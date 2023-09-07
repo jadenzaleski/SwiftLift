@@ -98,7 +98,7 @@ struct WorkoutView: View {
                         }
                         .alert(isPresented: $showDeleteAlert) {
                             Alert(
-                                title: Text("End your lift?"),
+                                title: Text("Cancel your lift?"),
                                 message: Text("All recorded data will be lost. This action cannot be undone. "),
                                 primaryButton: .default(Text("Cancel")),
                                 secondaryButton: .destructive(Text("Confirm"), action: {
@@ -147,7 +147,7 @@ struct WorkoutView: View {
             .map { $0.weight }
             .reduce(0, +)
         currentWorkout.gym = selectedGym
-        // save workout then clear
+        history.addWorkout(workout: currentWorkout)
         workoutInProgress = false
         // haptic feedback
         UINotificationFeedbackGenerator().notificationOccurred(.success)

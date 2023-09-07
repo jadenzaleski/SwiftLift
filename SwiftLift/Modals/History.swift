@@ -54,6 +54,15 @@ class History: ObservableObject {
         if !self.gyms.contains(workout.gym) {
             self.gyms.append(workout.gym)
         }
+        
+        workout.activities.forEach { activity in
+            guard let index = exercises.firstIndex(where: { $0.name == activity.name }) else {
+                // Handle the case where the exercise with the specified target doesn't exist
+                print("history addWorkout() error")
+                return
+            }
+            exercises[index].update(activity: activity)
+        }
     }
     
     func getTimeFormatted(ifDays: Bool) -> String {

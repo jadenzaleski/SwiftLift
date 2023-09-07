@@ -159,7 +159,7 @@
 				D7B90E692AA8309500F9EC41 /* Sources */,
 				D7B90E6A2AA8309500F9EC41 /* Frameworks */,
 				D7B90E6B2AA8309500F9EC41 /* Resources */,
-				D7B90E9B2AA8E8FB00F9EC41 /* ShellScript */,
+				D7B90E9B2AA8E8FB00F9EC41 /* Set build number to date */,
 			);
 			buildRules = (
 			);
@@ -218,8 +218,9 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		D7B90E9B2AA8E8FB00F9EC41 /* ShellScript */ = {
+		D7B90E9B2AA8E8FB00F9EC41 /* Set build number to date */ = {
 			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
 			buildActionMask = 2147483647;
 			files = (
 			);
@@ -227,6 +228,7 @@
 			);
 			inputPaths = (
 			);
+			name = "Set build number to date";
 			outputFileListPaths = (
 			);
 			outputPaths = (
@@ -412,6 +414,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jadenzaleski.SwiftLift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -445,6 +450,9 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.jadenzaleski.SwiftLift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -34,4 +34,29 @@ struct Exercise: Identifiable {
         Exercise(name: "Bench Press", notes: "Note for bench press", count: 4, history: [Activity(name: "", gym: "")], maxWeight: 100.0, maxReps: 10, totalWeight: 2000.0, totalReps: 100),
         Exercise(name: "Back Squat", notes: "Note for back squat", count: 3, history: [Activity(name: "", gym: "")], maxWeight: 200.0, maxReps: 20, totalWeight: 3000.0, totalReps: 200)
     ]
+    
+    mutating func update(activity: Activity) {
+        self.history.append(activity)
+        self.count += 1
+        activity.warmUpSets.forEach { set in
+            if (set.reps > self.maxReps) {
+                self.maxReps = set.reps
+            }
+            if (set.weight > self.maxWeight) {
+                self.maxWeight = set.weight
+            }
+            self.totalReps += set.reps
+            self.totalWeight += set.weight
+        }
+        activity.workingSets.forEach { set in
+            if (set.reps > self.maxReps) {
+                self.maxReps = set.reps
+            }
+            if (set.weight > self.maxWeight) {
+                self.maxWeight = set.weight
+            }
+            self.totalReps += set.reps
+            self.totalWeight += set.weight
+        }
+    }
 }
