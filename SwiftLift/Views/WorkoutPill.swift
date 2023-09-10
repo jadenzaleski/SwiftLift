@@ -11,6 +11,7 @@ struct WorkoutPill: View {
     @EnvironmentObject var history: History
     @Binding var activity: Activity
     @State var isComplete: Bool = false
+    @State var inProgress: Bool = false
     var body: some View {
         NavigationStack {
             NavigationLink {
@@ -18,9 +19,19 @@ struct WorkoutPill: View {
                     .environmentObject(history)
             } label: {
                 HStack {
-                    Image(systemName: isComplete ? "checkmark.circle.fill" : "exclamationmark.circle")
-                        .font(.title2)
-                        .foregroundStyle(isComplete ? .green : .yellow)
+                    if (isComplete) {
+                        Image(systemName:"checkmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(.green)
+                    } else if (inProgress) {
+                        Image(systemName: "exclamationmark.circle")
+                            .font(.title2)
+                            .foregroundStyle(.yellow)
+                    } else {
+                        Image(systemName: "circle")
+                            .font(.title2)
+                            .foregroundStyle(Color("ld"))
+                    }
                     Text("\(activity.name)")
                         .font(.title2)
                         .padding(.leading)
@@ -37,6 +48,7 @@ struct WorkoutPill: View {
                 .onChange(of: (activity.warmUpSets + activity.workingSets)) {
                     let allSets = activity.warmUpSets + activity.workingSets
                     isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
+                    inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
                 }
             }
         }
@@ -46,5 +58,6 @@ struct WorkoutPill: View {
 struct WorkoutPill_Previews: PreviewProvider {
     static var previews: some View {
         WorkoutPill(activity: .constant(Activity.sampleActivites[1]))
+            .environmentObject(History.sampleHistory)
     }
 }
