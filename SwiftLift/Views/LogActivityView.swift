@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LogActivityView: View {
-    @EnvironmentObject var history: History
+    @Environment(\.modelContext) private var modelContext
+    @Query private var history: [History]
+    @Query private var exercises: [Exercise]
     @Binding var activity: Activity
     @State var notes = ""
     @State private var isDeleting : Bool = false
@@ -115,11 +118,11 @@ struct LogActivityView: View {
             .padding(.top)
             TextField("Add note", text: $notes, axis: .vertical)
                 .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                .onAppear() {
-                    notes = history.notesForExercise(target: activity.name) ?? ""
+                .onAppear() { // FIXME: FINISH NOTES GET AND SET
+//                    notes = history.notesForExercise(target: activity.name) ?? ""
                 }
                 .onChange(of: notes) {
-                    history.setNotesForExercise(target: activity.name, notes: notes)
+//                    history.setNotesForExercise(target: activity.name, notes: notes)
                 }
                 .background(Color("lg"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
@@ -148,9 +151,6 @@ struct LogActivityView: View {
     
 }
 
-struct LogActivity_Previews: PreviewProvider {
-    static var previews: some View {
-        LogActivityView(activity: .constant(.sampleActivites[1]))
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    LogActivityView(activity: .constant(Activity.sampleActivites[1]))
 }

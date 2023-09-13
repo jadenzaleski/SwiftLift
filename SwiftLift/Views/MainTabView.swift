@@ -7,13 +7,11 @@
 
 import SwiftUI
 import UIKit
+import SwiftData
 
 struct MainTabView: View {
-    @EnvironmentObject var history: History
-    //    let lgLeading = LinearGradient(colors: [.purple, .blue, .green], startPoint: .topLeading, endPoint: .bottomTrailing)
-    //    let lgTrailing = LinearGradient(colors: [.purple, .blue, .green], startPoint: .topTrailing, endPoint: .bottomLeading)
-    //    let lg = LinearGradient(colors: [.purple, .blue, .green, .blue, .purple], startPoint: .leading, endPoint: .trailing)
-    
+    @Environment(\.modelContext) private var modelContext
+    @Query private var history: [History]
     /// Adds custom font and background to TabView
     init() {
         UITabBar.appearance().backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.04)
@@ -23,31 +21,31 @@ struct MainTabView: View {
         
         TabView {
             HomeView()
-                .environmentObject(history)
                 .tabItem {
                     Image(systemName: "dumbbell")
                     Text("Home")
                 }
             StatsView()
-                .environmentObject(history)
                 .tabItem {
                     Image(systemName: "chart.xyaxis.line")
                     Text("Stats")
                 }
             HistoryView()
-                .environmentObject(history)
                 .tabItem {
                     Image(systemName: "clock")
                     Text("History")
                 }
         }
+        .onAppear(perform: {
+            if (history.isEmpty) {
+                print("first time running app, creating empty history.")
+                modelContext.insert(History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalTime: 0, gyms: ["Default"]))
+            }
+        })
         
     }
 }
 
-struct MainTabView_Previews: PreviewProvider {
-    static var previews: some View {
-        MainTabView()
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    MainTabView()
 }

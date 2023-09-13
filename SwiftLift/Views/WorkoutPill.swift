@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct WorkoutPill: View {
-    @EnvironmentObject var history: History
     @Binding var activity: Activity
     @State var isComplete: Bool = false
     @State var inProgress: Bool = false
@@ -16,7 +15,6 @@ struct WorkoutPill: View {
         NavigationStack {
             NavigationLink {
                 LogActivityView(activity: $activity)
-                    .environmentObject(history)
             } label: {
                 HStack {
                     if (isComplete) {
@@ -55,9 +53,6 @@ struct WorkoutPill: View {
     }
 }
 
-struct WorkoutPill_Previews: PreviewProvider {
-    static var previews: some View {
-        WorkoutPill(activity: .constant(Activity.sampleActivites[1]))
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    WorkoutPill(activity: .constant(Activity.sampleActivites[0]))
 }

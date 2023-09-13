@@ -6,20 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HistoryView: View {
-    @EnvironmentObject var history: History
+    @Environment(\.modelContext) private var modelContext
+    @Query private var history: [History]
+    @Query private var exercises: [Exercise]
     var body: some View {
-        Text("History View")
-            .onAppear {
-                print(history)
-            }
+        Text("history: \(history.count), exercise: \(exercises.count)")
     }
 }
 
-struct HistoryView_Previews: PreviewProvider {
-    static var previews: some View {
-        HistoryView()
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    HistoryView()
 }
