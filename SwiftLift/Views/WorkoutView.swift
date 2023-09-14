@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct WorkoutView: View {
-    @EnvironmentObject var history: History
+    @Environment(\.modelContext) private var modelContext
+    @Query private var history: [History]
     @Binding var currentWorkout: Workout
     @Binding var workoutInProgress: Bool
     @Binding var selectedGym: String
@@ -59,7 +61,6 @@ struct WorkoutView: View {
                     ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, activity in
                         HStack {
                             WorkoutPill(activity: $currentWorkout.activities[index])
-                                .environmentObject(history)
                             if isDeleting {
                                 Button(action: {
                                     currentWorkout.activities.remove(at: index)
@@ -118,7 +119,6 @@ struct WorkoutView: View {
             }
             .sheet(isPresented: $isPresentingExerciseSearch) {
                 ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
-                    .environmentObject(history)
             }
         }
     }
@@ -147,16 +147,13 @@ struct WorkoutView: View {
             .map { $0.weight }
             .reduce(0, +)
         currentWorkout.gym = selectedGym
-        history.addWorkout(workout: currentWorkout)
+        history[0].addWorkout(workout: currentWorkout)
         workoutInProgress = false
         // haptic feedback
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
 }
 
-struct WorkoutView_Previews: PreviewProvider {
-    static var previews: some View {
-        WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
 }

@@ -6,19 +6,21 @@
 //
 
 import Foundation
+import SwiftData
 
-struct Exercise: Identifiable {
-    var id: UUID
-    var name: String
+@Model
+class Exercise: Identifiable {
+    @Attribute(.unique) var id: String = UUID().uuidString
+    @Attribute(.unique) var name: String
     var notes: String
     var count: Int
-    var history: [Activity]
+    var history: [Activity]? = []
     var maxWeight: Double
     var maxReps: Int
     var totalWeight: Double
     var totalReps: Int
     
-    init(id: UUID = UUID(), name: String, notes: String, count: Int = 0, history: [Activity] = [], maxWeight: Double = 0.0, maxReps: Int = 0, totalWeight: Double = 0, totalReps: Int = 0) {
+    init(id: String = UUID().uuidString, name: String, notes: String, count: Int = 0, history: [Activity] = [], maxWeight: Double = 0.0, maxReps: Int = 0, totalWeight: Double = 0, totalReps: Int = 0) {
         self.id = id
         self.name = name
         self.notes = notes
@@ -35,8 +37,8 @@ struct Exercise: Identifiable {
         Exercise(name: "Back Squat", notes: "Note for back squat", count: 3, history: [Activity(name: "", gym: "")], maxWeight: 200.0, maxReps: 20, totalWeight: 3000.0, totalReps: 200)
     ]
     
-    mutating func update(activity: Activity) {
-        self.history.append(activity)
+    func update(activity: Activity) {
+        self.history?.append(activity)
         self.count += 1
         activity.warmUpSets.forEach { set in
             if (set.reps > self.maxReps) {

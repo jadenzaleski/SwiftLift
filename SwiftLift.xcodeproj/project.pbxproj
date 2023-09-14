@@ -93,7 +93,7 @@
 				D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */,
 				D74270682AA90DA80020503C /* LaunchScreen.storyboard */,
 				D7B90EA02AA8EC3000F9EC41 /* Fonts */,
-				D7B90E9F2AA8EC2400F9EC41 /* Modals */,
+				D7B90E9F2AA8EC2400F9EC41 /* Models */,
 				D7B90E9E2AA8EC1C00F9EC41 /* Views */,
 				D7B90E9C2AA8EBD500F9EC41 /* Assets.xcassets */,
 				D7B90E7F2AA830BF00F9EC41 /* Info.plist */,
@@ -129,7 +129,7 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
-		D7B90E9F2AA8EC2400F9EC41 /* Modals */ = {
+		D7B90E9F2AA8EC2400F9EC41 /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				D7B90EA62AA8ECA100F9EC41 /* Activity.swift */,
@@ -138,7 +138,7 @@
 				D7B90EA22AA8ECA100F9EC41 /* SetData.swift */,
 				D7B90EA32AA8ECA100F9EC41 /* Workout.swift */,
 			);
-			path = Modals;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		D7B90EA02AA8EC3000F9EC41 /* Fonts */ = {

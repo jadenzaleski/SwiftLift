@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Activity: Identifiable {
+struct Activity: Identifiable, Codable, Hashable {
     var id: UUID
     var name: String
     var warmUpSets: [SetData]

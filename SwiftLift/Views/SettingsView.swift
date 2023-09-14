@@ -6,6 +6,7 @@
 //
 import Foundation
 import SwiftUI
+import SwiftData
 
 struct SettingsView: View {
     let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
@@ -15,6 +16,8 @@ struct SettingsView: View {
         List {
             Section {
                 Text("settings to come...")
+                Text("Change accent color?")
+
             } header: {
                 Text("General")
             } footer: {
@@ -26,8 +29,6 @@ struct SettingsView: View {
     }
 }
 
-struct SettingsView_Previews: PreviewProvider {
-    static var previews: some View {
-        SettingsView()
-    }
+#Preview {
+    SettingsView()
 }

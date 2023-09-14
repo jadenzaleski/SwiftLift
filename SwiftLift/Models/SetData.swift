@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct SetData: Identifiable, Hashable {
-    let id = UUID()
+struct SetData: Identifiable, Codable, Hashable {
+    var id = UUID()
     var reps: Int
     var weight: Double
     var isChecked: Bool = false

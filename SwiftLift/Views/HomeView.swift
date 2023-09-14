@@ -7,16 +7,14 @@
 
 import SwiftUI
 import UIKit
+import SwiftData
 
 struct HomeView: View {
-    @EnvironmentObject var history: History
-    @State private var isRotating1 = 0.0
-    @State private var isRotating2 = 0.0
-    @State private var isRotating3 = 0.0
-    @State private var isRotating4 = 0.0
-    @State private var isRotating5 = 0.0
+    @Environment(\.modelContext) private var modelContext
+    @Query private var history: [History]
+    @Query private var exercises: [Exercise]
     @State var workoutInProgress = false
-    @State private var selectedGym = ""
+    @State private var selectedGym = "Default"
     @State private var newGymAlert = false
     @State var newGym = ""
     @State var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: "")
@@ -46,18 +44,18 @@ struct HomeView: View {
                         VStack {
                             HStack {
                                 Image(systemName: "number")
-                                Text("\(history.totalWorkouts)")
+                                Text("\(history[0].totalWorkouts)")
                                 Spacer()
-                                Text("\(history.getTimeFormatted(ifDays: true))")
+                                Text("\(history[0].getTimeFormatted(ifDays: true))")
                                 Image(systemName: "clock")
                             }
                             .padding(.horizontal)
                             .padding(.vertical, 3.0)
                             HStack {
                                 Image(systemName: "repeat")
-                                Text("\(history.totalReps)")
+                                Text("\(history[0].totalReps)")
                                 Spacer()
-                                Text("\(Int(history.totalWeight))")
+                                Text("\(Int(history[0].totalWeight))")
                                 Image(systemName: "scalemass")
                             }
                             .padding(.horizontal)
@@ -89,15 +87,15 @@ struct HomeView: View {
                     Spacer()
                     List {
                         Picker("Gym", selection: $selectedGym) {
-                            ForEach(history.gyms, id: \.self) { gym in
-                                Text("\(gym)")
+                            ForEach(history[0].gyms, id: \.self) { gym in
+                                    Text("\(gym)")
                             }
                         }
                         .listRowBackground(Color.lg)
                         HStack {
                             TextField("Add a new gym", text: $newGym)
                             Button(action: {
-                                if history.addGym(gym: newGym) {
+                                if history[0].addGym(gym: newGym) {
                                     selectedGym = newGym
                                     newGym = ""
                                     // haptic feedback
@@ -140,23 +138,16 @@ struct HomeView: View {
                 }
             } else {
                 WorkoutView(currentWorkout: $currentWorkout, workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
-                    .environmentObject(history)
             }
         }
     }
     
     private func startWorkout() {
-        if selectedGym == "" {
-            selectedGym = history.gyms[0]
-        }
         currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: selectedGym)
         workoutInProgress = true;
     }
 }
 
-struct HomeView_Previews: PreviewProvider {
-    static var previews: some View {
-        HomeView()
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    HomeView()
 }

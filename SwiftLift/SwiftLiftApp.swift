@@ -6,15 +6,27 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct SwiftLiftApp: App {
-    @StateObject var history = History(workouts: [], exercises: [], totalWorkouts: 0, totalWeight: 0, totalReps: 0, totalTime: 0, gyms: ["Default"])
+    var sharedModelContainer: ModelContainer = {
+        let schema = Schema([
+            History.self, Exercise.self
+        ])
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+
+        do {
+            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
     var body: some Scene {
         WindowGroup {
             MainTabView()
-                .environmentObject(history)
         }
+        .modelContainer(sharedModelContainer)
     }
     
 }

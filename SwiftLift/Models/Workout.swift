@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Workout: Identifiable {
-    var id: UUID
+struct Workout: Identifiable, Codable, Hashable {
+    var id: String = UUID().uuidString
     var startDate: Date
     var time: TimeInterval
     var activities: [Activity] // may not need, could be a list of exercise names/uuid
@@ -16,7 +16,7 @@ struct Workout: Identifiable {
     var totalReps: Int
     var gym: String
     
-    init(id: UUID = UUID(), startDate: Date, time: TimeInterval, activities: [Activity], totalWeight: Double, totalReps: Int, gym: String) {
+    init(id: String = UUID().uuidString, startDate: Date, time: TimeInterval, activities: [Activity], totalWeight: Double, totalReps: Int, gym: String) {
         self.id = id
         self.startDate = startDate
         self.time = time

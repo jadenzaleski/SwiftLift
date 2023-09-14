@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ExerciseSearch: View {
-    @EnvironmentObject var history: History
+    @Environment(\.modelContext) private var modelContext
+    @Query private var history: [History]
+    @Query private var exercises: [Exercise]
     @Binding var currentWorkout: Workout
     @Binding var isPresentingExerciseSearch: Bool
     @State private var searchText = ""
@@ -33,7 +36,7 @@ struct ExerciseSearch: View {
                             HStack {
                                 Text(exerciseName)
                                 Spacer()
-                                Text("\(history.getExerciseCount(name: exerciseName))")
+                                Text("\(exerciseName)")
                                 Image(systemName: selectedExercises.contains(exerciseName) ? "checkmark.square.fill" :"square")
                             }
                         }
@@ -44,11 +47,12 @@ struct ExerciseSearch: View {
                     HStack {
                         TextField("Add a new exercise", text: $newExercise)
                         Button(action: {
-                            if history.addExercise(name: newExercise) {
+                            newExercise = newExercise.capitalized
+                            modelContext.insert(Exercise(name: newExercise, notes: ""))
                                 // haptic feedback
                                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                                 newExercise = ""
-                            }
+                            
                         }) {
                             Image(systemName: "plus.circle.fill")
                         }
@@ -81,15 +85,12 @@ struct ExerciseSearch: View {
     
     var searchResults: [String] {
         if searchText.isEmpty {
-            return history.exercises.map { $0.name }
+            return exercises.map { $0.name }
         } else {
-            return history.exercises.map { $0.name }.filter { $0.localizedCaseInsensitiveContains(searchText) }
+            return exercises.map { $0.name }.filter { $0.localizedCaseInsensitiveContains(searchText) }
         }
     }
 }
-struct ExerciseSearch_Previews: PreviewProvider {
-    static var previews: some View {
-        ExerciseSearch(currentWorkout: .constant(Workout.sampleWorkout), isPresentingExerciseSearch: .constant(true))
-            .environmentObject(History.sampleHistory)
-    }
+#Preview {
+    ExerciseSearch(currentWorkout: .constant(Workout.sampleWorkout), isPresentingExerciseSearch: .constant(true))
 }
