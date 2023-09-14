@@ -14,7 +14,7 @@ struct HomeView: View {
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
     @State var workoutInProgress = false
-    @State private var selectedGym = ""
+    @State private var selectedGym = "Default"
     @State private var newGymAlert = false
     @State var newGym = ""
     @State var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: "")
@@ -88,7 +88,7 @@ struct HomeView: View {
                     List {
                         Picker("Gym", selection: $selectedGym) {
                             ForEach(history[0].gyms, id: \.self) { gym in
-                                Text("\(gym)")
+                                    Text("\(gym)")
                             }
                         }
                         .listRowBackground(Color.lg)
@@ -143,9 +143,6 @@ struct HomeView: View {
     }
     
     private func startWorkout() {
-        if selectedGym == "" {
-            selectedGym = history[0].gyms[0]
-        }
         currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: selectedGym)
         workoutInProgress = true;
     }

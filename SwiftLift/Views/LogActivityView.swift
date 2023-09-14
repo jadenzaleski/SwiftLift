@@ -13,8 +13,9 @@ struct LogActivityView: View {
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
     @Binding var activity: Activity
-    @State var notes = ""
+    @State var notes = "";
     @State private var isDeleting : Bool = false
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             HStack {
@@ -84,7 +85,7 @@ struct LogActivityView: View {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         }) {
                             Image(systemName: "trash")
-                                .font(.title2)
+                                .font(.title)
                                 .foregroundStyle(Color.red)
                         }
                         .padding(.leading, 5.0)
@@ -118,11 +119,11 @@ struct LogActivityView: View {
             .padding(.top)
             TextField("Add note", text: $notes, axis: .vertical)
                 .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                .onAppear() { // FIXME: FINISH NOTES GET AND SET
-//                    notes = history.notesForExercise(target: activity.name) ?? ""
+                .onAppear() {
+                    notes = exercises[getExerciseIndex(name: activity.name)].notes;
                 }
                 .onChange(of: notes) {
-//                    history.setNotesForExercise(target: activity.name, notes: notes)
+                    exercises[getExerciseIndex(name: activity.name)].notes = notes;
                 }
                 .background(Color("lg"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
@@ -149,8 +150,21 @@ struct LogActivityView: View {
         }
     }
     
+    private func getExerciseIndex(name: String) -> Int {
+        return exercises.firstIndex(where: { $0.name == name }) ?? 0;
+    }
+    
 }
 
-#Preview {
-    LogActivityView(activity: .constant(Activity.sampleActivites[1]))
+struct LogActivityView_Previews: PreviewProvider {
+    static var previews: some View {
+        LogActivityView(activity: .constant(Activity.sampleActivites[0]))
+            .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+
+    }
 }
+
+//#Preview {
+//    LogActivityView(activity: .constant(Activity.sampleActivites[0]))
+//        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+//}

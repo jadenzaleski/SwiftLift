@@ -47,6 +47,7 @@ struct ExerciseSearch: View {
                     HStack {
                         TextField("Add a new exercise", text: $newExercise)
                         Button(action: {
+                            newExercise = newExercise.capitalized
                             modelContext.insert(Exercise(name: newExercise, notes: ""))
                                 // haptic feedback
                                 UINotificationFeedbackGenerator().notificationOccurred(.success)

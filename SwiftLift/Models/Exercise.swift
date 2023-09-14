@@ -11,7 +11,7 @@ import SwiftData
 @Model
 class Exercise: Identifiable {
     @Attribute(.unique) var id: String = UUID().uuidString
-    var name: String
+    @Attribute(.unique) var name: String
     var notes: String
     var count: Int
     var history: [Activity]? = []
