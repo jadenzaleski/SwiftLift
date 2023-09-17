@@ -156,13 +156,13 @@ struct LogActivityView: View {
     
 }
 
-struct LogActivityView_Previews: PreviewProvider {
-    static var previews: some View {
-        LogActivityView(activity: .constant(Activity.sampleActivites[0]))
-            .modelContainer(for: [History.self, Exercise.self], inMemory: true)
-
-    }
-}
+//struct LogActivityView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        LogActivityView(activity: .constant(Activity.sampleActivites[0]))
+//            .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+//
+//    }
+//}
 
 //#Preview {
 //    LogActivityView(activity: .constant(Activity.sampleActivites[0]))

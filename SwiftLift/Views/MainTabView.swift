@@ -14,8 +14,8 @@ struct MainTabView: View {
     @Query private var history: [History]
     /// Adds custom font and background to TabView
     init() {
-        UITabBar.appearance().backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.04)
-//        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
+        UITabBar.appearance().backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.03)
+        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
     }
     var body: some View {
         
@@ -48,4 +48,6 @@ struct MainTabView: View {
 
 #Preview {
     MainTabView()
+        .modelContainer(previewContainer)
+
 }

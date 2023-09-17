@@ -154,6 +154,8 @@ struct WorkoutView: View {
     }
 }
 
-#Preview {
-    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
-}
+//#Preview {
+//    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
+//        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+//
+//}

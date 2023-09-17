@@ -20,28 +20,36 @@ struct ExerciseSearch: View {
     
     
     var body: some View {
+        var searchResults: [Exercise] {
+            if searchText.isEmpty {
+                return exercises.map { $0 }
+            } else {
+                return exercises.map { $0 }.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
+            }
+        }
+        
         NavigationView {
             List {
                 Section {
-                    ForEach(searchResults, id: \.self) { exerciseName in
+                    ForEach(searchResults, id: \.self) { exercise in
                         Button {
-                            if selectedExercises.contains(exerciseName) {
-                                selectedExercises = selectedExercises.filter { $0 != exerciseName }
+                            if selectedExercises.contains(exercise.name) {
+                                selectedExercises = selectedExercises.filter { $0 != exercise.name }
                             } else {
-                                selectedExercises.append(exerciseName)
+                                selectedExercises.append(exercise.name)
                             }
                             // haptic feedback
                             UISelectionFeedbackGenerator().selectionChanged()
                         } label: {
                             HStack {
-                                Text(exerciseName)
+                                Text(exercise.name)
                                 Spacer()
-                                Text("\(exerciseName)")
-                                Image(systemName: selectedExercises.contains(exerciseName) ? "checkmark.square.fill" :"square")
+                                Text("\(exercise.count)")
+                                Image(systemName: selectedExercises.contains(exercise.name) ? "checkmark.square.fill" : "square")
                             }
                         }
                         .buttonStyle(BorderlessButtonStyle())
-                        .foregroundStyle(selectedExercises.contains(exerciseName) ? Color.green : Color("ld"))
+                        .foregroundStyle(selectedExercises.contains(exercise.name) ? Color.green : Color("ld"))
                         
                     }
                     HStack {
@@ -57,9 +65,9 @@ struct ExerciseSearch: View {
                             Image(systemName: "plus.circle.fill")
                         }
                         .disabled(newExercise.isEmpty)
-                    }
+                        .buttonStyle(BorderlessButtonStyle())                    }
                 } footer: {
-                    Text("When adding a new exercise, each name must be unique and not empty.")
+                    Text("When adding a new exercise, each name must be unique and contain at least one character.")
                 }
             }
             .navigationTitle("Exercises")
@@ -82,15 +90,8 @@ struct ExerciseSearch: View {
             }
         }
     }
-    
-    var searchResults: [String] {
-        if searchText.isEmpty {
-            return exercises.map { $0.name }
-        } else {
-            return exercises.map { $0.name }.filter { $0.localizedCaseInsensitiveContains(searchText) }
-        }
-    }
 }
 #Preview {
     ExerciseSearch(currentWorkout: .constant(Workout.sampleWorkout), isPresentingExerciseSearch: .constant(true))
+        .modelContainer(previewContainer)
 }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D73604C12AB3B9050029C09E /* SwiftDataPreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */; };
 		D742705C2AA90D910020503C /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270502AA90D900020503C /* MainTabView.swift */; };
 		D742705D2AA90D910020503C /* WorkoutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270512AA90D900020503C /* WorkoutView.swift */; };
 		D742705E2AA90D910020503C /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270522AA90D900020503C /* StatsView.swift */; };
@@ -32,6 +33,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataPreviewContainer.swift; sourceTree = "<group>"; };
 		D74270502AA90D900020503C /* MainTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		D74270512AA90D900020503C /* WorkoutView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WorkoutView.swift; sourceTree = "<group>"; };
 		D74270522AA90D900020503C /* StatsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
@@ -120,6 +122,7 @@
 				D74270502AA90D900020503C /* MainTabView.swift */,
 				D74270552AA90D900020503C /* NumbersOnlyViewModifier.swift */,
 				D74270562AA90D910020503C /* SetPill.swift */,
+				D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */,
 				D74270532AA90D900020503C /* SettingsView.swift */,
 				D74270522AA90D900020503C /* StatsView.swift */,
 				D742705B2AA90D910020503C /* Tester.swift */,
@@ -261,6 +264,7 @@
 				D7B90EA82AA8ECA100F9EC41 /* Workout.swift in Sources */,
 				D74270652AA90D910020503C /* ExerciseSearch.swift in Sources */,
 				D742705E2AA90D910020503C /* StatsView.swift in Sources */,
+				D73604C12AB3B9050029C09E /* SwiftDataPreviewContainer.swift in Sources */,
 				D74270642AA90D910020503C /* WorkoutPill.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

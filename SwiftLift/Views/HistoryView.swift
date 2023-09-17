@@ -17,6 +17,8 @@ struct HistoryView: View {
     }
 }
 
-#Preview {
-    HistoryView()
-}
+//#Preview {
+//    HistoryView()
+//        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+//
+//}
