@@ -25,26 +25,49 @@ struct MainTabView: View {
                     Image(systemName: "dumbbell")
                     Text("Home")
                 }
+                .tag(0)
             StatsView()
                 .tabItem {
                     Image(systemName: "chart.xyaxis.line")
                     Text("Stats")
                 }
+                .tag(1)
             HistoryView()
                 .tabItem {
                     Image(systemName: "clock")
                     Text("History")
                 }
+                .tag(2)
         }
+//        .toolbar{
+//            ToolbarItemGroup(placement: .keyboard){
+//                Spacer()
+//                Button {
+//                        UIApplication.shared.dismissKeyboard()
+//                } label: {
+//                    Image(systemName: "keyboard.chevron.compact.down")
+//                }
+//                .padding(.all, 5.0)
+//            }
+//        }
         .onAppear(perform: {
             if (history.isEmpty) {
                 print("first time running app, creating empty history.")
                 modelContext.insert(History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalTime: 0, gyms: ["Default"]))
             }
         })
-        
     }
 }
+
+#if canImport(UIKit)
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        UIApplication.shared.dismissKeyboard()
+
+    }
+}
+#endif
 
 #Preview {
     MainTabView()

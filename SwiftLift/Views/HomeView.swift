@@ -16,8 +16,6 @@ struct HomeView: View {
     @Query private var exercises: [Exercise]
     @State var workoutInProgress = false
     @State private var selectedGym = "Default"
-    @State private var gyms = [String]()
-    @State private var newGymAlert = false
     @State var newGym = ""
     @State var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: "")
     @State private var showLifetime = true
@@ -87,54 +85,51 @@ struct HomeView: View {
                                 .fontWeight(Font.Weight.bold)
                         }
                         .padding(25.0)
-    //                    .buttonStyle(BorderlessButtonStyle())
-    //                    .clipShape(RoundedRectangle(cornerRadius: 15))
                         .foregroundStyle(Color("mainSystemColor"))
                         .background(gradient)
                         .clipShape(Capsule())
                     }
                     .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
-
-
-
+                    
+                    
+                    
                     Spacer()
                     VStack {
                         HStack {
                             Text("Gym:")
                             Spacer()
                             Picker("Select a gym", selection: $selectedGym) {
-                                ForEach(gyms, id: \.self) { gym in
+                                ForEach(history[0].gyms, id: \.self) { gym in
                                     Text(gym).tag(gym)
                                 }
                             }
                         }
-                        .onAppear {
-                            gyms = history[0].gyms
-                            if let firstGym = gyms.first {
-                                        selectedGym = firstGym // Set an initial valid selection
-                                    }
-                        }
-                        .padding(.horizontal)
-                        .padding(.top, 10.0)
-                        .padding(.bottom, 3.0)
-                        Divider()
-                            .padding(.horizontal)
-                        HStack {
-                            TextField("Add a new gym", text: $newGym)
-                            Button(action: {
-                                addNewGym()
-                            }) {
-                                Image(systemName: "plus.circle.fill")
-                            }
-                            .disabled(newGym.isEmpty)
-                        }
-                        .padding([.leading, .bottom, .trailing])
-                        .padding(.top, 6.0)
+                        .padding(10.0)
+//                        .padding(.top, 10.0)
+//                        .padding(.bottom, 3.0)
+//                        Divider()
+//                            .padding(.horizontal)
+//                        HStack {
+//                            TextField("Add a new gym", text: $newGym)
+//                            
+//                            Button(action: {
+//                               addNewGym()
+//                            }) {
+//                                Image(systemName: "plus.circle.fill")
+//                            }
+//                            .disabled(newGym.isEmpty)
+//                        }
+//                        .padding([.leading, .bottom, .trailing])
+//                        .padding(.top, 6.0)
                     }
+                    
                     .background(Color("lg"))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding()
                     
+                }
+                .onTapGesture {
+                    self.hideKeyboard()
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
@@ -148,39 +143,19 @@ struct HomeView: View {
                         }
                     }
                 }
-                .toolbar{
-                    ToolbarItemGroup(placement: .keyboard){
-                        Spacer()
-                        Button {
-                            UIApplication.shared.dismissKeyboard()
-                        } label: {
-                            Image(systemName: "keyboard.chevron.compact.down")
-                        }
-                        .padding(.all, 5.0)
-                    }
-                }
+                
+                
             } else {
                 WorkoutView(currentWorkout: $currentWorkout, workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
             }
         }
+        .scrollDismissesKeyboard(.immediately)
     }
     
     private func startWorkout() {
         currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: selectedGym)
         workoutInProgress = true;
     }
-    
-    private func addNewGym() {
-            if !newGym.isEmpty && !gyms.contains(newGym) {
-                withAnimation {
-                    gyms.append(newGym.capitalized)
-                    selectedGym = newGym
-                }
-                newGym = ""
-                // haptic feedback
-                UINotificationFeedbackGenerator().notificationOccurred(.success)
-            }
-        }
 }
 
 #Preview {

@@ -128,8 +128,9 @@ struct LogActivityView: View {
                 .background(Color("lg"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
         }
+        .scrollDismissesKeyboard(.immediately)
         .padding(.horizontal)
-        // for some strange reason xcode throws and error if i combine the below two toolbars
+        // for some strange reason xcode throws and error if you combine the below two toolbars
         .toolbar {
             Button(isDeleting ? "Done" : "Edit") {
                 withAnimation(.interactiveSpring) {
@@ -153,7 +154,6 @@ struct LogActivityView: View {
     private func getExerciseIndex(name: String) -> Int {
         return exercises.firstIndex(where: { $0.name == name }) ?? 0;
     }
-    
 }
 
 //struct LogActivityView_Previews: PreviewProvider {
