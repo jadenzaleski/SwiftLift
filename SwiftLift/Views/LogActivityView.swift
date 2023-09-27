@@ -128,6 +128,7 @@ struct LogActivityView: View {
                 .background(Color("lg"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
         }
+        .navigationTitle(Text(activity.name))
         .scrollDismissesKeyboard(.immediately)
         .padding(.horizontal)
         // for some strange reason xcode throws and error if you combine the below two toolbars
@@ -140,13 +141,13 @@ struct LogActivityView: View {
         }
         .toolbar{
             ToolbarItemGroup(placement: .keyboard){
-                    Spacer()
-                    Button {
-                        UIApplication.shared.dismissKeyboard()
-                    } label: {
-                        Image(systemName: "keyboard.chevron.compact.down")
-                    }
-                    .padding(.all, 5.0)
+                Spacer()
+                Button {
+                    UIApplication.shared.dismissKeyboard()
+                } label: {
+                    Image(systemName: "keyboard.chevron.compact.down")
+                }
+                .padding(.all, 5.0)
             }
         }
     }
@@ -156,15 +157,7 @@ struct LogActivityView: View {
     }
 }
 
-//struct LogActivityView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LogActivityView(activity: .constant(Activity.sampleActivites[0]))
-//            .modelContainer(for: [History.self, Exercise.self], inMemory: true)
-//
-//    }
-//}
-
-//#Preview {
-//    LogActivityView(activity: .constant(Activity.sampleActivites[0]))
-//        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
-//}
+#Preview {
+    LogActivityView(activity: .constant(Activity.sampleActivites[0]))
+        .modelContainer(previewContainer)
+}
