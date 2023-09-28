@@ -94,38 +94,22 @@ struct HomeView: View {
                     
                     
                     Spacer()
-                    VStack {
-                        HStack {
-                            Text("Gym:")
-                            Spacer()
-                            Picker("Select a gym", selection: $selectedGym) {
-                                ForEach(history[0].gyms, id: \.self) { gym in
-                                    Text(gym).tag(gym)
-                                }
+                    
+                    HStack {
+                        Text("Gym:")
+                            .padding(10.0)
+                        Spacer()
+                        Picker("Select a gym", selection: $selectedGym) {
+                            ForEach(history[0].gyms, id: \.self) { gym in
+                                Text(gym).tag(gym)
                             }
                         }
                         .padding(10.0)
-//                        .padding(.top, 10.0)
-//                        .padding(.bottom, 3.0)
-//                        Divider()
-//                            .padding(.horizontal)
-//                        HStack {
-//                            TextField("Add a new gym", text: $newGym)
-//                            
-//                            Button(action: {
-//                               addNewGym()
-//                            }) {
-//                                Image(systemName: "plus.circle.fill")
-//                            }
-//                            .disabled(newGym.isEmpty)
-//                        }
-//                        .padding([.leading, .bottom, .trailing])
-//                        .padding(.top, 6.0)
                     }
-                    
                     .background(Color("offset"))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding()
+                    .shadow(color: Color(UIColor.systemGray4), radius: 5)
                     
                 }
                 .onTapGesture {

@@ -35,6 +35,7 @@ struct LogActivityView: View {
             ForEach(Array(activity.warmUpSets.enumerated()), id: \.element.id) { index, set in
                 HStack {
                     SetPill(set: $activity.warmUpSets[index], isDeleting: $isDeleting)
+                        .shadow(color: Color(UIColor.systemGray4), radius: 5)
                     if isDeleting {
                         Button(action: {
                             activity.warmUpSets.remove(at: index)
@@ -78,6 +79,7 @@ struct LogActivityView: View {
             ForEach(Array(activity.workingSets.enumerated()), id: \.element.id) { index, set in
                 HStack {
                     SetPill(set: $activity.workingSets[index], isDeleting: $isDeleting)
+                        .shadow(color: Color(UIColor.systemGray4), radius: 5)
                     if isDeleting {
                         Button(action: {
                             activity.workingSets.remove(at: index)
@@ -127,6 +129,7 @@ struct LogActivityView: View {
                 }
                 .background(Color("offset"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
+                .shadow(color: Color(UIColor.systemGray4), radius: 5)
         }
         .navigationTitle(Text(activity.name))
         .scrollDismissesKeyboard(.immediately)
@@ -154,6 +157,13 @@ struct LogActivityView: View {
     
     private func getExerciseIndex(name: String) -> Int {
         return exercises.firstIndex(where: { $0.name == name }) ?? 0;
+    }
+}
+
+private extension UIScrollView {
+    override open var clipsToBounds: Bool {
+        get { false }
+        set {}
     }
 }
 

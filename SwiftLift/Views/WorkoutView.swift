@@ -61,6 +61,7 @@ struct WorkoutView: View {
                     ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, activity in
                         HStack {
                             WorkoutPill(activity: $currentWorkout.activities[index])
+                                .shadow(color: Color(UIColor.systemGray4), radius: 5)
                             if isDeleting {
                                 Button(action: {
                                     currentWorkout.activities.remove(at: index)

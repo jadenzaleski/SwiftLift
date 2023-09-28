@@ -47,6 +47,7 @@ struct ExerciseSearch: View {
                                 Text("\(exercise.count)")
                                 Image(systemName: selectedExercises.contains(exercise.name) ? "checkmark.square.fill" : "square")
                             }
+                            .padding(.vertical, 10.0)
                         }
                         .buttonStyle(BorderlessButtonStyle())
                         .foregroundStyle(selectedExercises.contains(exercise.name) ? Color.green : Color("ld"))
@@ -65,7 +66,9 @@ struct ExerciseSearch: View {
                             Image(systemName: "plus.circle.fill")
                         }
                         .disabled(newExercise.isEmpty)
-                        .buttonStyle(BorderlessButtonStyle())                    }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
+                    .padding(.vertical, 10.0)
                 } footer: {
                     Text("When adding a new exercise, each name must be unique and contain at least one character.")
                 }

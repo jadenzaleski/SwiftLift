@@ -21,7 +21,7 @@ struct SetPill: View {
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
             } label: {
                 Image(systemName: set.isChecked ? "checkmark.circle.fill" : "checkmark.circle")
-                    .font(.title)
+                    .font(.title2)
             }
             .frame(width: 40, height: 30)
             .foregroundStyle(set.isChecked ? Color.green : Color.blue)
@@ -30,22 +30,23 @@ struct SetPill: View {
             TextField("0", text: $intString)
                 .numbersOnly($intString)
                 .frame(width: 75)
-                .font(.title)
+                .font(.title2)
                 .onChange(of: intString) {
                         set.setReps(string: intString)
                 }
             Spacer()
             Text("/")
-                .font(.title)
+                .font(.title2)
             Spacer()
             TextField("0.0", text: $decString)
                 .numbersOnly($decString, includeDecimal: true)
                 .frame(width: 100)
-                .font(.title)
+                .font(.title2)
                 .multilineTextAlignment(.trailing)
                 .onChange(of: decString) {
                         set.setWeight(string: decString)
                 }
+                .padding(.trailing, 5.0)
         }
         .padding()
         .background(Color("offset"))
