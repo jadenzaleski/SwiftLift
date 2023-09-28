@@ -40,7 +40,7 @@ struct WorkoutPill: View {
                         .foregroundStyle(Color.ld)
                 }
                 .padding()
-                .background(Color.lg)
+                .background(Color("offset"))
                 .clipShape(Capsule())
                 .overlay(isComplete ? Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
                 .onChange(of: (activity.warmUpSets + activity.workingSets)) {

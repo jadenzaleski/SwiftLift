@@ -125,7 +125,7 @@ struct LogActivityView: View {
                 .onChange(of: notes) {
                     exercises[getExerciseIndex(name: activity.name)].notes = notes;
                 }
-                .background(Color("lg"))
+                .background(Color("offset"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
         }
         .navigationTitle(Text(activity.name))

@@ -123,7 +123,7 @@ struct HomeView: View {
 //                        .padding(.top, 6.0)
                     }
                     
-                    .background(Color("lg"))
+                    .background(Color("offset"))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding()
                     

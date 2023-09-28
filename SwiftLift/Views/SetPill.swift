@@ -48,7 +48,7 @@ struct SetPill: View {
                 }
         }
         .padding()
-        .background(Color("lg"))
+        .background(Color("offset"))
         .clipShape(Capsule())
         .overlay(set.isChecked ? Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
         .onAppear {
