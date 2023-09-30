@@ -109,7 +109,8 @@ struct HomeView: View {
                     .background(Color("offset"))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding()
-                    .shadow(color: Color(UIColor.systemGray4), radius: 5)
+                    .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
+                    
                     
                 }
                 .onTapGesture {
@@ -117,9 +118,10 @@ struct HomeView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        NavigationLink(destination: Tester()) {
+                        NavigationLink(destination: ProfileView()) {
                             Image(systemName: "person.crop.circle")
                         }
+                        
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         NavigationLink(destination: SettingsView()) {
@@ -139,6 +141,13 @@ struct HomeView: View {
     private func startWorkout() {
         currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: selectedGym)
         workoutInProgress = true;
+    }
+}
+
+private extension UIScrollView {
+    override open var clipsToBounds: Bool {
+        get { false }
+        set {}
     }
 }
 

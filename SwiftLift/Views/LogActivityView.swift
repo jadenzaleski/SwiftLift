@@ -10,6 +10,7 @@ import SwiftData
 
 struct LogActivityView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
     @Binding var activity: Activity
@@ -35,7 +36,7 @@ struct LogActivityView: View {
             ForEach(Array(activity.warmUpSets.enumerated()), id: \.element.id) { index, set in
                 HStack {
                     SetPill(set: $activity.warmUpSets[index], isDeleting: $isDeleting)
-                        .shadow(color: Color(UIColor.systemGray4), radius: 5)
+                        .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
                     if isDeleting {
                         Button(action: {
                             activity.warmUpSets.remove(at: index)
@@ -79,7 +80,7 @@ struct LogActivityView: View {
             ForEach(Array(activity.workingSets.enumerated()), id: \.element.id) { index, set in
                 HStack {
                     SetPill(set: $activity.workingSets[index], isDeleting: $isDeleting)
-                        .shadow(color: Color(UIColor.systemGray4), radius: 5)
+                        .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
                     if isDeleting {
                         Button(action: {
                             activity.workingSets.remove(at: index)
@@ -129,7 +130,8 @@ struct LogActivityView: View {
                 }
                 .background(Color("offset"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
-                .shadow(color: Color(UIColor.systemGray4), radius: 5)
+                .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
+                
         }
         .navigationTitle(Text(activity.name))
         .scrollDismissesKeyboard(.immediately)
@@ -160,10 +162,9 @@ struct LogActivityView: View {
     }
 }
 
-private extension UIScrollView {
-    override open var clipsToBounds: Bool {
-        get { false }
-        set {}
+extension UITextField {
+    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        return false;
     }
 }
 

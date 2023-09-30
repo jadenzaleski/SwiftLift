@@ -10,6 +10,7 @@ import SwiftData
 
 struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) private var colorScheme
     @Query private var history: [History]
     @Binding var currentWorkout: Workout
     @Binding var workoutInProgress: Bool
@@ -61,7 +62,7 @@ struct WorkoutView: View {
                     ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, activity in
                         HStack {
                             WorkoutPill(activity: $currentWorkout.activities[index])
-                                .shadow(color: Color(UIColor.systemGray4), radius: 5)
+                                .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
                             if isDeleting {
                                 Button(action: {
                                     currentWorkout.activities.remove(at: index)

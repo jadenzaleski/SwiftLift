@@ -25,7 +25,7 @@ struct SettingsView: View {
                     Text("Change accent color?")
                     Text("Light/Dark/System color?")
                     Text("Backup/restore data?")
-                    
+                    Text("Kilos?")
                 } header: {
                     Text("General")
                 }

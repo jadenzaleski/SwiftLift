@@ -23,6 +23,7 @@
 		D74270692AA90DA80020503C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D74270682AA90DA80020503C /* LaunchScreen.storyboard */; };
 		D742706B2AA91C5E0020503C /* SwiftLiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */; };
 		D742706C2AA91CF20020503C /* OpenSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B90EA12AA8EC3B00F9EC41 /* OpenSans.ttf */; };
+		D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78474082AC7D73700725EB1 /* ProfileView.swift */; };
 		D7B90E782AA8309600F9EC41 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B90E772AA8309600F9EC41 /* Preview Assets.xcassets */; };
 		D7B90E9D2AA8EBD500F9EC41 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D7B90E9C2AA8EBD500F9EC41 /* Assets.xcassets */; };
 		D7B90EA72AA8ECA100F9EC41 /* SetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA22AA8ECA100F9EC41 /* SetData.swift */; };
@@ -48,7 +49,8 @@
 		D742705B2AA90D910020503C /* Tester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tester.swift; sourceTree = "<group>"; };
 		D74270682AA90DA80020503C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftLiftApp.swift; sourceTree = "<group>"; };
-		D742706E2AA924250020503C /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D742706E2AA924250020503C /* README.md */ = {isa = PBXFileReference; explicitFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D78474082AC7D73700725EB1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		D7B90E6D2AA8309500F9EC41 /* SwiftLift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftLift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7B90E772AA8309600F9EC41 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D7B90E7F2AA830BF00F9EC41 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 				D742705A2AA90D910020503C /* LogActivityView.swift */,
 				D74270502AA90D900020503C /* MainTabView.swift */,
 				D74270552AA90D900020503C /* NumbersOnlyViewModifier.swift */,
+				D78474082AC7D73700725EB1 /* ProfileView.swift */,
 				D74270562AA90D910020503C /* SetPill.swift */,
 				D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */,
 				D74270532AA90D900020503C /* SettingsView.swift */,
@@ -259,6 +262,7 @@
 				D74270632AA90D910020503C /* HistoryView.swift in Sources */,
 				D742705C2AA90D910020503C /* MainTabView.swift in Sources */,
 				D74270622AA90D910020503C /* SetPill.swift in Sources */,
+				D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */,
 				D74270612AA90D910020503C /* NumbersOnlyViewModifier.swift in Sources */,
 				D7B90EA92AA8ECA100F9EC41 /* History.swift in Sources */,
 				D7B90EA82AA8ECA100F9EC41 /* Workout.swift in Sources */,
@@ -416,7 +420,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jadenzaleski.SwiftLift;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jadenzaleski.Swift-Lift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -452,7 +456,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.jadenzaleski.SwiftLift;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jadenzaleski.Swift-Lift";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;

@@ -7,12 +7,13 @@
 
 import SwiftUI
 import Combine
+import UIKit
 
 struct SetPill: View {
     @Binding var set: SetData
     @Binding var isDeleting: Bool
-    @State private var decString: String = "0.0"
-    @State private var intString: String = "0"
+    @State  var decString: String = "0.0"
+    @State  var intString: String = "0"
     var body: some View{
         HStack {
             Button {
@@ -32,7 +33,12 @@ struct SetPill: View {
                 .frame(width: 75)
                 .font(.title2)
                 .onChange(of: intString) {
-                        set.setReps(string: intString)
+                    set.setReps(string: intString)
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
+                    if let textField = obj.object as? UITextField {
+                        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                    }
                 }
             Spacer()
             Text("/")
@@ -44,9 +50,17 @@ struct SetPill: View {
                 .font(.title2)
                 .multilineTextAlignment(.trailing)
                 .onChange(of: decString) {
-                        set.setWeight(string: decString)
+                    set.setWeight(string: decString)
                 }
                 .padding(.trailing, 5.0)
+                .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) {
+                    obj in
+                    if let textField = obj.object as? UITextField {
+                        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                    }
+                }
+                
+                
         }
         .padding()
         .background(Color("offset"))
@@ -58,6 +72,8 @@ struct SetPill: View {
         }
     }
 }
+
+
 
 struct SetPill_Previews: PreviewProvider {
     static var previews: some View {
