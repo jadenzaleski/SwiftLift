@@ -16,14 +16,16 @@ final class History {
     var totalReps: Int
     var totalTime: TimeInterval
     var gyms: [String]
+    var joinDate: Date
     
-    init(workouts: [Workout], totalWorkouts: Int, totalWeight: Double, totalReps: Int, totalTime: TimeInterval, gyms: [String]) {
+    init(workouts: [Workout], totalWorkouts: Int, totalWeight: Double, totalReps: Int, totalTime: TimeInterval, gyms: [String], joinDate: Date = Date.now) {
         self.workouts = workouts
         self.totalWorkouts = totalWorkouts
         self.totalWeight = totalWeight
         self.totalReps = totalReps
         self.totalTime = totalTime
         self.gyms = gyms
+        self.joinDate = joinDate
     }
     
     static var sampleHistory: History {

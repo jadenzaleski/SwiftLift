@@ -162,12 +162,6 @@ struct LogActivityView: View {
     }
 }
 
-extension UITextField {
-    override open func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
-        return false;
-    }
-}
-
 #Preview {
     LogActivityView(activity: .constant(Activity.sampleActivites[0]))
         .modelContainer(previewContainer)
