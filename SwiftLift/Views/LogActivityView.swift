@@ -88,7 +88,7 @@ struct LogActivityView: View {
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         }) {
                             Image(systemName: "trash")
-                                .font(.title)
+                                .font(.title2)
                                 .foregroundStyle(Color.red)
                         }
                         .padding(.leading, 5.0)

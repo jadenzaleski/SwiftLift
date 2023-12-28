@@ -12,7 +12,7 @@ import SwiftData
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var history: [History]
-    /// Adds custom font and background to TabView
+    // Adds custom font and background to TabView
     init() {
         UITabBar.appearance().backgroundColor = UIColor(Color("offset"))
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
@@ -24,6 +24,7 @@ struct MainTabView: View {
                 .tabItem {
                     Image(systemName: "dumbbell")
                     Text("Home")
+                        
                 }
                 .tag(0)
             StatsView()

@@ -13,7 +13,14 @@ struct SettingsView: View {
     @Environment(\.colorScheme) var colorScheme
     @Query private var history: [History]
     @State private var newGym = ""
+    @State private var color = Color.accentColor
+    // TODO: need to add color to app storage
+    @AppStorage("selectedTheme") private var selectedTheme = "Automatic"
+    @AppStorage("bold") private var bold = false
+    @AppStorage("metric") private var metric = false
     
+    
+    let themes = ["Automatic", "Light", "Dark"]
     let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
     
@@ -21,13 +28,32 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 Section {
-                    Text("settings to come...")
-                    Text("Change accent color?")
-                    Text("Light/Dark/System color?")
-                    Text("Backup/restore data?")
-                    Text("Kilos?")
+                    NavigationLink {
+                        ComingSoon()
+                    } label: {
+                        Text("Export/restore data")
+                    }
+                    Toggle(isOn: $metric) {
+                        Text("Metric")
+                    }
                 } header: {
                     Text("General")
+                }
+                
+                Section {
+                    Picker("Appearance", selection: $selectedTheme) {
+                        ForEach(themes, id: \.self) {
+                            Text($0)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    Toggle(isOn: $bold) {
+                        Text("Bold Text")
+                    }
+                    ColorPicker("Accent Color", selection: $color)
+
+                } header: {
+                    Text("Appearance")
                 }
                 
                 Section {
@@ -58,17 +84,17 @@ struct SettingsView: View {
                 Section {
                     
                     NavigationLink {
-                        Tester()
+                        ComingSoon()
                     } label: {
                         Text("Write a review")
                     }
                     NavigationLink {
-                        Tester()
+                        ComingSoon()
                     } label: {
                         Text("Leave a rating")
                     }
                     NavigationLink {
-                        Tester()
+                        ComingSoon()
                     } label: {
                         Text("Report a bug")
                     }

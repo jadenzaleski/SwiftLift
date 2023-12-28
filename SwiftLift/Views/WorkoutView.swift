@@ -99,16 +99,20 @@ struct WorkoutView: View {
                         } label: {
                             Image(systemName: "xmark")
                         }
-                        .alert(isPresented: $showDeleteAlert) {
-                            Alert(
-                                title: Text("Cancel your lift?"),
-                                message: Text("All recorded data will be lost. This action cannot be undone. "),
-                                primaryButton: .default(Text("Cancel")),
-                                secondaryButton: .destructive(Text("Confirm"), action: {
-                                    workoutInProgress = false
-                                })
-                            )
+                        .alert(
+                            "Cancel your lift?",
+                            isPresented: $showDeleteAlert
+                        ) {
+                            Button(role: .destructive) {
+                                workoutInProgress = false
+                            } label: {
+                                Text("Confirm")
+                            }
+                        } message: {
+                            Text("All recorded data will be lost. This action cannot be undone.")
                         }
+                        
+                        
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button() {
