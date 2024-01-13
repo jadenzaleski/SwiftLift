@@ -50,18 +50,62 @@ struct HistoryDetail: View {
                 ForEach(workout.activities, id: \.id) { activity in
                     VStack {
                         HStack {
-                            Text("\(activity.name)") // TODO: FINISH
+                            Text("\(activity.name)")
+                                .font(.title2)
                             Spacer()
                         }
-                        ForEach(activity.warmUpSets, id: \.id) { warmUpSet in
-                            Text("\(warmUpSet.getReps())  x  \(warmUpSet.getWeight())lbs")
+                        if (activity.warmUpSets.count > 0) {
+                            HStack {
+                                Text("Warm-up sets")
+                                    .font(.caption)
+                                VStack {
+                                    Divider()
+                                }
+                            }
+                            ForEach(activity.warmUpSets, id: \.id) { warmUpSet in
+                                HStack(alignment: .firstTextBaseline) {
+                                    Text("\(warmUpSet.getReps())")
+                                        .frame(width: 100, height: 20, alignment: .leading)
+                                    Spacer()
+                                    Text("/")
+                                        .frame(width: 10, height: 20, alignment: .center)
+                                    Spacer()
+                                    Text("\(warmUpSet.getWeight())")
+                                        .frame(width: 100, height: 20, alignment: .trailing)
+                                }
+                                .padding(.vertical, 0.0)
+                                .padding(.horizontal)
+                            }
                         }
-                        Divider()
-                        ForEach(activity.workingSets, id: \.id) { workingSet in
-                            Text("\(workingSet.getReps())  x  \(workingSet.getWeight())lbs")
+                        
+                        if (activity.workingSets.count > 0) {
+                            HStack {
+                                Text("Working sets")
+                                    .font(.caption)
+                                VStack {
+                                    Divider()
+                                }
+                            }
+                            .padding(.top, 10)
+                            ForEach(activity.workingSets, id: \.id) { workingSet in
+                                HStack(alignment: .firstTextBaseline) {
+                                    Text("\(workingSet.getReps())")
+                                        .frame(width: 100, height: 20, alignment: .leading)
+                                    Spacer()
+                                    Text("/")
+                                        .frame(width: 10, height: 20, alignment: .center)
+                                    Spacer()
+                                    Text("\(workingSet.getWeight())")
+                                        .frame(width: 100, height: 20, alignment: .trailing)
+                                }
+                                .padding(.vertical, 0.0)
+                                .padding(.horizontal)
+                            }
                         }
+                        
                     }
-                    .padding()
+                    .padding(.all)
+                    .padding(.horizontal, 25.0)
                     .background(Color("offset"))
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)

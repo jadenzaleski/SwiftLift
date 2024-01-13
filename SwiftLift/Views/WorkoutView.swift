@@ -139,7 +139,7 @@ struct WorkoutView: View {
     
     private func stopWorkout() {
         currentWorkout.time = time
-        currentWorkout.activities.removeAll { activity in
+        currentWorkout.activities.removeAll { activity in // TODO: Not owrking right when exercise is 0.
             let allSets = activity.warmUpSets + activity.workingSets
             return !allSets.isEmpty && !allSets.contains { $0.isChecked }
             //            return !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
