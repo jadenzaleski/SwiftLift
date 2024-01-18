@@ -24,6 +24,7 @@
 		D74270692AA90DA80020503C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D74270682AA90DA80020503C /* LaunchScreen.storyboard */; };
 		D742706B2AA91C5E0020503C /* SwiftLiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */; };
 		D742706C2AA91CF20020503C /* OpenSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B90EA12AA8EC3B00F9EC41 /* OpenSans.ttf */; };
+		D77FD0E62B54AA710095644A /* VolumeVsDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77FD0E52B54AA710095644A /* VolumeVsDate.swift */; };
 		D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78474082AC7D73700725EB1 /* ProfileView.swift */; };
 		D7A2C00C2B33E2E7000E3C58 /* HistoryRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A2C00B2B33E2E7000E3C58 /* HistoryRow.swift */; };
 		D7A2C00E2B364DF5000E3C58 /* HistoryDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7A2C00D2B364DF5000E3C58 /* HistoryDetail.swift */; };
@@ -54,6 +55,7 @@
 		D74270682AA90DA80020503C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftLiftApp.swift; sourceTree = "<group>"; };
 		D742706E2AA924250020503C /* README.md */ = {isa = PBXFileReference; explicitFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D77FD0E52B54AA710095644A /* VolumeVsDate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeVsDate.swift; sourceTree = "<group>"; };
 		D78474082AC7D73700725EB1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		D7A2C00B2B33E2E7000E3C58 /* HistoryRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryRow.swift; sourceTree = "<group>"; };
 		D7A2C00D2B364DF5000E3C58 /* HistoryDetail.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetail.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 		D7B90E6F2AA8309500F9EC41 /* SwiftLift */ = {
 			isa = PBXGroup;
 			children = (
+				D7F0B0012B5392A90022D34A /* Charts */,
 				D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */,
 				D74270682AA90DA80020503C /* LaunchScreen.storyboard */,
 				D7B90EA02AA8EC3000F9EC41 /* Fonts */,
@@ -162,6 +165,14 @@
 				D7B90EA12AA8EC3B00F9EC41 /* OpenSans.ttf */,
 			);
 			path = Fonts;
+			sourceTree = "<group>";
+		};
+		D7F0B0012B5392A90022D34A /* Charts */ = {
+			isa = PBXGroup;
+			children = (
+				D77FD0E52B54AA710095644A /* VolumeVsDate.swift */,
+			);
+			path = Charts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,6 +274,7 @@
 				D7B90EAB2AA8ECA100F9EC41 /* Activity.swift in Sources */,
 				D7B90EAA2AA8ECA100F9EC41 /* Exercise.swift in Sources */,
 				D742705D2AA90D910020503C /* WorkoutView.swift in Sources */,
+				D77FD0E62B54AA710095644A /* VolumeVsDate.swift in Sources */,
 				D7B90EA72AA8ECA100F9EC41 /* SetData.swift in Sources */,
 				D7A2C00C2B33E2E7000E3C58 /* HistoryRow.swift in Sources */,
 				D74270602AA90D910020503C /* HomeView.swift in Sources */,

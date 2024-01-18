@@ -27,6 +27,7 @@ struct MainTabView: View {
                         
                 }
                 .tag(0)
+                
             StatsView()
                 .tabItem {
                     Image(systemName: "chart.xyaxis.line")
@@ -40,6 +41,7 @@ struct MainTabView: View {
                 }
                 .tag(2)
         }
+        
 //        .toolbar{
 //            ToolbarItemGroup(placement: .keyboard){
 //                Spacer()

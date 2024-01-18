@@ -27,6 +27,13 @@ struct Workout: Identifiable, Codable, Hashable {
     }
     
     static var sampleWorkout: Workout {
-        Workout(startDate: Date.now, time: Date.timeIntervalSinceReferenceDate, activities: Activity.sampleActivites, totalWeight: 2000.0, totalReps: 100, gym: "gym2")
+        Workout(startDate: Date.now + 10000, time: Date.timeIntervalSinceReferenceDate, activities: Activity.sampleActivites, totalWeight: 2000.0, totalReps: 200, gym: "gym2")
+    }
+    static var sampleWorkout2: Workout {
+        Workout(startDate: Date.now - 500000, time: Date.timeIntervalSinceReferenceDate, activities: Activity.sampleActivites, totalWeight: 1000.0, totalReps: 800, gym: "gym1")
+    }
+    
+    static var sampleWorkout3: Workout {
+        Workout(startDate: Date.now, time: Date.timeIntervalSinceReferenceDate, activities: Activity.sampleActivites, totalWeight: 1500.0, totalReps: 700, gym: "gym1")
     }
 }

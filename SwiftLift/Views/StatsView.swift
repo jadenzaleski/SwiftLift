@@ -9,7 +9,6 @@ import SwiftUI
 
 struct StatsView: View {
     var body: some View {
-        Text("Stats View")
         /*
          - total workouts
          - total weight - volume
@@ -25,11 +24,36 @@ struct StatsView: View {
             - more data about workout
          -
          */
+        ScrollView {
+            VStack(spacing: 20) {
+                HStack {
+                    Text("Stats View")
+                        .font(.largeTitle)
+                    Spacer()
+                }
+                VStack {
+                    Text("VolumeVsDate")
+                    VolumeVsDate()
+                }
+                .padding()
+                .background()
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                
+                VStack {
+                    
+                }
+                .padding()
+                .background()
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+            }
+            .padding()
+        }
+        .background(Color("offset"))
+
     }
 }
 
-struct StatsView_Previews: PreviewProvider {
-    static var previews: some View {
-        StatsView()
-    }
+#Preview {
+    StatsView()
+        .modelContainer(previewContainer)
 }
