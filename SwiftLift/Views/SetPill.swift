@@ -77,6 +77,6 @@ struct SetPill: View {
 
 struct SetPill_Previews: PreviewProvider {
     static var previews: some View {
-        SetPill(set: .constant(SetData.sampleSets[1]), isDeleting: .constant(false))
+        SetPill(set: .constant(SetData.randomSet()), isDeleting: .constant(false))
     }
 }

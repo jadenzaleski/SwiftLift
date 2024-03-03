@@ -26,8 +26,20 @@ struct Activity: Identifiable, Codable, Hashable {
     
     static let sampleActivites: [Activity] =
     [
-        Activity(name: "Bench Press", warmUpSets: SetData.sampleSets, workingSets: SetData.sampleSets, gym: "gym2"),
-        Activity(name: "Back Squat", warmUpSets: SetData.sampleSets, workingSets: SetData.sampleSets, gym: "gym2"),
-        Activity(name: "Bicep Curl", warmUpSets: SetData.sampleSets, workingSets: SetData.sampleSets, gym: "gym2")
+        Activity(name: "Bench Press", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)), workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym2"),
+        Activity(name: "Back Squat", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)), workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym1"),
+        Activity(name: "Bicep Curl", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)), workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym2")
     ]
+    
+    static func randomActivity() -> Activity {
+        return Activity(name: "randomName\(Int.random(in: 0...100))",
+                        warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)),
+                        workingSets: SetData.randomSets(count: Int.random(in: 2...6)),
+                        gym: "randomGym\(Int.random(in: 0...100))")
+    }
+    
+    static func randomActivities(count: Int) -> [Activity] {
+        return (0..<count).map { _ in randomActivity() }
+        
+    }
 }

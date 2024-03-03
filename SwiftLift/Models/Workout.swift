@@ -36,4 +36,17 @@ struct Workout: Identifiable, Codable, Hashable {
     static var sampleWorkout3: Workout {
         Workout(startDate: Date.now - 1000, time: Date.timeIntervalSinceReferenceDate, activities: Activity.sampleActivites, totalWeight: 1500.0, totalReps: 700, gym: "gym1")
     }
+    
+    static func randomWorkout() -> Workout {
+        let startDate = Date(timeIntervalSince1970: 0)  // January 1, 1970
+        let endDate = Date()  // Current date and time
+        let ti = TimeInterval(arc4random_uniform(UInt32(endDate.timeIntervalSince(startDate))))
+        let x = startDate.addingTimeInterval(ti)
+        let gyms = ["gym1", "gym2", "gym3"]
+        return Workout(startDate: x, time: TimeInterval.random(in: 60...9000), activities: Activity.randomActivities(count: Int.random(in: 2...10)), totalWeight: Double.random(in: 1000.0...40000), totalReps: Int.random(in: 100...300), gym: gyms.randomElement() ?? "gym1")
+    }
+    
+    static func randomWorkouts(count: Int) -> [Workout] {
+        return (0..<count).map { _ in randomWorkout() }
+    }
 }

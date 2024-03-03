@@ -86,11 +86,11 @@ struct VolumeVsDate: View {
         //        let volumes = h.workouts!.map { $0.totalWeight }
         let n = pastDays == -1 ? h.workouts!.count : min(pastDays, h.workouts?.count ?? 0)
         let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []
-        let sortedWorkouts = h.workouts!.sorted { (workout1, workout2) in
+        let sortedWorkouts = h.workouts!.prefix(n).sorted { (workout1, workout2) in
             return workout1.startDate < workout2.startDate
         }
         
-        var data: [PlottingData] = sortedWorkouts.enumerated().map { index, workout in
+        let data: [PlottingData] = sortedWorkouts.enumerated().map { index, workout in
             return PlottingData(x: Int(index), y: workout.totalWeight, date: workout.startDate)
         }
         
@@ -113,6 +113,7 @@ struct VolumeVsDate: View {
         
         let maxX = data.max(by: { $0.x < $1.x })?.x ?? 0
         let maxY = data.max(by: { $0.y < $1.y })?.y ?? 0
+        let minY = data.min(by: { $0.y < $1.y })?.y ?? 0
         let totalY = data.reduce(0.0) { $0 + $1.y }
         let avgY =  data.isEmpty ? 0.0 : totalY / Double(data.count)
         let maxDate = data.map { $0.date }.max() ?? Date()
@@ -163,8 +164,8 @@ struct VolumeVsDate: View {
                     AxisGridLine()
                     AxisValueLabel(orientation: .vertical, horizontalSpacing: -6.5, verticalSpacing: 6.5) {
                         if let pd = data.first(where: { $0.x == index }) {
-                            Text("\(pd.date, format: .dateTime.month(.twoDigits).day(.twoDigits))")
-                                
+                            Text("\(pd.date, format: .dateTime.month(.twoDigits).day(.twoDigits).year(.twoDigits))")
+                            
                         }
                     }
                     
@@ -172,14 +173,39 @@ struct VolumeVsDate: View {
             }
             
         }
-        .chartYScale(domain: 0...(maxY + 100))
-        //        .chartScrollableAxes(.horizontal)
-        //        .chartScrollPosition(initialX: minDate.timeIntervalSince1970)
+        .chartYAxis {
+            AxisMarks() { value in
+                if let index = value.as(Int.self) {
+                    AxisGridLine()
+                    AxisValueLabel() {
+                        Text("\(formatK(index))")
+                    }
+                }
+            }
+        }
+        
+        .chartYScale(domain: (minY - (minY / 2))...(maxY + (maxY * 0.1)))
+        .chartScrollableAxes(.horizontal)
+        // only show max of 14 at a time
+        .chartXVisibleDomain(length: min((n + 1), 14))
+        .chartXScale(domain: -1...maxX + 1)
+        .chartScrollPosition(initialX: minDate.timeIntervalSince1970)
+        
     }
 }
 
+// Function to format labels with 'k' for thousands
+func formatK(_ value: Int) -> String {
+    let absValue = abs(value)
+    if absValue >= 1000 {
+        let formattedValue = String(format: "%.1fk", Double(value) / 1000)
+        return formattedValue.replacingOccurrences(of: ".0", with: "")
+    } else {
+        return "\(value)"
+    }
+}
 
 #Preview {
-    VolumeVsDate(pastDays: .constant(30), yAxis: .constant("volume"))
+    VolumeVsDate(pastDays: .constant(20), yAxis: .constant("volume"))
         .modelContainer(previewContainer)
 }

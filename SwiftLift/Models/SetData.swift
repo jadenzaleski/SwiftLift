@@ -19,11 +19,17 @@ struct SetData: Identifiable, Codable, Hashable {
         self.isChecked = isChecked
     }
     
-    static var sampleSets: [SetData] = [
-        SetData(reps: 8, weight: 45.0, isChecked: false),
-        SetData(reps: 10, weight: 135.0, isChecked: true),
-        SetData(reps: 8, weight: 225.0, isChecked: false)
-    ]
+    static func randomSet() -> SetData {
+        let randomReps = Int.random(in: 1...12)
+        let randomWeight = Double.random(in: 10.0...315.0).rounded(.down)
+        let randomIsChecked = Bool.random()
+
+        return SetData(reps: randomReps, weight: randomWeight, isChecked: randomIsChecked)
+    }
+    
+    static func randomSets(count: Int) -> [SetData] {
+        return (0..<count).map { _ in randomSet() } // Adjust the number of sets as needed
+    }
     
     mutating func setReps(string: String) {
         if (Int(string) != nil) {

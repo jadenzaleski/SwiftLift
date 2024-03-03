@@ -29,7 +29,7 @@ final class History {
     }
     
     static var sampleHistory: History {
-        History(workouts: [Workout.sampleWorkout, Workout.sampleWorkout2, Workout.sampleWorkout3], totalWorkouts: 3, totalWeight: 250.0, totalReps: 500, totalTime: 1000000, gyms: ["gym1", "gym2"])
+        History(workouts: Workout.randomWorkouts(count: 1000), totalWorkouts: 1000, totalWeight: 20050.0, totalReps: 5000, totalTime: 10000000, gyms: ["gym1", "gym2", "gym3"])
     }
     
     func addWorkout(workout: Workout) {
