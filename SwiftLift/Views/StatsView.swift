@@ -6,8 +6,13 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct StatsView: View {
+    @Environment(\.modelContext) private var modelContext
+    @Environment(\.colorScheme) var colorScheme
+    @Query private var history: [History]
+    @Query private var exercises: [Exercise]
     enum DateYValue: String, CaseIterable, Identifiable {
         case volume, reps, duration
         var id: Self { self }
@@ -25,8 +30,8 @@ struct StatsView: View {
         }
     }
     @State private var selectedYDateValue: DateYValue = .volume
-
     @State private var selectedPastLength: Int = 7
+    @State private var selectedGym = "Default"
     
     var body: some View {
         /*
@@ -44,6 +49,22 @@ struct StatsView: View {
          - more data about workout
          -
          */
+        HStack {
+            Text("Gym:")
+                .padding(10.0)
+            Spacer()
+            Picker("Select a gym", selection: $selectedGym) {
+                ForEach(history[0].gyms, id: \.self) { gym in
+                    Text(gym).tag(gym)
+                }
+            }
+            .padding(10.0)
+        }
+        .background(Color("offset"))
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .padding()
+        .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
+        
         ScrollView {
             
             VStack(spacing: 20) {
@@ -96,7 +117,7 @@ struct StatsView: View {
                         }
                         Spacer()
                     }
-                    VolumeVsDate(pastDays: $selectedPastLength, yAxis: $selectedYDateValue.text)
+                    LineChart(pastDays: $selectedPastLength, yAxis: $selectedYDateValue.text)
                 }
                 .padding()
                 .background()
