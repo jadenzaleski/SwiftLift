@@ -129,12 +129,16 @@ struct WorkoutView: View {
         }
     }
     
-    private func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
-        let hours = Int(timeInterval / 3600)
-        let minutes = Int((timeInterval.truncatingRemainder(dividingBy: 3600)) / 60)
-        let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
+    func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
+        let durationFormatter = DateComponentsFormatter()
+        durationFormatter.unitsStyle = .abbreviated
+        durationFormatter.allowedUnits = [.hour, .minute, .second]
         
-        return String(format: "%02d:%02d:%02d", abs(hours), abs(minutes), abs(seconds))
+        guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
+            return "Invalid Duration"
+        }
+        
+        return formattedDuration
     }
     
     private func stopWorkout() {
@@ -148,10 +152,14 @@ struct WorkoutView: View {
             .flatMap { $0.warmUpSets + $0.workingSets }
             .map { $0.reps }
             .reduce(0, +)
+        currentWorkout.totalSets += currentWorkout.activities
+            .flatMap { $0.warmUpSets + $0.workingSets }
+            .count
         currentWorkout.totalWeight += currentWorkout.activities
             .flatMap { $0.warmUpSets + $0.workingSets }
             .map { $0.weight }
             .reduce(0, +)
+        
         currentWorkout.gym = selectedGym
         history[0].addWorkout(workout: currentWorkout)
         workoutInProgress = false
@@ -160,8 +168,8 @@ struct WorkoutView: View {
     }
 }
 
-//#Preview {
-//    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
-//        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
-//
-//}
+    #Preview {
+        WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
+            .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+
+    }

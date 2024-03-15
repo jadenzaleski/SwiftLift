@@ -23,17 +23,14 @@ struct HistoryRow: View {
             .font(.title3)
             .foregroundStyle(gradient)
             HStack() {
+                Image(systemName: "mappin.and.ellipse")
+                    .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
+                Text("\(workout.gym)")
+                    .padding(.trailing, 5.0)
                 Image(systemName: "clock")
                     .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
                 Text("\(formatTimeInterval(workout.time))")
                     .padding(.trailing, 5.0)
-                Image(systemName: "repeat")
-                    .padding(.trailing, -5.0)
-                Text("\(workout.totalReps)")
-                    .padding(.trailing, 5.0)
-                Image(systemName: "scalemass")
-                    .padding(.trailing, -5.0)
-                Text("\(Int(workout.totalWeight))")
                 Spacer()
             }
         }
@@ -41,15 +38,19 @@ struct HistoryRow: View {
 //        .background(.red)
     }
     
-    private func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
-        let hours = Int(timeInterval / 3600)
-        let minutes = Int((timeInterval.truncatingRemainder(dividingBy: 3600)) / 60)
-        let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
+    func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
+        let durationFormatter = DateComponentsFormatter()
+        durationFormatter.unitsStyle = .abbreviated
+        durationFormatter.allowedUnits = [.hour, .minute, .second]
         
-        return String(format: "%02d:%02d:%02d", abs(hours), abs(minutes), abs(seconds))
+        guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
+            return "Invalid Duration"
+        }
+        
+        return formattedDuration
     }
 }
 
 #Preview {
-    HistoryRow(workout: Workout(startDate: Date.now, time: TimeInterval.pi, activities: [Activity(name: "yep", gym: "mm")], totalWeight: 20.0, totalReps: 30, gym: "gymString"))
+    HistoryRow(workout: Workout(startDate: Date.now, time: TimeInterval.pi, activities: [Activity(name: "yep", gym: "mm")], totalWeight: 20.0, totalReps: 30, totalSets: 30, gym: "gymString"))
 }

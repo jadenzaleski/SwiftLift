@@ -34,8 +34,8 @@ struct LineChart: View {
     
     
     var body: some View {
-//        let h = history[0]
-        let h = History.sampleHistory
+        let h = history[0]
+//        let h = History.sampleHistory
         // n is the number of workouts to display. min of input and count of workouts
         let n = pastDays == -1 ? h.workouts!.count : min(pastDays, h.workouts?.count ?? 0)
         //let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []

@@ -24,19 +24,43 @@ struct HistoryDetail: View {
             .font(.title2)
             .foregroundStyle(gradient)
             
-            HStack() {
-                Image(systemName: "clock")
-                    .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-                Text("\(formatTimeInterval(workout.time))")
-                    .padding(.trailing, 5.0)
-                Image(systemName: "repeat")
-                    .padding(.trailing, -5.0)
-                Text("\(workout.totalReps)")
-                    .padding(.trailing, 5.0)
-                Image(systemName: "scalemass")
-                    .padding(.trailing, -5.0)
-                Text("\(Int(workout.totalWeight))")
-                Spacer()
+            HStack {
+                Image(systemName: "mappin.and.ellipse")
+                Text(workout.gym)
+//                Spacer()
+            }
+            .padding(.horizontal)
+            .font(.title2)
+            
+            VStack() {
+                HStack {
+                    // time
+                    Image(systemName: "clock")
+                        .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
+                    Text("\(formatTimeInterval(workout.time))")
+                        .padding(.trailing, 5.0)
+                    Spacer()
+                    // sets
+                    Text("\(workout.totalSets)")
+                    Image(systemName: "checklist.checked")
+                        .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
+
+                }
+                
+                HStack {
+                    // volume
+                    Image(systemName: "scalemass")
+                        .padding(.trailing, -5.0)
+                    Text("\(Int(workout.totalWeight))")
+                    Spacer()
+                    //reps
+                    Text("\(workout.totalReps)")
+                    Image(systemName: "repeat")
+                        .padding(.trailing, -5.0)
+                }
+                // sets
+                
+
             }
             .padding(.horizontal)
             Divider()
@@ -116,15 +140,19 @@ struct HistoryDetail: View {
         
     }
     
-    private func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
-        let hours = Int(timeInterval / 3600)
-        let minutes = Int((timeInterval.truncatingRemainder(dividingBy: 3600)) / 60)
-        let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
+    func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
+        let durationFormatter = DateComponentsFormatter()
+        durationFormatter.unitsStyle = .abbreviated
+        durationFormatter.allowedUnits = [.hour, .minute, .second]
         
-        return String(format: "%02d:%02d:%02d", abs(hours), abs(minutes), abs(seconds))
+        guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
+            return "Invalid Duration"
+        }
+        
+        return formattedDuration
     }
 }
 
 #Preview {
-    HistoryDetail(workout: Workout(startDate: Date.now, time: TimeInterval.pi, activities: Activity.sampleActivites, totalWeight: 20.0, totalReps: 30, gym: "gymString"))
+    HistoryDetail(workout: Workout.randomWorkout())
 }

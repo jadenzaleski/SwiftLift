@@ -33,7 +33,7 @@ struct Activity: Identifiable, Codable, Hashable {
     
     static func randomActivity() -> Activity {
         return Activity(name: "randomName\(Int.random(in: 0...100))",
-                        warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)),
+                        warmUpSets: SetData.randomSets(count: Int.random(in: 0...3)),
                         workingSets: SetData.randomSets(count: Int.random(in: 2...6)),
                         gym: "randomGym\(Int.random(in: 0...100))")
     }

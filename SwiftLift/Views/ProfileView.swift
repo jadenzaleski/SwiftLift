@@ -35,7 +35,7 @@ struct ProfileView: View {
                     Image(systemName: "number")
                     Text("\(history[0].totalWorkouts)")
                     Spacer()
-                    Text("\(history[0].getTimeFormatted(ifDays: true))")
+                    Text("\(history[0].getTimeFormattedLetters(useDays: true))")
                     Image(systemName: "clock")
                 }
                 .padding(.horizontal)

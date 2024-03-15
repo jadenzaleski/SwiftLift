@@ -56,7 +56,8 @@ struct MainTabView: View {
         .onAppear(perform: {
             if (history.isEmpty) {
                 print("first time running app, creating empty history.")
-                modelContext.insert(History.sampleHistory)
+                modelContext.insert(History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"]))
+//                modelContext.insert(History.sampleHistory)
             }
         })
     }

@@ -17,7 +17,7 @@ struct HomeView: View {
     @State var workoutInProgress = false
     @State private var selectedGym = "Default"
     @State var newGym = ""
-    @State var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: "")
+    @State var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: "")
     @State private var showLifetime = true
     @State private var rotationAngle: Double = 0
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -47,7 +47,7 @@ struct HomeView: View {
                                 Image(systemName: "number")
                                 Text("\(history[0].totalWorkouts)")
                                 Spacer()
-                                Text("\(history[0].getTimeFormatted(ifDays: true))")
+                                Text("\(history[0].getTimeFormattedLetters(useDays: true))")
                                 Image(systemName: "clock")
                             }
                             .padding(.horizontal)
@@ -139,7 +139,7 @@ struct HomeView: View {
     }
     
     private func startWorkout() {
-        currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, gym: selectedGym)
+        currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: selectedGym)
         workoutInProgress = true;
     }
 }

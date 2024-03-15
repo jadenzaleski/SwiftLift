@@ -31,18 +31,10 @@ struct HistoryView: View {
         }
         
     }
-    
-    private func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
-        let hours = Int(timeInterval / 3600)
-        let minutes = Int((timeInterval.truncatingRemainder(dividingBy: 3600)) / 60)
-        let seconds = Int(timeInterval.truncatingRemainder(dividingBy: 60))
-        
-        return String(format: "%02d:%02d:%02d", abs(hours), abs(minutes), abs(seconds))
-    }
 }
 
 #Preview {
     HistoryView()
-        //.modelContainer(for: [History.self, Exercise.self], inMemory: true)
+        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
 
 }
