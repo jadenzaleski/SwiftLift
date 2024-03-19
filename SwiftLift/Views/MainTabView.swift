@@ -24,7 +24,6 @@ struct MainTabView: View {
                 .tabItem {
                     Image(systemName: "dumbbell")
                     Text("Home")
-                        
                 }
                 .tag(0)
                 

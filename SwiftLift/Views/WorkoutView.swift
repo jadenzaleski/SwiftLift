@@ -143,7 +143,7 @@ struct WorkoutView: View {
     
     private func stopWorkout() {
         currentWorkout.time = time
-        currentWorkout.activities.removeAll { activity in // TODO: Not owrking right when exercise is 0.
+        currentWorkout.activities.removeAll { activity in // TODO: Not working right when exercise is 0.
             let allSets = activity.warmUpSets + activity.workingSets
             return !allSets.isEmpty && !allSets.contains { $0.isChecked }
             //            return !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
@@ -155,9 +155,11 @@ struct WorkoutView: View {
         currentWorkout.totalSets += currentWorkout.activities
             .flatMap { $0.warmUpSets + $0.workingSets }
             .count
-        currentWorkout.totalWeight += currentWorkout.activities
+        
+        let flatMapWeight = currentWorkout.activities
             .flatMap { $0.warmUpSets + $0.workingSets }
-            .map { $0.weight }
+        currentWorkout.totalWeight += flatMapWeight
+            .map { $0.weight * Double($0.reps) }
             .reduce(0, +)
         
         currentWorkout.gym = selectedGym
@@ -168,8 +170,8 @@ struct WorkoutView: View {
     }
 }
 
-    #Preview {
-        WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
-            .modelContainer(for: [History.self, Exercise.self], inMemory: true)
-
-    }
+#Preview {
+    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
+        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+    
+}

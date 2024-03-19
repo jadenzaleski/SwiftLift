@@ -139,7 +139,7 @@ struct StatsView: View {
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
-                    
+                    .padding(.bottom, 100)
 //                    VStack {
 //                        Text("hey")
 //                            .padding(100)
