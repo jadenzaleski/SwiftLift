@@ -12,8 +12,8 @@ import UIKit
 struct SetPill: View {
     @Binding var set: SetData
     @Binding var isDeleting: Bool
-    @State  var decString: String = "0.0"
-    @State  var intString: String = "0"
+    @State private var decString: String = "0.0"
+    @State private var intString: String = "0"
     var body: some View{
         HStack {
             Button {

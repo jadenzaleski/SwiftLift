@@ -14,8 +14,8 @@ struct ExerciseSearch: View {
     @Query private var exercises: [Exercise]
     @Binding var currentWorkout: Workout
     @Binding var isPresentingExerciseSearch: Bool
-    @State private var searchText = ""
-    @State private var newExercise = ""
+    @SceneStorage("searchText") private var searchText = ""
+    @SceneStorage("newExercise") private var newExercise = ""
     @State private var selectedExercises: [String] = []
     
     

@@ -12,6 +12,8 @@ import SwiftData
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var history: [History]
+    @Query private var cw: [CurrentWorkout]
+    @SceneStorage("selectedTab") private var selectedTab = 0
     // Adds custom font and background to TabView
     init() {
         UITabBar.appearance().backgroundColor = UIColor(Color("offset"))
@@ -19,7 +21,7 @@ struct MainTabView: View {
     }
     var body: some View {
         
-        TabView {
+        TabView(selection: $selectedTab) {
             HomeView()
                 .tabItem {
                     Image(systemName: "dumbbell")
@@ -54,10 +56,16 @@ struct MainTabView: View {
 //        }
         .onAppear(perform: {
             if (history.isEmpty) {
-                print("first time running app, creating empty history.")
+                print("⌾ First time running app, creating empty history.")
                 modelContext.insert(History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"]))
 //                modelContext.insert(History.sampleHistory)
+                
             }
+            if (cw.isEmpty) {
+                print("⌾ No current workout save, creating inital index")
+                modelContext.insert(CurrentWorkout(workout: Workout(startDate: .now, time: 0, activities: [], totalWeight: 0.0, totalReps: 0, totalSets: 0, gym: "Default")))
+            }
+            
         })
     }
 }

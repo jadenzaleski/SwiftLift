@@ -15,7 +15,7 @@ struct LogActivityView: View {
     @Query private var exercises: [Exercise]
     @Binding var activity: Activity
     @State var notes = "";
-    @State private var isDeleting : Bool = false
+    @SceneStorage("isDeleting") private var isDeleting : Bool = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {

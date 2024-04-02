@@ -16,8 +16,8 @@ struct WorkoutView: View {
     @Binding var workoutInProgress: Bool
     @Binding var selectedGym: String
     @State private var showDeleteAlert = false
-    @State var isDeleting: Bool = false
-    @State var isPresentingExerciseSearch: Bool = false
+    @State private var isDeleting: Bool = false
+    @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
     @State var time = TimeInterval()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var body: some View {

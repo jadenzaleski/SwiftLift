@@ -9,8 +9,8 @@ import SwiftUI
 
 struct WorkoutPill: View {
     @Binding var activity: Activity
-    @State var isComplete: Bool = false
-    @State var inProgress: Bool = false
+    @State private var isComplete: Bool = false
+    @State private var inProgress: Bool = false
     var body: some View {
         NavigationStack {
             NavigationLink {
@@ -44,6 +44,11 @@ struct WorkoutPill: View {
                 .clipShape(Capsule())
                 .overlay(isComplete ? Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
                 .onChange(of: (activity.warmUpSets + activity.workingSets)) {
+                    let allSets = activity.warmUpSets + activity.workingSets
+                    isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
+                    inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
+                }
+                .onAppear {
                     let allSets = activity.warmUpSets + activity.workingSets
                     isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
                     inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)

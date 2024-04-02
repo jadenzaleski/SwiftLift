@@ -12,13 +12,15 @@ import SwiftData
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) var scenePhase
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
-    @State var workoutInProgress = false
-    @State private var selectedGym = "Default"
-    @State var newGym = ""
-    @State var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: "")
-    @State private var showLifetime = true
+    @Query private var currentWorkoutSave: [CurrentWorkout]
+    @SceneStorage("workoutInProgress") private var workoutInProgress = false
+    @SceneStorage("selectedGym") private var selectedGym = "Default"
+    @SceneStorage("newGym") private var newGym = ""
+    @State private var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: "")
+    @SceneStorage("showLifetime") private var showLifetime = true
     @State private var rotationAngle: Double = 0
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
     
@@ -136,7 +138,25 @@ struct HomeView: View {
             }
         }
         .scrollDismissesKeyboard(.immediately)
+        .onChange(of: scenePhase) {
+            if (workoutInProgress) {
+                if scenePhase == .inactive {
+                    print("⌾ Inactive")
+                } else if scenePhase == .active {
+                    print("⌾ Active")
+                    // update the State
+                    currentWorkout = currentWorkoutSave[0].workout
+                    print("⌾ Updated currentWorkout State")
+                } else if scenePhase == .background {
+                    print("⌾ Background")
+                }
+            }
+        }
+        .onChange(of: currentWorkout) {
+            currentWorkoutSave[0].save(workout: currentWorkout)
+        }
     }
+    
     
     private func startWorkout() {
         currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: selectedGym)

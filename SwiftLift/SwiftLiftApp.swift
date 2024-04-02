@@ -12,7 +12,7 @@ import SwiftData
 struct SwiftLiftApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            History.self, Exercise.self
+            History.self, Exercise.self, CurrentWorkout.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         
