@@ -23,6 +23,6 @@
 </p>
 
 <h1>Activity</h1>
-
+<img alt="stats" src="https://repobeats.axiom.co/api/embed/86f2ab22b543bf7ab5a2be344bb944b05753f303.svg" width=100%>
 
 
