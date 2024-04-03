@@ -13,6 +13,8 @@
     <br>
     <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/jadenzaleski/SwiftLift?color=lightGreen">
     <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr-closed/jadenzaleski/SwiftLift?color=lightGreen">
+    <br>
+    <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/jadenzaleski/SwiftLift">
 </p>
 
 <p align=center>
