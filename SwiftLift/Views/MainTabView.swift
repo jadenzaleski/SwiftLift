@@ -19,6 +19,7 @@ struct MainTabView: View {
         UITabBar.appearance().backgroundColor = UIColor(Color("offset"))
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
     }
+    
     var body: some View {
         
         TabView(selection: $selectedTab) {
@@ -55,16 +56,7 @@ struct MainTabView: View {
 //            }
 //        }
         .onAppear(perform: {
-            if (history.isEmpty) {
-                print("⌾ First time running app, creating empty history.")
-                modelContext.insert(History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"]))
-//                modelContext.insert(History.sampleHistory)
-                
-            }
-            if (cw.isEmpty) {
-                print("⌾ No current workout save, creating inital index")
-                modelContext.insert(CurrentWorkout(workout: Workout(startDate: .now, time: 0, activities: [], totalWeight: 0.0, totalReps: 0, totalSets: 0, gym: "Default")))
-            }
+
             
         })
     }

@@ -30,8 +30,12 @@ final class History {
         self.joinDate = joinDate
     }
     
-    static var sampleHistory: History {
+    static var sample: History {
         History(workouts: Workout.randomWorkouts(count: 1000), totalWorkouts: 1000, totalWeight: 200050.0, totalReps: 5000, totalSets: 3000, totalTime: 10000000, gyms: ["gym1", "gym2", "gym3"])
+    }
+    
+    static var blank: History {
+        History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"])
     }
     
     func addWorkout(workout: Workout) {

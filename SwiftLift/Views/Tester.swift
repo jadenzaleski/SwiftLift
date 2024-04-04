@@ -42,7 +42,7 @@ struct Tester: View {
                 .font(.system(size: 16))
             Button("Tap") {
                 i += 1
-                print("⌾ Running Tester: \(i)")
+                print("[+] Running Tester: \(i)")
 
                 switch i {
                 case 1:

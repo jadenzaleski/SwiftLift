@@ -141,14 +141,14 @@ struct HomeView: View {
         .onChange(of: scenePhase) {
             if (workoutInProgress) {
                 if scenePhase == .inactive {
-                    print("⌾ Inactive")
+                    print("[+] SwiftLift inactive")
                 } else if scenePhase == .active {
-                    print("⌾ Active")
+                    print("[+] SwiftLift active")
                     // update the State
                     currentWorkout = currentWorkoutSave[0].workout
-                    print("⌾ Updated currentWorkout State")
+                    print("[+] Updated currentWorkout @State")
                 } else if scenePhase == .background {
-                    print("⌾ Background")
+                    print("[+] SwiftLift now in background")
                 }
             }
         }
@@ -159,7 +159,7 @@ struct HomeView: View {
     
     
     private func startWorkout() {
-        currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: selectedGym)
+        currentWorkout = Workout.blank(selectedGym: selectedGym)
         workoutInProgress = true;
     }
 }

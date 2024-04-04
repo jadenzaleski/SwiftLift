@@ -16,7 +16,7 @@ let previewContainer: ModelContainer = {
             for: History.self, Exercise.self
         )
         
-        container.mainContext.insert(History.sampleHistory)
+        container.mainContext.insert(History.sample)
         
         return container
     } catch {

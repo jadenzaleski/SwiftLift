@@ -39,6 +39,10 @@ struct Workout: Identifiable, Codable, Hashable {
         Workout(startDate: Date.now - 1000, time: Date.timeIntervalSinceReferenceDate, activities: Activity.sampleActivites, totalWeight: 1500.0, totalReps: 700, totalSets: 300, gym: "gym1")
     }
     
+    static func blank(selectedGym: String) -> Workout {
+        Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: selectedGym)
+    }
+    
     static func randomWorkout() -> Workout {
         let startDate = Date(timeIntervalSince1970: 0)  // January 1, 1970
         let endDate = Date()  // Current date and time

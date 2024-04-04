@@ -12,6 +12,7 @@ struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
     @Query private var history: [History]
+    @Query private var currentWorkoutSave: [CurrentWorkout]
     @Binding var currentWorkout: Workout
     @Binding var workoutInProgress: Bool
     @Binding var selectedGym: String
@@ -163,6 +164,7 @@ struct WorkoutView: View {
             .reduce(0, +)
         
         currentWorkout.gym = selectedGym
+        // add to the histroy array of past workouts
         history[0].addWorkout(workout: currentWorkout)
         workoutInProgress = false
         // haptic feedback

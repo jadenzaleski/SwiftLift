@@ -19,7 +19,16 @@ class CurrentWorkout {
     
     func save(workout: Workout) {
         self.workout = workout
-        print("⌾ Current workout saved.")
+        print("[+] Current workout saved.")
+    }
+    
+    func clear() {
+        self.workout = Workout.blank(selectedGym: "")
+        print("[+] Current workout cleared.")
+    }
+    
+    static var blank: CurrentWorkout {
+        CurrentWorkout(workout: Workout(startDate: .now, time: 0, activities: [], totalWeight: 0.0, totalReps: 0, totalSets: 0, gym: "Default"))
     }
 
 }
