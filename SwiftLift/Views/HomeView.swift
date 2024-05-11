@@ -26,7 +26,6 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            if !workoutInProgress {
                 VStack {
                     HStack {
                         Button {
@@ -131,11 +130,11 @@ struct HomeView: View {
                         }
                     }
                 }
-                
-                
-            } else {
-                WorkoutView(currentWorkout: $currentWorkout, workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
-            }
+                .navigationDestination(isPresented: $workoutInProgress) {
+                    WorkoutView(currentWorkout: $currentWorkout, workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
+                        .navigationBarBackButtonHidden()
+
+                }
         }
         .scrollDismissesKeyboard(.immediately)
         .onChange(of: scenePhase) {
