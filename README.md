@@ -5,6 +5,7 @@
 
 
 <p align=center>
+<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jadenzaleski/SwiftLift/iOS-build.yml?style=for-the-badge&logo=GitHub">
 <img alt="Static Badge" src="https://img.shields.io/badge/Testflight-lightblue?style=for-the-badge&logo=apple&logoColor=white&color=186ec3">
 </p>
 
