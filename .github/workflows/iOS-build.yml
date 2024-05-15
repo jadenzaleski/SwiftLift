@@ -51,7 +51,7 @@ jobs:
       - name: build archive
         run: |
           xcodebuild -scheme "SwiftLift" \
-          -archivePath $RUNNER_TEMP/iamgroot.xcarchive \
+          -archivePath $RUNNER_TEMP/SwiftLift.xcarchive \
           -sdk iphoneos \
           -configuration Debug \
           -destination generic/platform=iOS \
