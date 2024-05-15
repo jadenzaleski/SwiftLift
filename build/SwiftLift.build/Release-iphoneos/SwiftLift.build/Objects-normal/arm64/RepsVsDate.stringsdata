@@ -1,0 +1,16 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Charts/RepsVsDate.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Date"
+      },
+      {
+        "comment": "",
+        "key": "Reps"
+      }
+    ]
+  },
+  "version": 1
+}

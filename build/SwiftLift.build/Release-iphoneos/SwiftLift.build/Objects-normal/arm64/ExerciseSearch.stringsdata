@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/ExerciseSearch.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Exercises"
+      },
+      {
+        "comment": "",
+        "key": "%lld"
+      },
+      {
+        "comment": "",
+        "key": "Add a new exercise"
+      },
+      {
+        "comment": "",
+        "key": "When adding a new exercise, each name must be unique and contain at least one character."
+      },
+      {
+        "comment": "",
+        "key": "Cancel"
+      },
+      {
+        "comment": "",
+        "key": "Add(%lld)"
+      }
+    ]
+  },
+  "version": 1
+}

@@ -23,13 +23,13 @@ struct HomeView: View {
     @SceneStorage("showLifetime") private var showLifetime = true
     @State private var rotationAngle: Double = 0
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
-    
+
     var body: some View {
         NavigationStack {
                 VStack {
                     HStack {
                         Button {
-                            withAnimation() {
+                            withAnimation {
                                 showLifetime.toggle()
                             }
                         } label: {
@@ -42,7 +42,7 @@ struct HomeView: View {
                         .buttonStyle(.plain)
                     }
                     .padding(.horizontal)
-                    if (showLifetime) {
+                    if showLifetime {
                         VStack {
                             HStack {
                                 Image(systemName: "number")
@@ -64,7 +64,7 @@ struct HomeView: View {
                         }
                         .transition(.asymmetric(insertion: .offset(x: 0, y: -25).combined(with: .opacity), removal: .offset(x: 0, y: -25).combined(with: .opacity)))
                     }
-                    
+
                     Spacer()
                     Button {
                         startWorkout()
@@ -80,7 +80,7 @@ struct HomeView: View {
                                     .font(.title)
                                 Image(systemName: "figure.highintensity.intervaltraining")
                                     .font(.title)
-                                
+
                             }
                             Text("Start a Workout")
                                 .fontWeight(Font.Weight.bold)
@@ -91,11 +91,9 @@ struct HomeView: View {
                         .clipShape(Capsule())
                     }
                     .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
-                    
-                    
-                    
+
                     Spacer()
-                    
+
                     HStack {
                         Text("Gym:")
                             .padding(10.0)
@@ -111,8 +109,7 @@ struct HomeView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .padding()
                     .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
-                    
-                    
+
                 }
                 .onTapGesture {
                     self.hideKeyboard()
@@ -122,7 +119,7 @@ struct HomeView: View {
                         NavigationLink(destination: ProfileView()) {
                             Image(systemName: "person.crop.circle")
                         }
-                        
+
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         NavigationLink(destination: SettingsView()) {
@@ -138,7 +135,7 @@ struct HomeView: View {
         }
         .scrollDismissesKeyboard(.immediately)
         .onChange(of: scenePhase) {
-            if (workoutInProgress) {
+            if workoutInProgress {
                 if scenePhase == .inactive {
                     print("[+] SwiftLift inactive")
                 } else if scenePhase == .active {
@@ -155,11 +152,10 @@ struct HomeView: View {
             currentWorkoutSave[0].save(workout: currentWorkout)
         }
     }
-    
-    
+
     private func startWorkout() {
         currentWorkout = Workout.blank(selectedGym: selectedGym)
-        workoutInProgress = true;
+        workoutInProgress = true
     }
 }
 
@@ -174,4 +170,3 @@ private extension UIScrollView {
     HomeView()
         .modelContainer(previewContainer)
 }
-

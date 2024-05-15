@@ -29,7 +29,7 @@ struct HistoryView: View {
         } detail: {
             Text("Select a Workout")
         }
-        
+
     }
 }
 

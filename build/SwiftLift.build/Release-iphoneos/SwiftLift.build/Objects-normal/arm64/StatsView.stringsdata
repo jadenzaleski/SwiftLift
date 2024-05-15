@@ -1,0 +1,96 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/StatsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Lifetime totals:"
+      },
+      {
+        "comment": "",
+        "key": "Workouts:"
+      },
+      {
+        "comment": "",
+        "key": "%lld"
+      },
+      {
+        "comment": "",
+        "key": "Time:"
+      },
+      {
+        "comment": "",
+        "key": "%@"
+      },
+      {
+        "comment": "",
+        "key": "Weight:"
+      },
+      {
+        "comment": "",
+        "key": "Sets:"
+      },
+      {
+        "comment": "",
+        "key": "Reps:"
+      },
+      {
+        "comment": "",
+        "key": "Y Value"
+      },
+      {
+        "comment": "",
+        "key": "Volume"
+      },
+      {
+        "comment": "",
+        "key": "Reps"
+      },
+      {
+        "comment": "",
+        "key": "Duration"
+      },
+      {
+        "comment": "",
+        "key": "7"
+      },
+      {
+        "comment": "",
+        "key": "30"
+      },
+      {
+        "comment": "",
+        "key": "90"
+      },
+      {
+        "comment": "",
+        "key": "180"
+      },
+      {
+        "comment": "",
+        "key": "365"
+      },
+      {
+        "comment": "",
+        "key": "All"
+      },
+      {
+        "comment": "",
+        "key": "%@ vs. Date"
+      },
+      {
+        "comment": "",
+        "key": "All workouts"
+      },
+      {
+        "comment": "",
+        "key": "Past %lld workouts"
+      },
+      {
+        "comment": "",
+        "key": "Stats"
+      }
+    ]
+  },
+  "version": 1
+}

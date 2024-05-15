@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 struct Tester: View {
-    @State var i = 0;
+    @State var i = 0
     var body: some View {
         VStack {
             Text("Hello World")
@@ -34,7 +34,7 @@ struct Tester: View {
                 .font(Font.custom("OpenSansRoman-CondensedBold", size: 16))
             Text("Hello World")
                 .font(Font.custom("OpenSansRoman-ExtraBold", size: 16))
-            
+
             Text("Hello World")
                 .font(Font.custom("OpenSansRoman-Light", size: 16))
 
@@ -68,11 +68,11 @@ struct Tester: View {
                 case 6:
                     let generator = UIImpactFeedbackGenerator(style: .heavy)
                     generator.impactOccurred()
-                
+
                 case 7:
                     let generator = UIImpactFeedbackGenerator(style: .rigid)
                     generator.impactOccurred()
-                    
+
                 case 8:
                     let generator = UIImpactFeedbackGenerator(style: .soft)
                     generator.impactOccurred()

@@ -33,10 +33,9 @@ struct StatsView: View {
     @State private var selectedPastLength: Int = 7
     @State private var selectedGym = "All Gyms"
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
-    
+
     var body: some View {
-        
-        
+
         ScrollView {
             LazyVStack(alignment: .center, spacing: 20, pinnedViews: .sectionHeaders) {
                 Section {
@@ -46,7 +45,7 @@ struct StatsView: View {
                             .bold()
                         Divider()
                             .padding(.vertical, 3)
-                        
+
                         HStack {
                             Image(systemName: "number")
                             Text("Workouts:")
@@ -87,15 +86,13 @@ struct StatsView: View {
                                 .bold()
                                 .foregroundStyle(gradient)
                         }
-                        
-                        
-                        
+
                     }
                     .padding()
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
-                    
+
                     VStack {
                         Picker("Y Value", selection: $selectedYDateValue) {
                             Text("Volume").tag(DateYValue.volume)
@@ -113,7 +110,7 @@ struct StatsView: View {
                         }
                         .padding(.top, 8.0)
                         .pickerStyle(.segmented)
-                        
+
                         HStack {
                             Text("\(selectedYDateValue.text.capitalized) vs. Date")
                                 .font(.title3)
@@ -122,7 +119,7 @@ struct StatsView: View {
                         }
                         .padding(.top, 20.0)
                         HStack {
-                            if (selectedPastLength == -1) {
+                            if selectedPastLength == -1 {
                                 Text("All workouts")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
@@ -148,16 +145,16 @@ struct StatsView: View {
 //                    .background()
 //                    .clipShape(RoundedRectangle(cornerRadius: 15))
 //                    .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
-                    
+
                 } header: { // TODO: implement gym filter
                     VStack(spacing: 0) {
                         VStack(spacing: 0) {
                             Spacer()
-                            HStack() {
+                            HStack {
                                 Text("Stats")
                                     .font(.largeTitle)
                                 Spacer()
-                                
+
 //                                Menu {
 //                                    Picker("Select a gym", selection: $selectedGym) {
 //                                        Text("All Gyms").tag("All Gyms")
@@ -175,47 +172,45 @@ struct StatsView: View {
 //                                        .font(.largeTitle)
 //                                        .tint(.black)
 //                                }
-                                
+
                             }
                             .padding(.horizontal, 20)
                             .padding(.bottom, 5.0)
-                            
+
                         }
                         .frame(height: 120)
                         .background(Color("offset"))
                         .ignoresSafeArea(.all)
                         .padding(.horizontal, -20.0)
-                        
+
                         LinearGradient(colors: [Color(UIColor.systemGray5), .clear], startPoint: .top, endPoint: .bottom)
                             .frame(height: 10)
                             .padding(.horizontal, -20.0)
                     }
                 }
-                
-                
+
             }
             .padding()
-            
-            
+
         }
         .background(Color("offset"))
         .ignoresSafeArea(.all)
-        
+
     }
-    
+
     // format the times into 0h 0m
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
         let durationFormatter = DateComponentsFormatter()
         durationFormatter.unitsStyle = .abbreviated
         durationFormatter.allowedUnits = [.day, .hour, .minute]
-        
+
         guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
             return "Invalid Duration"
         }
-        
+
         return formattedDuration
     }
-    
+
 }
 
 #Preview {

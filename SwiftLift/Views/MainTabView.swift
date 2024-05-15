@@ -19,9 +19,9 @@ struct MainTabView: View {
         UITabBar.appearance().backgroundColor = UIColor(Color("offset"))
         UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
     }
-    
+
     var body: some View {
-        
+
         TabView(selection: $selectedTab) {
             HomeView()
                 .tabItem {
@@ -29,7 +29,7 @@ struct MainTabView: View {
                     Text("Home")
                 }
                 .tag(0)
-                
+
             StatsView()
                 .tabItem {
                     Image(systemName: "chart.xyaxis.line")
@@ -43,7 +43,7 @@ struct MainTabView: View {
                 }
                 .tag(2)
         }
-        
+
 //        .toolbar{
 //            ToolbarItemGroup(placement: .keyboard){
 //                Spacer()
@@ -57,7 +57,6 @@ struct MainTabView: View {
 //        }
         .onAppear(perform: {
 
-            
         })
     }
 }

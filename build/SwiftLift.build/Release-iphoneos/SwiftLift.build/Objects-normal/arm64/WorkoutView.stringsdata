@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/WorkoutView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%@"
+      },
+      {
+        "comment": "",
+        "key": "%lld Exercises:"
+      },
+      {
+        "comment": "",
+        "key": "Add exercise"
+      },
+      {
+        "comment": "",
+        "key": "Cancel your lift?"
+      },
+      {
+        "comment": "",
+        "key": "Confirm"
+      },
+      {
+        "comment": "",
+        "key": "All recorded data will be lost. This action cannot be undone."
+      }
+    ]
+  },
+  "version": 1
+}

@@ -30,11 +30,12 @@ struct WorkoutView: View {
                             .font(.title2)
                         Text("\(formatTimeInterval(time))")
                             .font(.title2)
-                            .onReceive(timer) { input in
+                            .onReceive(timer) { _ in
                                 time = currentWorkout.startDate.timeIntervalSinceNow
                             }
+
                         Spacer()
-                        
+
                         Text(selectedGym)
                             .font(.title2)
                             .lineLimit(1)
@@ -59,11 +60,12 @@ struct WorkoutView: View {
                     }
                     .padding(.horizontal)
                     .padding(.vertical, 5.0)
-                    
-                    ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, activity in
+
+                    ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, _ in
                         HStack {
                             WorkoutPill(activity: $currentWorkout.activities[index])
-                                .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
+                                .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4),
+                                        radius: 5)
                             if isDeleting {
                                 Button(action: {
                                     currentWorkout.activities.remove(at: index)
@@ -79,7 +81,7 @@ struct WorkoutView: View {
                         }
                     }
                     .padding(.vertical, 5.0)
-                    
+
                     Button {
                         isPresentingExerciseSearch.toggle()
                     } label: {
@@ -95,7 +97,7 @@ struct WorkoutView: View {
                 .padding(.horizontal)
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        Button() {
+                        Button {
                             showDeleteAlert = true
                         } label: {
                             Image(systemName: "xmark")
@@ -112,11 +114,9 @@ struct WorkoutView: View {
                         } message: {
                             Text("All recorded data will be lost. This action cannot be undone.")
                         }
-                        
-                        
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        Button() {
+                        Button {
                             stopWorkout()
                         } label: {
                             Image(systemName: "flag.checkered")
@@ -129,19 +129,19 @@ struct WorkoutView: View {
             }
         }
     }
-    
+
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
         let durationFormatter = DateComponentsFormatter()
         durationFormatter.unitsStyle = .abbreviated
         durationFormatter.allowedUnits = [.hour, .minute, .second]
-        
+
         guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
             return "Invalid Duration"
         }
-        
+
         return formattedDuration
     }
-    
+
     private func stopWorkout() {
         currentWorkout.time = time
         currentWorkout.activities.removeAll { activity in // TODO: Not working right when exercise is 0.
@@ -156,13 +156,13 @@ struct WorkoutView: View {
         currentWorkout.totalSets += currentWorkout.activities
             .flatMap { $0.warmUpSets + $0.workingSets }
             .count
-        
+
         let flatMapWeight = currentWorkout.activities
             .flatMap { $0.warmUpSets + $0.workingSets }
         currentWorkout.totalWeight += flatMapWeight
             .map { $0.weight * Double($0.reps) }
             .reduce(0, +)
-        
+
         currentWorkout.gym = selectedGym
         // add to the histroy array of past workouts
         history[0].addWorkout(workout: currentWorkout)
@@ -175,5 +175,5 @@ struct WorkoutView: View {
 #Preview {
     WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
         .modelContainer(for: [History.self, Exercise.self], inMemory: true)
-    
+
 }

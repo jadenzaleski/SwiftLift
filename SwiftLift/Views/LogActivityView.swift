@@ -14,8 +14,8 @@ struct LogActivityView: View {
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
     @Binding var activity: Activity
-    @State var notes = "";
-    @SceneStorage("isDeleting") private var isDeleting : Bool = false
+    @State var notes = ""
+    @SceneStorage("isDeleting") private var isDeleting: Bool = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -32,8 +32,8 @@ struct LogActivityView: View {
                 Spacer()
             }
             .padding(.horizontal)
-            
-            ForEach(Array(activity.warmUpSets.enumerated()), id: \.element.id) { index, set in
+
+            ForEach(Array(activity.warmUpSets.enumerated()), id: \.element.id) { index, _ in
                 HStack {
                     SetPill(set: $activity.warmUpSets[index], isDeleting: $isDeleting)
                         .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
@@ -52,7 +52,7 @@ struct LogActivityView: View {
                 }
                 .padding(.vertical, 2.0)
             }
-            
+
             Button(action: {
                 activity.warmUpSets.append(SetData(reps: 0, weight: 0, isChecked: false))
                 // haptic feedback
@@ -68,7 +68,7 @@ struct LogActivityView: View {
                 }
             }
             .padding(.top, 5.0)
-            
+
             HStack {
                 let c = activity.workingSets.count
                 Text(c == 1 ? "\(c) working set:" : "\(c) working sets:")
@@ -76,8 +76,8 @@ struct LogActivityView: View {
                 Spacer()
             }
             .padding([.top, .horizontal])
-            
-            ForEach(Array(activity.workingSets.enumerated()), id: \.element.id) { index, set in
+
+            ForEach(Array(activity.workingSets.enumerated()), id: \.element.id) { index, _ in
                 HStack {
                     SetPill(set: $activity.workingSets[index], isDeleting: $isDeleting)
                         .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
@@ -96,7 +96,7 @@ struct LogActivityView: View {
                 }
                 .padding(.vertical, 2.0)
             }
-            
+
             Button(action: {
                 activity.workingSets.append(SetData(reps: 0, weight: 0.0, isChecked: false))
                 // haptic feedback
@@ -112,7 +112,7 @@ struct LogActivityView: View {
                 }
             }
             .padding(.top, 5.0)
-            
+
             HStack {
                 Text("Notes:")
                     .font(.title2)
@@ -122,16 +122,16 @@ struct LogActivityView: View {
             .padding(.top)
             TextField("Add note", text: $notes, axis: .vertical)
                 .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
-                .onAppear() {
-                    notes = exercises[getExerciseIndex(name: activity.name)].notes;
+                .onAppear {
+                    notes = exercises[getExerciseIndex(name: activity.name)].notes
                 }
                 .onChange(of: notes) {
-                    exercises[getExerciseIndex(name: activity.name)].notes = notes;
+                    exercises[getExerciseIndex(name: activity.name)].notes = notes
                 }
                 .background(Color("offset"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))
                 .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
-                
+
         }
         .navigationTitle(Text(activity.name))
         .scrollDismissesKeyboard(.immediately)
@@ -144,8 +144,8 @@ struct LogActivityView: View {
                 }
             }
         }
-        .toolbar{
-            ToolbarItemGroup(placement: .keyboard){
+        .toolbar {
+            ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button {
                     UIApplication.shared.dismissKeyboard()
@@ -156,9 +156,9 @@ struct LogActivityView: View {
             }
         }
     }
-    
+
     private func getExerciseIndex(name: String) -> Int {
-        return exercises.firstIndex(where: { $0.name == name }) ?? 0;
+        return exercises.firstIndex(where: { $0.name == name }) ?? 0
     }
 }
 

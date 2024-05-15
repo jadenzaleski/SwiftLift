@@ -1,0 +1,16 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/Tester.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Hello World"
+      },
+      {
+        "comment": "",
+        "key": "Tap"
+      }
+    ]
+  },
+  "version": 1
+}

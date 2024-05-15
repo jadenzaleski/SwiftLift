@@ -1,0 +1,32 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Charts/LineChart.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Average"
+      },
+      {
+        "comment": "",
+        "key": "Day"
+      },
+      {
+        "comment": "",
+        "key": "Weight"
+      },
+      {
+        "comment": "",
+        "key": "low"
+      },
+      {
+        "comment": "",
+        "key": "high"
+      },
+      {
+        "comment": "",
+        "key": "%@"
+      }
+    ]
+  },
+  "version": 1
+}

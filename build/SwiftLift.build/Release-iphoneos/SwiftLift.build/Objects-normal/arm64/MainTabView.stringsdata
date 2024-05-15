@@ -1,0 +1,20 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/MainTabView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Home"
+      },
+      {
+        "comment": "",
+        "key": "Stats"
+      },
+      {
+        "comment": "",
+        "key": "History"
+      }
+    ]
+  },
+  "version": 1
+}

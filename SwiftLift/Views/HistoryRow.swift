@@ -10,7 +10,7 @@ import SwiftUI
 struct HistoryRow: View {
     var workout: Workout
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
-    
+
     var body: some View {
         VStack {
             HStack {
@@ -22,7 +22,7 @@ struct HistoryRow: View {
             .padding(.bottom, 1.0)
             .font(.title3)
             .foregroundStyle(gradient)
-            HStack() {
+            HStack {
                 Image(systemName: "mappin.and.ellipse")
                     .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
                 Text("\(workout.gym)")
@@ -37,16 +37,16 @@ struct HistoryRow: View {
         .padding(/*@START_MENU_TOKEN@*/.all, 5.0/*@END_MENU_TOKEN@*/)
 //        .background(.red)
     }
-    
+
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
         let durationFormatter = DateComponentsFormatter()
         durationFormatter.unitsStyle = .abbreviated
         durationFormatter.allowedUnits = [.hour, .minute, .second]
-        
+
         guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
             return "Invalid Duration"
         }
-        
+
         return formattedDuration
     }
 }

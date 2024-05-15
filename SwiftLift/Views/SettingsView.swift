@@ -18,12 +18,11 @@ struct SettingsView: View {
     @AppStorage("selectedTheme") private var selectedTheme = "Automatic"
     @AppStorage("bold") private var bold = false
     @AppStorage("metric") private var metric = false
-    
-    
+
     let themes = ["Automatic", "Light", "Dark"]
     let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
     let buildNumber = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
-    
+
     var body: some View {
         NavigationStack {
             List {
@@ -39,7 +38,7 @@ struct SettingsView: View {
                 } header: {
                     Text("General")
                 }
-                
+
                 Section {
                     Picker("Appearance", selection: $selectedTheme) {
                         ForEach(themes, id: \.self) {
@@ -55,7 +54,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Appearance")
                 }
-                
+
                 Section {
                     ForEach(history[0].gyms, id: \.self) { gym in
                         Text(gym)
@@ -64,10 +63,10 @@ struct SettingsView: View {
                         history[0].gyms.remove(atOffsets: indexSet)
                     })
                     .deleteDisabled(history[0].gyms.count <= 1)
-                    
+
                     HStack {
                         TextField("Add a new gym", text: $newGym)
-                        
+
                         Button(action: {
                             addNewGym()
                         }) {
@@ -80,9 +79,9 @@ struct SettingsView: View {
                 } footer: {
                     Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
                 }
-                
+
                 Section {
-                    
+
                     NavigationLink {
                         ComingSoon()
                     } label: {
@@ -101,7 +100,7 @@ struct SettingsView: View {
                 } header: {
                     Text("Feedback")
                 }
-                
+
                 Section {
                     Text("Version: \(appVersion ?? "-")")
                     Text("Build: \(buildNumber ?? "-")")
@@ -112,8 +111,8 @@ struct SettingsView: View {
                 }
             }
             .navigationTitle("Settings")
-            .toolbar{
-                ToolbarItemGroup(placement: .keyboard){
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button {
                         UIApplication.shared.dismissKeyboard()
@@ -125,7 +124,7 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private func addNewGym() {
         if !history[0].gyms.isEmpty && !history[0].gyms.contains(newGym) {
             withAnimation {
@@ -136,7 +135,7 @@ struct SettingsView: View {
             // haptic feedback
             UINotificationFeedbackGenerator().notificationOccurred(.success)
         }
-        
+
     }
 }
 

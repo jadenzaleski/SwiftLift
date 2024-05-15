@@ -1,0 +1,6 @@
+#!/bin/sh
+## Generate the build number using current date and time
+buildNumber=$(date "+%Y%m.%d.%H%M")
+## Set the build number in plist file
+/usr/libexec/PlistBuddy -c "Set :CFBundleVersion $buildNumber" "${TARGET_BUILD_DIR}/${INFOPLIST_PATH}"
+

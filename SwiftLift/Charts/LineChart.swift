@@ -14,7 +14,7 @@ struct PlottingData: Identifiable {
     var y: Double
     var date: Date
     var x: Int
-    
+
     init(id: UUID = UUID(), x: Int, y: Double, date: Date) {
         self.id = id
         self.y = y
@@ -30,15 +30,13 @@ struct LineChart: View {
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.4), Color.white.opacity(0)]), startPoint: .top, endPoint: .bottom)
     @Binding var pastDays: Int
     @Binding var yAxis: String
-    
-    
-    
+
     var body: some View {
         let h = history[0]
 //        let h = History.sample
         // n is the number of workouts to display. min of input and count of workouts
         let n = pastDays == -1 ? h.workouts!.count : min(pastDays, h.workouts?.count ?? 0)
-        //let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []
+        // let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []
         // sort the workouts so the most recent is on top i think
         let sortedWorkouts = h.workouts!.prefix(n).sorted { (workout1, workout2) in
             return workout1.startDate < workout2.startDate
@@ -46,16 +44,16 @@ struct LineChart: View {
         // data to plot, change based on passed in yAxis value
         let data: [PlottingData] = sortedWorkouts.enumerated().map { index, workout in
             var y = 0.0
-            if (yAxis == "duration") {
+            if yAxis == "duration" {
                 y = Double(workout.time)
-            } else if (yAxis == "volume") {
+            } else if yAxis == "volume" {
                 y = workout.totalWeight
             } else {
                 y = Double(workout.totalReps)
             }
             return PlottingData(x: Int(index), y: y, date: workout.startDate)
         }
-        
+
         let maxX = data.max(by: { $0.x < $1.x })?.x ?? 0
         let maxY = data.max(by: { $0.y < $1.y })?.y ?? 0
         let minY = data.min(by: { $0.y < $1.y })?.y ?? 0
@@ -63,7 +61,7 @@ struct LineChart: View {
         let avgY =  data.isEmpty ? 0.0 : totalY / Double(data.count)
 //        let maxDate = data.map { $0.date }.max() ?? Date()
 //        let minDate = data.map { $0.date }.min() ?? Date()
-        
+
         var avgText: String {
             if yAxis == "duration" {
                 return formatTimeInterval(avgY)
@@ -71,7 +69,7 @@ struct LineChart: View {
                 return String(Int(avgY))
             }
         }
-        
+
         Chart {
             ForEach(data) { d in
                 LineMark(
@@ -89,10 +87,10 @@ struct LineChart: View {
                 AreaMark(
                     x: .value("Day", d.x),
                     yStart: .value("low", 0),
-                    yEnd: .value("high",  d.y)
+                    yEnd: .value("high", d.y)
                 )
                 .foregroundStyle(gradient)
-                
+
             }
             RuleMark(y: .value("Average", avgY))
                 .foregroundStyle(Color.secondary)
@@ -103,10 +101,10 @@ struct LineChart: View {
                         .padding(.trailing, 32)
                         .foregroundStyle(Color.secondary)
                 }
-            
+
         }
         .frame(height: 250)
-        
+
         .chartXAxis {
             AxisMarks(preset: .aligned, values: data.map { $0.x }) { value in
                 if let index = value.as(Int.self) {
@@ -114,19 +112,19 @@ struct LineChart: View {
                     AxisValueLabel(orientation: .vertical, horizontalSpacing: -6.5, verticalSpacing: 6.5) {
                         if let pd = data.first(where: { $0.x == index }) {
                             Text("\(pd.date, format: .dateTime.month(.twoDigits).day(.twoDigits))")
-                            
+
                         }
                     }
-                    
+
                 }
             }
-            
+
         }
         .chartYAxis {
-            AxisMarks() { value in
+            AxisMarks { value in
                 if let index = value.as(Int.self) {
                     AxisGridLine()
-                    AxisValueLabel() {
+                    AxisValueLabel {
                         Text("\(formatYValue(index))")
                     }
                 }
@@ -141,23 +139,23 @@ struct LineChart: View {
         .chartXScale(domain: -1...maxX + 1)
         .chartScrollPosition(initialX: Date.distantFuture)
     }
-    
+
     // format the times into 0h 0m
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
         let durationFormatter = DateComponentsFormatter()
         durationFormatter.unitsStyle = .abbreviated
         durationFormatter.allowedUnits = [.hour, .minute]
-        
+
         guard let formattedDuration = durationFormatter.string(from: timeInterval) else {
             return "Invalid Duration"
         }
-        
+
         return formattedDuration
     }
-    
+
     // function to format labels for y axis based on passed in var 'yAxis'
     func formatYValue(_ value: Int) -> String {
-        if (yAxis == "duration") {
+        if yAxis == "duration" {
             return formatTimeInterval(TimeInterval(value))
         } else {
             // add k instead of 1000

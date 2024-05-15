@@ -15,9 +15,9 @@ let previewContainer: ModelContainer = {
         let container = try ModelContainer(
             for: History.self, Exercise.self
         )
-        
+
         container.mainContext.insert(History.sample)
-        
+
         return container
     } catch {
         fatalError("Failed to create container")

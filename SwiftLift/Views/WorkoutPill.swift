@@ -17,11 +17,11 @@ struct WorkoutPill: View {
                 LogActivityView(activity: $activity)
             } label: {
                 HStack {
-                    if (isComplete) {
-                        Image(systemName:"checkmark.circle.fill")
+                    if isComplete {
+                        Image(systemName: "checkmark.circle.fill")
                             .font(.title2)
                             .foregroundStyle(.green)
-                    } else if (inProgress) {
+                    } else if inProgress {
                         Image(systemName: "exclamationmark.circle")
                             .font(.title2)
                             .foregroundStyle(.yellow)

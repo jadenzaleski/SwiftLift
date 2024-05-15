@@ -189,6 +189,7 @@
 			buildConfigurationList = D7B90E7B2AA8309600F9EC41 /* Build configuration list for PBXNativeTarget "SwiftLift" */;
 			buildPhases = (
 				D7B90E692AA8309500F9EC41 /* Sources */,
+				D7E2D77B2BF460D5006550F3 /* SwiftLint */,
 				D7B90E6A2AA8309500F9EC41 /* Frameworks */,
 				D7B90E6B2AA8309500F9EC41 /* Resources */,
 				D7B90E9B2AA8E8FB00F9EC41 /* Set build number to date */,
@@ -268,6 +269,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "## Generate the build number using current date and time\nbuildNumber=$(date \"+%Y%m.%d.%H%M\")\n## Set the build number in plist file\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNumber\" \"${TARGET_BUILD_DIR}/${INFOPLIST_PATH}\"\n";
+		};
+		D7E2D77B2BF460D5006550F3 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ \"$(uname -m)\" == arm64 ]]; then\n    export PATH=\"/opt/homebrew/bin:$PATH\"\nfi\n\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

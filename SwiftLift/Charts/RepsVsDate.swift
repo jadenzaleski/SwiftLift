@@ -14,14 +14,14 @@ struct RepsVsDate: View {
     @Environment(\.colorScheme) var colorScheme
     @Query private var history: [History]
     private let gradient = LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.4), Color.white.opacity(0)]), startPoint: .top, endPoint: .bottom)
-    
+
     var body: some View {
         let h = history[0]
         let dates = h.workouts!.map { $0.startDate }
- 
+
         let startDate = dates.min() ?? Date()
         let endDate = dates.max() ?? Date()
-        
+
         Chart {
             ForEach(h.workouts!) { workout in
                 LineMark(x: .value("Date", workout.startDate),
@@ -31,10 +31,10 @@ struct RepsVsDate: View {
                     Image(systemName: "circle.fill")
                         .font(.system(size: 8))
                 }
-      
+
             }
             .interpolationMethod(.cardinal)
-            
+
             ForEach(h.workouts!) { workout in
                 AreaMark(x: .value("Date", workout.startDate),
                          y: .value("Reps", workout.totalReps))

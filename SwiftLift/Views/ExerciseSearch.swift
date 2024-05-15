@@ -17,8 +17,7 @@ struct ExerciseSearch: View {
     @SceneStorage("searchText") private var searchText = ""
     @SceneStorage("newExercise") private var newExercise = ""
     @State private var selectedExercises: [String] = []
-    
-    
+
     var body: some View {
         var searchResults: [Exercise] {
             if searchText.isEmpty {
@@ -27,7 +26,7 @@ struct ExerciseSearch: View {
                 return exercises.map { $0 }.filter { $0.name.localizedCaseInsensitiveContains(searchText) }
             }
         }
-        
+
         NavigationView {
             List {
                 Section {
@@ -51,7 +50,7 @@ struct ExerciseSearch: View {
                         }
                         .buttonStyle(BorderlessButtonStyle())
                         .foregroundStyle(selectedExercises.contains(exercise.name) ? Color.green : Color("ld"))
-                        
+
                     }
                     HStack {
                         TextField("Add a new exercise", text: $newExercise)
@@ -61,7 +60,7 @@ struct ExerciseSearch: View {
                                 // haptic feedback
                                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                                 newExercise = ""
-                            
+
                         }) {
                             Image(systemName: "plus.circle.fill")
                         }

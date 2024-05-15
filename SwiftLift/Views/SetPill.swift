@@ -14,7 +14,7 @@ struct SetPill: View {
     @Binding var isDeleting: Bool
     @State private var decString: String = "0.0"
     @State private var intString: String = "0"
-    var body: some View{
+    var body: some View {
         HStack {
             Button {
                 set.isChecked.toggle()
@@ -27,7 +27,7 @@ struct SetPill: View {
             .frame(width: 40, height: 30)
             .foregroundStyle(set.isChecked ? Color.green : Color.blue)
             Spacer()
-            
+
             TextField("0", text: $intString)
                 .numbersOnly($intString)
                 .frame(width: 75)
@@ -59,8 +59,7 @@ struct SetPill: View {
                         textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
                     }
                 }
-                
-                
+
         }
         .padding()
         .background(Color("offset"))
@@ -72,8 +71,6 @@ struct SetPill: View {
         }
     }
 }
-
-
 
 struct SetPill_Previews: PreviewProvider {
     static var previews: some View {

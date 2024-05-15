@@ -1,0 +1,20 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/HistoryView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "No Workouts Yet"
+      },
+      {
+        "comment": "",
+        "key": "History"
+      },
+      {
+        "comment": "",
+        "key": "Select a Workout"
+      }
+    ]
+  },
+  "version": 1
+}

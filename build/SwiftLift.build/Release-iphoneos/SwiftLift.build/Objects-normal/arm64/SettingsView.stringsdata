@@ -1,0 +1,80 @@
+{
+  "source": "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/SettingsView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Settings"
+      },
+      {
+        "comment": "",
+        "key": "Export/restore data"
+      },
+      {
+        "comment": "",
+        "key": "Metric"
+      },
+      {
+        "comment": "",
+        "key": "General"
+      },
+      {
+        "comment": "",
+        "key": "Appearance"
+      },
+      {
+        "comment": "",
+        "key": "Accent Color"
+      },
+      {
+        "comment": "",
+        "key": "Bold Text"
+      },
+      {
+        "comment": "",
+        "key": "Add a new gym"
+      },
+      {
+        "comment": "",
+        "key": "Gyms"
+      },
+      {
+        "comment": "",
+        "key": "Swipe left on a gym to delete it. There must be at least one gym in the list at all times."
+      },
+      {
+        "comment": "",
+        "key": "Write a review"
+      },
+      {
+        "comment": "",
+        "key": "Leave a rating"
+      },
+      {
+        "comment": "",
+        "key": "Report a bug"
+      },
+      {
+        "comment": "",
+        "key": "Feedback"
+      },
+      {
+        "comment": "",
+        "key": "Version: %@"
+      },
+      {
+        "comment": "",
+        "key": "Build: %@"
+      },
+      {
+        "comment": "",
+        "key": "About"
+      },
+      {
+        "comment": "",
+        "key": "Main icon by [Solar Icons](https://www.figma.com/community/file/1166831539721848736?ref=svgrepo.com) in CC Attribution License via [SVG Repo](https://www.svgrepo.com/)."
+      }
+    ]
+  },
+  "version": 1
+}

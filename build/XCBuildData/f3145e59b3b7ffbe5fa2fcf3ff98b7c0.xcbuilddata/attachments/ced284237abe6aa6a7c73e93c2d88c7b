@@ -1,0 +1,145 @@
+{
+  "" : {
+    "const-values" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLift-master.swiftconstvalues",
+    "dependencies" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLift-master.d",
+    "diagnostics" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLift-master.dia",
+    "emit-module-dependencies" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLift-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLift-master-emit-module.dia",
+    "swift-dependencies" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLift-master.swiftdeps"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Charts/LineChart.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/LineChart.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/LineChart.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/LineChart.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Charts/RepsVsDate.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/RepsVsDate.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/RepsVsDate.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/RepsVsDate.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Models/Activity.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Activity.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Activity.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Activity.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Models/CurrentWorkout.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/CurrentWorkout.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/CurrentWorkout.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/CurrentWorkout.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Models/Exercise.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Exercise.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Exercise.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Exercise.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Models/History.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/History.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/History.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/History.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Models/SetData.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SetData.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SetData.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SetData.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Models/Workout.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Workout.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Workout.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Workout.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/SwiftLiftApp.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLiftApp.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLiftApp.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftLiftApp.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/ComingSoon.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ComingSoon.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ComingSoon.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ComingSoon.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/ExerciseSearch.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ExerciseSearch.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ExerciseSearch.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ExerciseSearch.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/HistoryDetail.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryDetail.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryDetail.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryDetail.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/HistoryRow.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryRow.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryRow.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryRow.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/HistoryView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HistoryView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/HomeView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HomeView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HomeView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/HomeView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/LogActivityView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/LogActivityView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/LogActivityView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/LogActivityView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/MainTabView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/MainTabView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/MainTabView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/MainTabView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/NumbersOnlyViewModifier.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/NumbersOnlyViewModifier.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/NumbersOnlyViewModifier.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/NumbersOnlyViewModifier.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/ProfileView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ProfileView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ProfileView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/ProfileView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/SetPill.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SetPill.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SetPill.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SetPill.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/SettingsView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SettingsView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/StatsView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/StatsView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/StatsView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/StatsView.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/SwiftDataPreviewContainer.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftDataPreviewContainer.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftDataPreviewContainer.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/SwiftDataPreviewContainer.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/Tester.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Tester.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Tester.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/Tester.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/WorkoutPill.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/WorkoutPill.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/WorkoutPill.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/WorkoutPill.o"
+  },
+  "/Users/jaden/Desktop/Development/Apps/SwiftLift/SwiftLift/Views/WorkoutView.swift" : {
+    "index-unit-output-path" : "/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/WorkoutView.o",
+    "llvm-bc" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/WorkoutView.bc",
+    "object" : "/Users/jaden/Desktop/Development/Apps/SwiftLift/build/SwiftLift.build/Release-iphoneos/SwiftLift.build/Objects-normal/arm64/WorkoutView.o"
+  }
+}

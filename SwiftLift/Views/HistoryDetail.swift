@@ -23,7 +23,7 @@ struct HistoryDetail: View {
             .padding(.horizontal)
             .font(.title2)
             .foregroundStyle(gradient)
-            
+
             HStack {
                 Image(systemName: "mappin.and.ellipse")
                 Text(workout.gym)
@@ -31,8 +31,8 @@ struct HistoryDetail: View {
             }
             .padding(.horizontal)
             .font(.title2)
-            
-            VStack() {
+
+            VStack {
                 HStack {
                     // time
                     Image(systemName: "clock")
@@ -46,20 +46,19 @@ struct HistoryDetail: View {
                         .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
 
                 }
-                
+
                 HStack {
                     // volume
                     Image(systemName: "scalemass")
                         .padding(.trailing, -5.0)
                     Text("\(Int(workout.totalWeight))")
                     Spacer()
-                    //reps
+                    // reps
                     Text("\(workout.totalReps)")
                     Image(systemName: "repeat")
                         .padding(.trailing, -5.0)
                 }
                 // sets
-                
 
             }
             .padding(.horizontal)
@@ -68,7 +67,7 @@ struct HistoryDetail: View {
         }
         .zIndex(/*@START_MENU_TOKEN@*/1.0/*@END_MENU_TOKEN@*/)
         .background(.mainSystem)
-        
+
         ScrollView {
             VStack {
                 ForEach(workout.activities, id: \.id) { activity in
@@ -78,7 +77,7 @@ struct HistoryDetail: View {
                                 .font(.title2)
                             Spacer()
                         }
-                        if (activity.warmUpSets.count > 0) {
+                        if activity.warmUpSets.count > 0 {
                             HStack {
                                 Text("Warm-up sets")
                                     .font(.caption)
@@ -101,8 +100,8 @@ struct HistoryDetail: View {
                                 .padding(.horizontal)
                             }
                         }
-                        
-                        if (activity.workingSets.count > 0) {
+
+                        if activity.workingSets.count > 0 {
                             HStack {
                                 Text("Working sets")
                                     .font(.caption)
@@ -126,7 +125,7 @@ struct HistoryDetail: View {
                                 .padding(.horizontal)
                             }
                         }
-                        
+
                     }
                     .padding(.all)
                     .padding(.horizontal, 25.0)
@@ -137,18 +136,18 @@ struct HistoryDetail: View {
             }
         }
         .padding(.horizontal)
-        
+
     }
-    
+
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
         let durationFormatter = DateComponentsFormatter()
         durationFormatter.unitsStyle = .abbreviated
         durationFormatter.allowedUnits = [.hour, .minute, .second]
-        
+
         guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
             return "Invalid Duration"
         }
-        
+
         return formattedDuration
     }
 }
