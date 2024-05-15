@@ -5,6 +5,7 @@
 
 
 <p align=center>
+<img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jadenzaleski/SwiftLift/iOS-build.yml?style=for-the-badge&logo=GitHub">
 <img alt="Static Badge" src="https://img.shields.io/badge/Testflight-lightblue?style=for-the-badge&logo=apple&logoColor=white&color=186ec3">
 </p>
 
@@ -18,6 +19,8 @@
     <br>
     <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr/jadenzaleski/SwiftLift?style=flat-square&color=yellow">
     <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues-pr-closed/jadenzaleski/SwiftLift?style=flat-square&color=lightGreen">
+    <br>
+    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/jadenzaleski/SwiftLift/swiftlint.yml?style=flat-square&label=SwiftLint">
     <br>
     <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/jadenzaleski/SwiftLift?style=flat-square&color=b50da1">
 </p>
