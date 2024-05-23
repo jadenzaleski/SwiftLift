@@ -57,7 +57,7 @@ struct MainTabView: View {
 //            }
 //        }
         .onAppear(perform: {
-
+            history[0].makeTotalTimeAbsolute()
         })
     }
 }

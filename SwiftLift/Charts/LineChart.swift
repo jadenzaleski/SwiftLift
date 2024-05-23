@@ -35,7 +35,6 @@ struct LineChart: View {
 
     var body: some View {
         let his = history[0]
-//        let h = History.sample
         // n is the number of workouts to display. min of input and count of workouts
         let num = pastDays == -1 ? his.workouts!.count : min(pastDays, his.workouts?.count ?? 0)
         // let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []
@@ -61,8 +60,11 @@ struct LineChart: View {
         let minY = data.min(by: { $0.yAxis < $1.yAxis })?.yAxis ?? 0
         let totalY = data.reduce(0.0) { $0 + $1.yAxis }
         let avgY =  data.isEmpty ? 0.0 : totalY / Double(data.count)
-        let lowerBound = minY - (minY / 1.5)
-        let upperBound = maxY + (maxY * 0.05)
+        let ySpan = maxY - minY
+        // 12.5% spacing between max and min y values
+        let spacing = 0.125 * ySpan
+        let lowerBound = minY - spacing
+        let upperBound = maxY + spacing
 
         var avgText: String {
             if yAxis == "duration" {
@@ -97,7 +99,7 @@ struct LineChart: View {
             RuleMark(y: .value("Average", avgY))
                 .foregroundStyle(Color.secondary)
                 .lineStyle(StrokeStyle(lineWidth: 0.8, dash: [10]))
-                .annotation(alignment: .topTrailing) {
+                .annotation(alignment: .trailing) {
                     Text("Avg: " + avgText)
                         .font(.subheadline).bold()
                         .padding(.trailing, 32)
@@ -113,7 +115,7 @@ struct LineChart: View {
                     AxisGridLine()
                     AxisValueLabel(orientation: .vertical, horizontalSpacing: -6.5, verticalSpacing: 6.5) {
                         if let item = data.first(where: { $0.xAxis == index }) {
-                            Text("\(item.date, format: .dateTime.month(.twoDigits).day(.twoDigits))")
+                            Text("\(item.date, format: .dateTime.month(.twoDigits).day(.twoDigits).year())")
 
                         }
                     }
@@ -174,6 +176,6 @@ struct LineChart: View {
 }
 
 #Preview {
-    LineChart(pastDays: .constant(20), yAxis: .constant("duration"))
+    LineChart(pastDays: .constant(30), yAxis: .constant("duration"))
         .modelContainer(previewContainer)
 }

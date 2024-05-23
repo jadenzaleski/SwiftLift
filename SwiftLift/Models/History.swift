@@ -88,4 +88,20 @@ final class History {
         return false
     }
 
+    func makeTotalTimeAbsolute() {
+        // Ensure workouts is not nil
+        guard var workouts = workouts else { return }
+
+        // Iterate through all workouts
+        for index in workouts.indices {
+            // Ensure the time is positive
+            workouts[index].time = abs(workouts[index].time)
+        }
+
+        // Recalculate totalTime after updating workout times
+        self.totalTime = workouts.reduce(0) { $0 + abs($1.time) }
+
+        // Update workouts property with the modified array
+        self.workouts = workouts
+    }
 }
