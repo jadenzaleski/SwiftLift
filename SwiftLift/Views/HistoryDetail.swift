@@ -10,7 +10,8 @@ import SwiftUI
 struct HistoryDetail: View {
     @Environment(\.colorScheme) var colorScheme
     var workout: Workout
-    private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+    private let gradient = LinearGradient(gradient: Gradient(colors: [
+        Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
     var body: some View {
         VStack {
             HStack {

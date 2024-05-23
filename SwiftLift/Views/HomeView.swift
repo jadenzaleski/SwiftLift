@@ -19,10 +19,12 @@ struct HomeView: View {
     @SceneStorage("workoutInProgress") private var workoutInProgress = false
     @SceneStorage("selectedGym") private var selectedGym = "Default"
     @SceneStorage("newGym") private var newGym = ""
-    @State private var currentWorkout = Workout(startDate: .now, time: 0, activities: [], totalWeight: 0, totalReps: 0, totalSets: 0, gym: "")
+    @State private var currentWorkout = Workout(startDate: .now, time: 0, activities: [],
+                                                totalWeight: 0, totalReps: 0, totalSets: 0, gym: "")
     @SceneStorage("showLifetime") private var showLifetime = true
     @State private var rotationAngle: Double = 0
-    private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+    private let gradient = LinearGradient(gradient: Gradient(colors: [
+        Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
         NavigationStack {
@@ -62,7 +64,8 @@ struct HomeView: View {
                             }
                             .padding(.horizontal)
                         }
-                        .transition(.asymmetric(insertion: .offset(x: 0, y: -25).combined(with: .opacity), removal: .offset(x: 0, y: -25).combined(with: .opacity)))
+                        .transition(.asymmetric(insertion: .offset(x: 0, y: -25).combined(with: .opacity),
+                                                removal: .offset(x: 0, y: -25).combined(with: .opacity)))
                     }
 
                     Spacer()
@@ -128,7 +131,8 @@ struct HomeView: View {
                     }
                 }
                 .navigationDestination(isPresented: $workoutInProgress) {
-                    WorkoutView(currentWorkout: $currentWorkout, workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
+                    WorkoutView(currentWorkout: $currentWorkout,
+                                workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
                         .navigationBarBackButtonHidden()
 
                 }

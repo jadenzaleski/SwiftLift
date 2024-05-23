@@ -42,7 +42,8 @@ struct WorkoutPill: View {
                 .padding()
                 .background(Color("offset"))
                 .clipShape(Capsule())
-                .overlay(isComplete ? Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
+                .overlay(isComplete ?
+                         Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
                 .onChange(of: (activity.warmUpSets + activity.workingSets)) {
                     let allSets = activity.warmUpSets + activity.workingSets
                     isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }

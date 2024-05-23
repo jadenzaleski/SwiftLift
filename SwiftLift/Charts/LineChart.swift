@@ -11,15 +11,15 @@ import Charts
 
 struct PlottingData: Identifiable {
     var id = UUID()
-    var y: Double
+    var yAxis: Double
     var date: Date
-    var x: Int
+    var xAxis: Int
 
-    init(id: UUID = UUID(), x: Int, y: Double, date: Date) {
+    init(id: UUID = UUID(), xAxis: Int, yAxis: Double, date: Date) {
         self.id = id
-        self.y = y
+        self.yAxis = yAxis
         self.date = date
-        self.x = x
+        self.xAxis = xAxis
     }
 }
 
@@ -27,40 +27,42 @@ struct LineChart: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
     @Query private var history: [History]
-    private let gradient = LinearGradient(gradient: Gradient(colors: [Color.accentColor.opacity(0.4), Color.white.opacity(0)]), startPoint: .top, endPoint: .bottom)
+    private let gradient = LinearGradient(gradient: Gradient(colors: [
+        Color.accentColor.opacity(0.4),
+        Color.white.opacity(0)]), startPoint: .top, endPoint: .bottom)
     @Binding var pastDays: Int
     @Binding var yAxis: String
 
     var body: some View {
-        let h = history[0]
+        let his = history[0]
 //        let h = History.sample
         // n is the number of workouts to display. min of input and count of workouts
-        let n = pastDays == -1 ? h.workouts!.count : min(pastDays, h.workouts?.count ?? 0)
+        let num = pastDays == -1 ? his.workouts!.count : min(pastDays, his.workouts?.count ?? 0)
         // let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []
         // sort the workouts so the most recent is on top i think
-        let sortedWorkouts = h.workouts!.prefix(n).sorted { (workout1, workout2) in
+        let sortedWorkouts = his.workouts!.prefix(num).sorted { (workout1, workout2) in
             return workout1.startDate < workout2.startDate
         }
         // data to plot, change based on passed in yAxis value
         let data: [PlottingData] = sortedWorkouts.enumerated().map { index, workout in
-            var y = 0.0
+            var possibleY = 0.0
             if yAxis == "duration" {
-                y = Double(workout.time)
+                possibleY = Double(workout.time)
             } else if yAxis == "volume" {
-                y = workout.totalWeight
+                possibleY = workout.totalWeight
             } else {
-                y = Double(workout.totalReps)
+                possibleY = Double(workout.totalReps)
             }
-            return PlottingData(x: Int(index), y: y, date: workout.startDate)
+            return PlottingData(xAxis: Int(index), yAxis: possibleY, date: workout.startDate)
         }
 
-        let maxX = data.max(by: { $0.x < $1.x })?.x ?? 0
-        let maxY = data.max(by: { $0.y < $1.y })?.y ?? 0
-        let minY = data.min(by: { $0.y < $1.y })?.y ?? 0
-        let totalY = data.reduce(0.0) { $0 + $1.y }
+        let maxX = data.max(by: { $0.xAxis < $1.xAxis })?.xAxis ?? 0
+        let maxY = data.max(by: { $0.yAxis < $1.yAxis })?.yAxis ?? 0
+        let minY = data.min(by: { $0.yAxis < $1.yAxis })?.yAxis ?? 0
+        let totalY = data.reduce(0.0) { $0 + $1.yAxis }
         let avgY =  data.isEmpty ? 0.0 : totalY / Double(data.count)
-//        let maxDate = data.map { $0.date }.max() ?? Date()
-//        let minDate = data.map { $0.date }.min() ?? Date()
+        let lowerBound = minY - (minY / 1.5)
+        let upperBound = maxY + (maxY * 0.05)
 
         var avgText: String {
             if yAxis == "duration" {
@@ -71,10 +73,10 @@ struct LineChart: View {
         }
 
         Chart {
-            ForEach(data) { d in
+            ForEach(data) { datum in
                 LineMark(
-                    x: .value("Day", d.x),
-                    y: .value("Weight", d.y)
+                    x: .value("Day", datum.xAxis),
+                    y: .value("Weight", datum.yAxis)
                 )
                 .foregroundStyle(Color.accentColor)
             }
@@ -83,11 +85,11 @@ struct LineChart: View {
                     .fill(Color.accentColor)
                     .frame(width: 8)
             }
-            ForEach(data) { d in
+            ForEach(data) { datum in
                 AreaMark(
-                    x: .value("Day", d.x),
+                    x: .value("Day", datum.xAxis),
                     yStart: .value("low", 0),
-                    yEnd: .value("high", d.y)
+                    yEnd: .value("high", datum.yAxis)
                 )
                 .foregroundStyle(gradient)
 
@@ -106,12 +108,12 @@ struct LineChart: View {
         .frame(height: 250)
 
         .chartXAxis {
-            AxisMarks(preset: .aligned, values: data.map { $0.x }) { value in
+            AxisMarks(preset: .aligned, values: data.map { $0.xAxis }) { value in
                 if let index = value.as(Int.self) {
                     AxisGridLine()
                     AxisValueLabel(orientation: .vertical, horizontalSpacing: -6.5, verticalSpacing: 6.5) {
-                        if let pd = data.first(where: { $0.x == index }) {
-                            Text("\(pd.date, format: .dateTime.month(.twoDigits).day(.twoDigits))")
+                        if let item = data.first(where: { $0.xAxis == index }) {
+                            Text("\(item.date, format: .dateTime.month(.twoDigits).day(.twoDigits))")
 
                         }
                     }
@@ -130,11 +132,12 @@ struct LineChart: View {
                 }
             }
         }
+
          // y padding that needs a better solution
-        .chartYScale(domain: (minY - (minY / 1.5))...(maxY + (maxY * 0.05)))
+        .chartYScale(domain: min(lowerBound, upperBound)...max(lowerBound, upperBound))
         .chartScrollableAxes(.horizontal)
         // only show max of 14 at a time
-        .chartXVisibleDomain(length: min((n + 1), 14))
+        .chartXVisibleDomain(length: min((num + 1), 14))
         // add one at the beginning and end for padding
         .chartXScale(domain: -1...maxX + 1)
         .chartScrollPosition(initialX: Date.distantFuture)

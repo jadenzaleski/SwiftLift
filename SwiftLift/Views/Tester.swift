@@ -9,7 +9,7 @@ import SwiftUI
 import UIKit
 
 struct Tester: View {
-    @State var i = 0
+    @State var index = 0
     var body: some View {
         VStack {
             Text("Hello World")
@@ -41,10 +41,10 @@ struct Tester: View {
             Text("Hello World")
                 .font(.system(size: 16))
             Button("Tap") {
-                i += 1
-                print("[+] Running Tester: \(i)")
+                index += 1
+                print("[+] Running Tester: \(index)")
 
-                switch i {
+                switch index {
                 case 1:
                     let generator = UINotificationFeedbackGenerator()
                     generator.notificationOccurred(.error)
@@ -80,7 +80,7 @@ struct Tester: View {
                 default:
                     let generator = UISelectionFeedbackGenerator()
                     generator.selectionChanged()
-                    i = 0
+                    index = 0
                 }
             }
         }

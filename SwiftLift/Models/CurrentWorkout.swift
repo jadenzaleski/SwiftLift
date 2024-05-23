@@ -28,7 +28,7 @@ class CurrentWorkout {
     }
 
     static var blank: CurrentWorkout {
-        CurrentWorkout(workout: Workout(startDate: .now, time: 0, activities: [], totalWeight: 0.0, totalReps: 0, totalSets: 0, gym: "Default"))
+        CurrentWorkout(workout: Workout(startDate: .now, time: 0, activities: [],
+                                        totalWeight: 0.0, totalReps: 0, totalSets: 0, gym: "Default"))
     }
-
 }

@@ -35,9 +35,11 @@ struct SetPill: View {
                 .onChange(of: intString) {
                     set.setReps(string: intString)
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
+                .onReceive(NotificationCenter.default
+                    .publisher(for: UITextField.textDidBeginEditingNotification)) { obj in
                     if let textField = obj.object as? UITextField {
-                        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                        textField.selectedTextRange = textField.textRange(
+                            from: textField.beginningOfDocument, to: textField.endOfDocument)
                     }
                 }
             Spacer()
@@ -53,10 +55,12 @@ struct SetPill: View {
                     set.setWeight(string: decString)
                 }
                 .padding(.trailing, 5.0)
-                .onReceive(NotificationCenter.default.publisher(for: UITextField.textDidBeginEditingNotification)) {
+                .onReceive(NotificationCenter.default.publisher(
+                    for: UITextField.textDidBeginEditingNotification)) {
                     obj in
                     if let textField = obj.object as? UITextField {
-                        textField.selectedTextRange = textField.textRange(from: textField.beginningOfDocument, to: textField.endOfDocument)
+                        textField.selectedTextRange = textField.textRange(
+                            from: textField.beginningOfDocument, to: textField.endOfDocument)
                     }
                 }
 
@@ -64,7 +68,8 @@ struct SetPill: View {
         .padding()
         .background(Color("offset"))
         .clipShape(Capsule())
-        .overlay(set.isChecked ? Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
+        .overlay(set.isChecked ?
+                 Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
         .onAppear {
             intString = set.getReps()
             decString = set.getWeight()

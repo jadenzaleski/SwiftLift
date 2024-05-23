@@ -54,7 +54,6 @@ struct SwiftLiftApp: App {
         } catch {
             fatalError("[+] Could not create ModelContainer: \(error)")
         }
-
     }()
 
     var body: some Scene {
@@ -71,57 +70,3 @@ struct SwiftLiftApp: App {
     }
 
 }
-
-/*
-
-import SwiftUI
-import SwiftData
-
-@main
-@MainActor
-struct SwiftLiftApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            History.self, Exercise.self, CurrentWorkout.self
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-        
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-        
-        
-        
-        
-    }()
-    
-    if (history.isEmpty) {
-        print("[+] First time running app, creating empty history.")
-        modelContext.insert(History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"]))
-        //                modelContext.insert(History.sample)
-        
-    }
-    if (cw.isEmpty) {
-        print("[+] No current workout save, creating inital index")
-        modelContext.insert(CurrentWorkout(workout: Workout(startDate: .now, time: 0, activities: [], totalWeight: 0.0, totalReps: 0, totalSets: 0, gym: "Default")))
-    }
-    
-    
-    
-    var body: some Scene {
-        WindowGroup {
-            MainTabView()
-                .onAppear {
-#if DEBUG
-                    UserDefaults.standard.set(false, forKey: "_UIConstraintBasedLayoutLogUnsatisfiable")
-#endif
-                }
-        }
-        .modelContainer(sharedModelContainer)
-        
-    }
-    
-}
-*/

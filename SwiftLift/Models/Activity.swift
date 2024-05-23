@@ -15,7 +15,8 @@ struct Activity: Identifiable, Codable, Hashable {
     var completedDate: Date
     var gym: String
 
-    init(id: UUID = UUID(), name: String, warmUpSets: [SetData] = [], workingSets: [SetData] = [], completedDate: Date = Date(), gym: String) {
+    init(id: UUID = UUID(), name: String, warmUpSets: [SetData] = [], workingSets: [SetData] = [],
+         completedDate: Date = Date(), gym: String) {
         self.id = id
         self.name = name
         self.warmUpSets = warmUpSets
@@ -26,9 +27,12 @@ struct Activity: Identifiable, Codable, Hashable {
 
     static let sampleActivites: [Activity] =
     [
-        Activity(name: "Bench Press", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)), workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym2"),
-        Activity(name: "Back Squat", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)), workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym1"),
-        Activity(name: "Bicep Curl", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)), workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym2")
+        Activity(name: "Bench Press", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)),
+                 workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym2"),
+        Activity(name: "Back Squat", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)),
+                 workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym1"),
+        Activity(name: "Bicep Curl", warmUpSets: SetData.randomSets(count: Int.random(in: 1...3)),
+                 workingSets: SetData.randomSets(count: Int.random(in: 2...6)), gym: "gym2")
     ]
 
     static func randomActivity() -> Activity {

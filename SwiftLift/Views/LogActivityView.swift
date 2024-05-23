@@ -26,8 +26,8 @@ struct LogActivityView: View {
             }
             Divider()
             HStack {
-                let c = activity.warmUpSets.count
-                Text(c == 1 ? "\(c) warmup set:" : "\(c) warmup sets:")
+                let count = activity.warmUpSets.count
+                Text(count == 1 ? "\(count) warmup set:" : "\(count) warmup sets:")
                     .font(.title2)
                 Spacer()
             }
@@ -42,11 +42,11 @@ struct LogActivityView: View {
                             activity.warmUpSets.remove(at: index)
                             // haptic feedback
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        }) {
+                        }, label: {
                             Image(systemName: "trash")
                                 .font(.title2)
                                 .foregroundStyle(Color.red)
-                        }
+                        })
                         .padding(.leading, 5.0)
                     }
                 }
@@ -57,7 +57,7 @@ struct LogActivityView: View {
                 activity.warmUpSets.append(SetData(reps: 0, weight: 0, isChecked: false))
                 // haptic feedback
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            }) {
+            }, label: {
                 HStack {
                     Spacer()
                     Image(systemName: "plus")
@@ -66,12 +66,12 @@ struct LogActivityView: View {
                         .font(.title3)
                     Spacer()
                 }
-            }
+            })
             .padding(.top, 5.0)
 
             HStack {
-                let c = activity.workingSets.count
-                Text(c == 1 ? "\(c) working set:" : "\(c) working sets:")
+                let count = activity.workingSets.count
+                Text(count == 1 ? "\(count) working set:" : "\(count) working sets:")
                     .font(.title2)
                 Spacer()
             }
@@ -86,11 +86,11 @@ struct LogActivityView: View {
                             activity.workingSets.remove(at: index)
                             // haptic feedback
                             UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        }) {
+                        }, label: {
                             Image(systemName: "trash")
                                 .font(.title2)
                                 .foregroundStyle(Color.red)
-                        }
+                        })
                         .padding(.leading, 5.0)
                     }
                 }
@@ -101,7 +101,7 @@ struct LogActivityView: View {
                 activity.workingSets.append(SetData(reps: 0, weight: 0.0, isChecked: false))
                 // haptic feedback
                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            }) {
+            }, label: {
                 HStack {
                     Spacer()
                     Image(systemName: "plus")
@@ -110,7 +110,7 @@ struct LogActivityView: View {
                         .font(.title3)
                     Spacer()
                 }
-            }
+            })
             .padding(.top, 5.0)
 
             HStack {

@@ -44,7 +44,8 @@ struct ExerciseSearch: View {
                                 Text(exercise.name)
                                 Spacer()
                                 Text("\(exercise.count)")
-                                Image(systemName: selectedExercises.contains(exercise.name) ? "checkmark.square.fill" : "square")
+                                Image(systemName: selectedExercises.contains(exercise.name) ?
+                                      "checkmark.square.fill" : "square")
                             }
                             .padding(.vertical, 10.0)
                         }
@@ -61,9 +62,9 @@ struct ExerciseSearch: View {
                                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                                 newExercise = ""
 
-                        }) {
+                        }, label: {
                             Image(systemName: "plus.circle.fill")
-                        }
+                        })
                         .disabled(newExercise.isEmpty)
                         .buttonStyle(BorderlessButtonStyle())
                     }

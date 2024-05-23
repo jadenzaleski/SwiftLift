@@ -12,12 +12,13 @@ import SwiftData
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var history: [History]
-    @Query private var cw: [CurrentWorkout]
+    @Query private var currentWorkout: [CurrentWorkout]
     @SceneStorage("selectedTab") private var selectedTab = 0
     // Adds custom font and background to TabView
     init() {
         UITabBar.appearance().backgroundColor = UIColor(Color("offset"))
-        UITabBarItem.appearance().setTitleTextAttributes([NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
+        UITabBarItem.appearance().setTitleTextAttributes([
+            NSAttributedString.Key.font: UIFont.init(name: "OpenSans-Regular", size: 12)! ], for: .normal)
     }
 
     var body: some View {

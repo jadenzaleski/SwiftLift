@@ -14,7 +14,6 @@ struct SettingsView: View {
     @Query private var history: [History]
     @State private var newGym = ""
     @State private var color = Color.accentColor
-    // TODO: need to add color to app storage
     @AppStorage("selectedTheme") private var selectedTheme = "Automatic"
     @AppStorage("bold") private var bold = false
     @AppStorage("metric") private var metric = false
@@ -69,9 +68,9 @@ struct SettingsView: View {
 
                         Button(action: {
                             addNewGym()
-                        }) {
+                        }, label: {
                             Image(systemName: "plus.circle.fill")
-                        }
+                        })
                         .disabled(newGym.isEmpty)
                     }
                 } header: {
@@ -107,7 +106,9 @@ struct SettingsView: View {
                 } header: {
                     Text("About")
                 } footer: {
-                    Text("Main icon by [Solar Icons](https://www.figma.com/community/file/1166831539721848736?ref=svgrepo.com) in CC Attribution License via [SVG Repo](https://www.svgrepo.com/).")
+                    Text("Main icon by [Solar" +
+                         "Icons](https://www.figma.com/community/file/1166831539721848736?ref=svgrepo.com) in CC" +
+                         "Attribution License via [SVG Repo](https://www.svgrepo.com/).")
                 }
             }
             .navigationTitle("Settings")

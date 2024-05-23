@@ -32,7 +32,8 @@ struct StatsView: View {
     @State private var selectedYDateValue: DateYValue = .volume
     @State private var selectedPastLength: Int = 7
     @State private var selectedGym = "All Gyms"
-    private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+    private let gradient = LinearGradient(gradient: Gradient(colors: [
+        Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
 
@@ -91,7 +92,8 @@ struct StatsView: View {
                     .padding()
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
+                    .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5),
+                            radius: 5, x: 0, y: 0)
 
                     VStack {
                         Picker("Y Value", selection: $selectedYDateValue) {
@@ -135,7 +137,8 @@ struct StatsView: View {
                     .padding()
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
+                    .shadow(color: colorScheme == .dark ?
+                            Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
                     .padding(.bottom, 100)
 //                    VStack {
 //                        Text("hey")
@@ -144,7 +147,8 @@ struct StatsView: View {
 //                    .padding()
 //                    .background()
 //                    .clipShape(RoundedRectangle(cornerRadius: 15))
-//                    .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
+//                    .shadow(color: colorScheme == .dark ?
+//                    Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
 
                 } header: { // TODO: implement gym filter
                     VStack(spacing: 0) {
@@ -183,7 +187,8 @@ struct StatsView: View {
                         .ignoresSafeArea(.all)
                         .padding(.horizontal, -20.0)
 
-                        LinearGradient(colors: [Color(UIColor.systemGray5), .clear], startPoint: .top, endPoint: .bottom)
+                        LinearGradient(colors: [Color(UIColor.systemGray5), .clear],
+                                       startPoint: .top, endPoint: .bottom)
                             .frame(height: 10)
                             .padding(.horizontal, -20.0)
                     }

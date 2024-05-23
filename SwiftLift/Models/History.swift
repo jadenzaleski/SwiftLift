@@ -19,7 +19,8 @@ final class History {
     var gyms: [String]
     var joinDate: Date
 
-    init(workouts: [Workout], totalWorkouts: Int, totalWeight: Double, totalReps: Int, totalSets: Int, totalTime: TimeInterval, gyms: [String], joinDate: Date = Date.now) {
+    init(workouts: [Workout], totalWorkouts: Int, totalWeight: Double,
+         totalReps: Int, totalSets: Int, totalTime: TimeInterval, gyms: [String], joinDate: Date = Date.now) {
         self.workouts = workouts
         self.totalWorkouts = totalWorkouts
         self.totalWeight = totalWeight
@@ -31,11 +32,13 @@ final class History {
     }
 
     static var sample: History {
-        History(workouts: Workout.randomWorkouts(count: 1000), totalWorkouts: 1000, totalWeight: 200050.0, totalReps: 5000, totalSets: 3000, totalTime: 10000000, gyms: ["gym1", "gym2", "gym3"])
+        History(workouts: Workout.randomWorkouts(count: 1000), totalWorkouts: 1000, totalWeight: 200050.0,
+                totalReps: 5000, totalSets: 3000, totalTime: 10000000, gyms: ["gym1", "gym2", "gym3"])
     }
 
     static var blank: History {
-        History(workouts: [], totalWorkouts: 0, totalWeight: 0.0, totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"])
+        History(workouts: [], totalWorkouts: 0, totalWeight: 0.0,
+                totalReps: 0, totalSets: 0, totalTime: 0, gyms: ["Default"])
     }
 
     func addWorkout(workout: Workout) {
@@ -53,9 +56,12 @@ final class History {
     func getTimeFormattedDigits(useDays: Bool) -> String {
         let days = Int(self.totalTime / 86400)
         let remainingTime = self.totalTime - Double(days * 86400)
-        let (hours, minutes, seconds) = (Int(remainingTime / 3600), Int((remainingTime / 60).truncatingRemainder(dividingBy: 60)), Int(remainingTime.truncatingRemainder(dividingBy: 60)))
+        let (hours, minutes, seconds) = (Int(remainingTime / 3600),
+                                         Int((remainingTime / 60).truncatingRemainder(dividingBy: 60)),
+                                         Int(remainingTime.truncatingRemainder(dividingBy: 60)))
         let timeFormat = useDays ? "%02d:%02d:%02d:%02d" : "%02d:%02d:%02d"
-        return useDays ? String(format: timeFormat, abs(days), abs(hours), abs(minutes), abs(seconds)) : String(format: timeFormat, abs(hours + (24 * days)), abs(minutes), abs(seconds))
+        return useDays ? String(format: timeFormat, abs(days), abs(hours), abs(minutes), abs(seconds)) :
+        String(format: timeFormat, abs(hours + (24 * days)), abs(minutes), abs(seconds))
     }
 
     func getTimeFormattedLetters(useDays: Bool) -> String {

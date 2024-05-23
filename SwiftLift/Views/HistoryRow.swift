@@ -9,7 +9,8 @@ import SwiftUI
 
 struct HistoryRow: View {
     var workout: Workout
-    private let gradient = LinearGradient(gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
+    private let gradient = LinearGradient(gradient: Gradient(colors: [
+        Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
         VStack {
@@ -52,5 +53,7 @@ struct HistoryRow: View {
 }
 
 #Preview {
-    HistoryRow(workout: Workout(startDate: Date.now, time: TimeInterval.pi, activities: [Activity(name: "yep", gym: "mm")], totalWeight: 20.0, totalReps: 30, totalSets: 30, gym: "gymString"))
+    HistoryRow(workout: Workout(startDate: Date.now, time: TimeInterval.pi,
+                                activities: [Activity(name: "yep", gym: "mm")],
+                                totalWeight: 20.0, totalReps: 30, totalSets: 30, gym: "gymString"))
 }

@@ -31,7 +31,7 @@ struct WorkoutView: View {
                         Text("\(formatTimeInterval(time))")
                             .font(.title2)
                             .onReceive(timer) { _ in
-                                time = currentWorkout.startDate.timeIntervalSinceNow
+                                time = abs(currentWorkout.startDate.timeIntervalSinceNow)
                             }
 
                         Spacer()
@@ -71,11 +71,11 @@ struct WorkoutView: View {
                                     currentWorkout.activities.remove(at: index)
                                     // haptic feedback
                                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                }) {
+                                }, label: {
                                     Image(systemName: "trash")
                                         .font(.title2)
                                         .foregroundStyle(Color.red)
-                                }
+                                })
                                 .padding(.leading, 5.0)
                             }
                         }
@@ -173,7 +173,8 @@ struct WorkoutView: View {
 }
 
 #Preview {
-    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout), workoutInProgress: .constant(true), selectedGym: .constant("Default"))
+    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout),
+                workoutInProgress: .constant(true), selectedGym: .constant("Default"))
         .modelContainer(for: [History.self, Exercise.self], inMemory: true)
 
 }
