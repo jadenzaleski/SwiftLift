@@ -26,6 +26,7 @@ struct StatsView: View {
             }
             nonmutating set {
                 // do nothing when set becuase we only read this value
+                return
             }
         }
     }
@@ -150,7 +151,7 @@ struct StatsView: View {
 //                    .shadow(color: colorScheme == .dark ?
 //                    Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
 
-                } header: { // TODO: implement gym filter
+                } header: {
                     VStack(spacing: 0) {
                         VStack(spacing: 0) {
                             Spacer()

@@ -107,6 +107,11 @@ struct HomeView: View {
                             }
                         }
                         .padding(10.0)
+                        .onAppear {
+                            if !history[0].gyms.contains(selectedGym) {
+                                selectedGym = history[0].gyms.first ?? "Default"
+                            }
+                        }
                     }
                     .background(Color("offset"))
                     .clipShape(RoundedRectangle(cornerRadius: 15))

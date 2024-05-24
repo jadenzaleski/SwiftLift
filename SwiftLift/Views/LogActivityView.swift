@@ -16,6 +16,7 @@ struct LogActivityView: View {
     @Binding var activity: Activity
     @State var notes = ""
     @SceneStorage("isDeleting") private var isDeleting: Bool = false
+    private let debouncer = Debouncer()
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -126,7 +127,9 @@ struct LogActivityView: View {
                     notes = exercises[getExerciseIndex(name: activity.name)].notes
                 }
                 .onChange(of: notes) {
-                    exercises[getExerciseIndex(name: activity.name)].notes = notes
+                    debouncer.debounce(interval: 3.0) {
+                        exercises[getExerciseIndex(name: activity.name)].notes = notes
+                    }
                 }
                 .background(Color("offset"))
                 .clipShape(RoundedRectangle(cornerRadius: 30))

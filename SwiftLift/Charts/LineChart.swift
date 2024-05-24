@@ -35,15 +35,17 @@ struct LineChart: View {
 
     var body: some View {
         let his = history[0]
-        // n is the number of workouts to display. min of input and count of workouts
+        // num is the number of workouts to display. min of input and count of workouts
         let num = pastDays == -1 ? his.workouts!.count : min(pastDays, his.workouts?.count ?? 0)
         // let dates = h.workouts?.prefix(n).compactMap { $0.startDate } ?? []
         // sort the workouts so the most recent is on top i think
-        let sortedWorkouts = his.workouts!.prefix(num).sorted { (workout1, workout2) in
+        let orderedWorkouts = his.workouts!.sorted { (workout1, workout2) in
             return workout1.startDate < workout2.startDate
         }
+
+        let selectedWorkouts = orderedWorkouts.suffix(num)
         // data to plot, change based on passed in yAxis value
-        let data: [PlottingData] = sortedWorkouts.enumerated().map { index, workout in
+        let data: [PlottingData] = selectedWorkouts.enumerated().map { index, workout in
             var possibleY = 0.0
             if yAxis == "duration" {
                 possibleY = Double(workout.time)
@@ -68,9 +70,9 @@ struct LineChart: View {
 
         var avgText: String {
             if yAxis == "duration" {
-                return formatTimeInterval(avgY)
+                return "Avg: " + formatTimeInterval(avgY)
             } else {
-                return String(Int(avgY))
+                return "Avg: " + formatNumberString(from: avgY)
             }
         }
 
@@ -100,7 +102,7 @@ struct LineChart: View {
                 .foregroundStyle(Color.secondary)
                 .lineStyle(StrokeStyle(lineWidth: 0.8, dash: [10]))
                 .annotation(alignment: .trailing) {
-                    Text("Avg: " + avgText)
+                    Text(avgText)
                         .font(.subheadline).bold()
                         .padding(.trailing, 32)
                         .foregroundStyle(Color.secondary)
@@ -173,9 +175,19 @@ struct LineChart: View {
             }
         }
     }
+
+    func formatNumberString(from number: Double) -> String {
+        let numberFormatter = NumberFormatter()
+        numberFormatter.numberStyle = .decimal
+        if let formattedNumber = numberFormatter.string(from: NSNumber(value: Int(number))) {
+            return formattedNumber
+        } else {
+            return String(Int(number))
+        }
+    }
 }
 
 #Preview {
-    LineChart(pastDays: .constant(30), yAxis: .constant("duration"))
+    LineChart(pastDays: .constant(7), yAxis: .constant("volume"))
         .modelContainer(previewContainer)
 }
