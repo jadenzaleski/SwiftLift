@@ -24,6 +24,7 @@ struct StatsView: View {
                 case .volume: return "volume"
                 }
             }
+            // swiftlint:disable:next unused_setter_value
             nonmutating set {
                 // do nothing when set becuase we only read this value
                 return
