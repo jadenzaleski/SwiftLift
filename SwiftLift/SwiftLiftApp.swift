@@ -39,9 +39,9 @@ struct SwiftLiftApp: App {
             // The below code will only run if the persistent store does not have both.
             if historyNotFound {
                 print("[+] History model not found in persistant store. Creating it...")
-//                container.mainContext.insert(History.blank)
+                container.mainContext.insert(History.blank)
                 // for testing random data:
-                container.mainContext.insert(History.sample)
+//                container.mainContext.insert(History.sample)
                 print("[+] History model created.")
             }
 
