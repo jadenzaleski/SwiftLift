@@ -3,7 +3,8 @@
 //  SwiftLift
 //
 //  Created by Jaden Zaleski on 7/31/23.
-//
+// Green: #5bb275
+// Purple: #604bb2
 
 import SwiftUI
 import SwiftData
