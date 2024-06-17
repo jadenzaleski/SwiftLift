@@ -143,38 +143,57 @@ struct WorkoutView: View {
     }
 
     private func stopWorkout() {
+        // Update current workout time
         currentWorkout.time = time
-        currentWorkout.activities.removeAll { activity in
-            let allSets = activity.warmUpSets + activity.workingSets
-            return !allSets.isEmpty && !allSets.contains { $0.isChecked }
-            //            return !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
+        // Filter activities to get only those with checked sets
+        currentWorkout.activities = currentWorkout.activities.compactMap { activity in
+            // Filter sets within the activity to include only checked sets with non-zero reps and weight
+            let checkedWarmUpSets = activity.warmUpSets.filter { $0.isChecked && $0.reps > 0 && $0.weight > 0 }
+            let checkedWorkingSets = activity.workingSets.filter { $0.isChecked && $0.reps > 0 && $0.weight > 0 }
+            // Check if there are any checked sets in either warm-up or working sets
+            if !checkedWarmUpSets.isEmpty || !checkedWorkingSets.isEmpty {
+                // Replace activity with filtered sets
+                var filteredActivity = activity
+                filteredActivity.warmUpSets = checkedWarmUpSets
+                filteredActivity.workingSets = checkedWorkingSets
+                return filteredActivity
+            } else {
+                // Exclude activity if no sets are checked or all have zero reps or weight
+                return nil
+            }
         }
-        currentWorkout.totalReps += currentWorkout.activities
-            .flatMap { $0.warmUpSets + $0.workingSets }
-            .map { $0.reps }
-            .reduce(0, +)
-        currentWorkout.totalSets += currentWorkout.activities
-            .flatMap { $0.warmUpSets + $0.workingSets }
-            .count
-
-        let flatMapWeight = currentWorkout.activities
-            .flatMap { $0.warmUpSets + $0.workingSets }
-        currentWorkout.totalWeight += flatMapWeight
-            .map { $0.weight * Double($0.reps) }
-            .reduce(0, +)
-
+        // Calculate totals based on checked sets with non-zero reps and weight
+        var totalReps = 0
+        var totalSets = 0
+        var totalWeight = 0.0
+        // Iterate through filtered activities and their sets
+        for activity in currentWorkout.activities {
+            for set in activity.warmUpSets + activity.workingSets {
+                // Include set in totals
+                totalReps += set.reps
+                totalSets += 1
+                totalWeight += Double(set.weight) * Double(set.reps)
+            }
+        }
+        // Assign calculated totals to currentWorkout
+        currentWorkout.totalReps = totalReps
+        currentWorkout.totalSets = totalSets
+        currentWorkout.totalWeight = totalWeight
+        // Set selected gym to current workout
         currentWorkout.gym = selectedGym
-        // add to the histroy array of past workouts
+        // Add current workout to history
         history[0].addWorkout(workout: currentWorkout)
+        // Reset workout in progress flag
         workoutInProgress = false
-        // haptic feedback
+        // Provide haptic feedback for success
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
+
 }
 
 #Preview {
     WorkoutView(currentWorkout: .constant(Workout.sampleWorkout),
                 workoutInProgress: .constant(true), selectedGym: .constant("Default"))
-        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+    .modelContainer(for: [History.self, Exercise.self], inMemory: true)
 
 }
