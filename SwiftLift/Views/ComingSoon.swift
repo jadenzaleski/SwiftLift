@@ -10,6 +10,7 @@ import SwiftUI
 struct ComingSoon: View {
     var body: some View {
         Text("Feature coming soon!")
+        Text("Lorem ipsum dolor sit amet.").font(.custom("Lato-HairlineItalic", size: 36))
     }
 }
 
