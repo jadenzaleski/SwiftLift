@@ -35,6 +35,7 @@
 		D76A5F5F2C212B9100813F51 /* Lato-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F552C212B9100813F51 /* Lato-LightItalic.ttf */; };
 		D76A5F602C212B9100813F51 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F562C212B9100813F51 /* Lato-Thin.ttf */; };
 		D76A5F612C212B9100813F51 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F572C212B9100813F51 /* Lato-Light.ttf */; };
+		D76A5F632C22755600813F51 /* LatoFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76A5F622C22755600813F51 /* LatoFont.swift */; };
 		D77FD0E62B54AA710095644A /* LineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77FD0E52B54AA710095644A /* LineChart.swift */; };
 		D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78474082AC7D73700725EB1 /* ProfileView.swift */; };
 		D78D94722C00E9B900DBEF7C /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78D94712C00E9B900DBEF7C /* Debouncer.swift */; };
@@ -78,6 +79,7 @@
 		D76A5F552C212B9100813F51 /* Lato-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-LightItalic.ttf"; sourceTree = "<group>"; };
 		D76A5F562C212B9100813F51 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
 		D76A5F572C212B9100813F51 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
+		D76A5F622C22755600813F51 /* LatoFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatoFont.swift; sourceTree = "<group>"; };
 		D77FD0E52B54AA710095644A /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
 		D78474082AC7D73700725EB1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		D78D94712C00E9B900DBEF7C /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 			children = (
 				D78D94712C00E9B900DBEF7C /* Debouncer.swift */,
 				D74270552AA90D900020503C /* NumbersOnlyViewModifier.swift */,
+				D76A5F622C22755600813F51 /* LatoFont.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -355,6 +358,7 @@
 				D74270672AA90D910020503C /* Tester.swift in Sources */,
 				D74270662AA90D910020503C /* LogActivityView.swift in Sources */,
 				D742705F2AA90D910020503C /* SettingsView.swift in Sources */,
+				D76A5F632C22755600813F51 /* LatoFont.swift in Sources */,
 				D7A2C00E2B364DF5000E3C58 /* HistoryDetail.swift in Sources */,
 				D74270632AA90D910020503C /* HistoryView.swift in Sources */,
 				D742705C2AA90D910020503C /* MainTabView.swift in Sources */,
