@@ -55,6 +55,7 @@ struct ExerciseSearch: View {
                     }
                     HStack {
                         TextField("Add a new exercise", text: $newExercise)
+                            .font(.lato(type: .regular))
                         Button(action: {
                             newExercise = newExercise.capitalized
                             modelContext.insert(Exercise(name: newExercise, notes: ""))
@@ -71,29 +72,45 @@ struct ExerciseSearch: View {
                     .padding(.vertical, 10.0)
                 } footer: {
                     Text("When adding a new exercise, each name must be unique and contain at least one character.")
+                        .font(.lato(type: .light, size: .caption))
                 }
             }
-            .navigationTitle("Exercises")
+            .navigationBarTitleDisplayMode(.inline)
             .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
             .keyboardType(.alphabet)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button {
                         isPresentingExerciseSearch = false
+                    } label: {
+                        Text("Cancel")
+                            .font(.lato(type: .regular))
                     }
                 }
+
+                ToolbarItem(placement: .principal) {
+                    Text("Exercises")
+                        .font(.lato(type: .light, size: .toolbarTitle))
+
+                }
+
+
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Add(\(selectedExercises.count))") {
+                    Button {
                         for name in selectedExercises {
                             currentWorkout.activities.append(Activity(name: name, gym: currentWorkout.gym))
                         }
                         isPresentingExerciseSearch = false
+                    } label: {
+                        Text("Add(\(selectedExercises.count))")
+                            .font(.lato(type: .regular))
                     }
                 }
             }
         }
     }
 }
+
 #Preview {
     ExerciseSearch(currentWorkout: .constant(Workout.sampleWorkout), isPresentingExerciseSearch: .constant(true))
         .modelContainer(previewContainer)

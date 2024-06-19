@@ -16,18 +16,26 @@ struct HistoryView: View {
         NavigationSplitView {
             if let workouts = history.first?.workouts, !workouts.isEmpty {
                 List(workouts.reversed()) { workout in
-                            NavigationLink {
-                                HistoryDetail(workout: workout)
-                            } label: {
-                                HistoryRow(workout: workout)
-                            }
-                            .navigationTitle("History")
-                        }
-                    } else {
-                        Text("No Workouts Yet")
+                    NavigationLink {
+                        HistoryDetail(workout: workout)
+                    } label: {
+                        HistoryRow(workout: workout)
                     }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("History")
+                            .font(.lato(type: .light, size: .toolbarTitle))
+                    }
+                }
+            } else {
+                Text("No Workouts Yet")
+                    .font(.lato(type: .light, isItalic: true))
+            }
         } detail: {
             Text("Select a Workout")
+                .font(.lato(type: .light, isItalic: true))
+
         }
 
     }
@@ -35,6 +43,6 @@ struct HistoryView: View {
 
 #Preview {
     HistoryView()
-        .modelContainer(for: [History.self, Exercise.self], inMemory: true)
+        .modelContainer(for: [History.self, Exercise.self], inMemory: false)
 
 }

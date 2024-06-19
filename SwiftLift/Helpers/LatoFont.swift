@@ -11,10 +11,31 @@ enum LatoFontType {
     case regular, bold, light, thin, black
 }
 
+enum LatoFontSize {
+    case caption, small, medium, large, toolbarTitle, custom(CGFloat)
+
+    var size: CGFloat {
+        switch self {
+        case .caption:
+            return 13
+        case .small:
+            return 14
+        case .medium:
+            return 18
+        case .large:
+            return 22
+        case .toolbarTitle:
+            return 26
+        case .custom(let size):
+            return size
+        }
+    }
+}
+
 struct LatoFont {
     var type: LatoFontType
     var isItalic: Bool
-    var size: CGFloat
+    var size: LatoFontSize
 
     func font() -> Font {
         let baseName: String
@@ -37,12 +58,14 @@ struct LatoFont {
         if type == .regular && isItalic {
             fontName = "Lato-Italic"
         }
-        return Font.custom(fontName, size: size)
+
+        let fontSize = size.size
+        return Font.custom(fontName, size: fontSize)
     }
 }
 
 extension Font {
-    static func lato(type: LatoFontType, isItalic: Bool = false, size: CGFloat) -> Font {
+    static func lato(type: LatoFontType, isItalic: Bool = false, size: LatoFontSize = .medium) -> Font {
         return LatoFont(type: type, isItalic: isItalic, size: size).font()
     }
 }
