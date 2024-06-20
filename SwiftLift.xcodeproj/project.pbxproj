@@ -36,6 +36,7 @@
 		D76A5F602C212B9100813F51 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F562C212B9100813F51 /* Lato-Thin.ttf */; };
 		D76A5F612C212B9100813F51 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F572C212B9100813F51 /* Lato-Light.ttf */; };
 		D76A5F632C22755600813F51 /* LatoFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76A5F622C22755600813F51 /* LatoFont.swift */; };
+		D76A5F652C23DEF900813F51 /* CustomBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76A5F642C23DEF900813F51 /* CustomBackButton.swift */; };
 		D77FD0E62B54AA710095644A /* LineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77FD0E52B54AA710095644A /* LineChart.swift */; };
 		D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78474082AC7D73700725EB1 /* ProfileView.swift */; };
 		D78D94722C00E9B900DBEF7C /* Debouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78D94712C00E9B900DBEF7C /* Debouncer.swift */; };
@@ -80,6 +81,7 @@
 		D76A5F562C212B9100813F51 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
 		D76A5F572C212B9100813F51 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
 		D76A5F622C22755600813F51 /* LatoFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatoFont.swift; sourceTree = "<group>"; };
+		D76A5F642C23DEF900813F51 /* CustomBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBackButton.swift; sourceTree = "<group>"; };
 		D77FD0E52B54AA710095644A /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
 		D78474082AC7D73700725EB1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		D78D94712C00E9B900DBEF7C /* Debouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Debouncer.swift; sourceTree = "<group>"; };
@@ -111,9 +113,11 @@
 		D78D94702C00E99E00DBEF7C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */,
 				D78D94712C00E9B900DBEF7C /* Debouncer.swift */,
 				D74270552AA90D900020503C /* NumbersOnlyViewModifier.swift */,
 				D76A5F622C22755600813F51 /* LatoFont.swift */,
+				D76A5F642C23DEF900813F51 /* CustomBackButton.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -173,7 +177,6 @@
 				D7384D332AF9EE1500D48669 /* ComingSoon.swift */,
 				D78474082AC7D73700725EB1 /* ProfileView.swift */,
 				D74270562AA90D910020503C /* SetPill.swift */,
-				D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */,
 				D74270532AA90D900020503C /* SettingsView.swift */,
 				D74270522AA90D900020503C /* StatsView.swift */,
 				D742705B2AA90D910020503C /* Tester.swift */,
@@ -371,6 +374,7 @@
 				D74270652AA90D910020503C /* ExerciseSearch.swift in Sources */,
 				D742705E2AA90D910020503C /* StatsView.swift in Sources */,
 				D78D94722C00E9B900DBEF7C /* Debouncer.swift in Sources */,
+				D76A5F652C23DEF900813F51 /* CustomBackButton.swift in Sources */,
 				D73604C12AB3B9050029C09E /* SwiftDataPreviewContainer.swift in Sources */,
 				D74270642AA90D910020503C /* WorkoutPill.swift in Sources */,
 			);

@@ -94,7 +94,6 @@ struct ExerciseSearch: View {
 
                 }
 
-
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         for name in selectedExercises {

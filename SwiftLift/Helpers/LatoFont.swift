@@ -12,20 +12,28 @@ enum LatoFontType {
 }
 
 enum LatoFontSize {
-    case caption, small, medium, large, toolbarTitle, custom(CGFloat)
+    case caption, body, small, medium, subtitle, large, heading, toolbarTitle, title, custom(CGFloat)
 
     var size: CGFloat {
         switch self {
         case .caption:
             return 13
+        case .body:
+            return 16
         case .small:
             return 14
         case .medium:
             return 18
+        case .subtitle:
+            return 20
         case .large:
             return 22
+        case .heading:
+            return 24
         case .toolbarTitle:
             return 26
+        case .title:
+            return 32
         case .custom(let size):
             return size
         }

@@ -28,6 +28,7 @@ struct MainTabView: View {
                 .tabItem {
                     Image(systemName: "dumbbell")
                     Text("Home")
+                        .font(.lato(type: .regular, size: .caption))
                 }
                 .tag(0)
 
@@ -35,12 +36,16 @@ struct MainTabView: View {
                 .tabItem {
                     Image(systemName: "chart.xyaxis.line")
                     Text("Stats")
+                        .font(.lato(type: .regular, size: .caption))
+
                 }
                 .tag(1)
             HistoryView()
                 .tabItem {
                     Image(systemName: "clock")
                     Text("History")
+                        .font(.lato(type: .regular, size: .caption))
+
                 }
                 .tag(2)
         }

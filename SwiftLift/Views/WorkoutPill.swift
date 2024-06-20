@@ -13,32 +13,30 @@ struct WorkoutPill: View {
     @State private var inProgress: Bool = false
     var body: some View {
         NavigationStack {
-            NavigationLink {
-                LogActivityView(activity: $activity)
-            } label: {
+            NavigationLink(destination: LogActivityView(activity: $activity).withCustomBackButton()) {
                 HStack {
                     if isComplete {
                         Image(systemName: "checkmark.circle.fill")
-                            .font(.title2)
+                            .font(.custom("", size: 24))
                             .foregroundStyle(.green)
                     } else if inProgress {
                         Image(systemName: "exclamationmark.circle")
-                            .font(.title2)
+                            .font(.custom("", size: 24))
                             .foregroundStyle(.yellow)
                     } else {
                         Image(systemName: "circle")
-                            .font(.title2)
+                            .font(.custom("", size: 24))
                             .foregroundStyle(Color("ld"))
                     }
                     Text("\(activity.name)")
-                        .font(.title2)
                         .padding(.leading)
                         .foregroundStyle(Color.ld)
                     Spacer()
                     Image(systemName: "chevron.forward")
-                        .font(.title2)
+
                         .foregroundStyle(Color.ld)
                 }
+                .font(.lato(type: .regular, size: .subtitle))
                 .padding()
                 .background(Color("offset"))
                 .clipShape(Capsule())

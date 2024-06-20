@@ -13,16 +13,16 @@ struct HistoryView: View {
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
     var body: some View {
-        NavigationSplitView {
+        NavigationStack {
             if let workouts = history.first?.workouts, !workouts.isEmpty {
                 List(workouts.reversed()) { workout in
-                    NavigationLink {
-                        HistoryDetail(workout: workout)
-                    } label: {
+                    NavigationLink(destination: HistoryDetail(workout: workout)) {
                         HistoryRow(workout: workout)
                     }
                 }
+                .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
+
                     ToolbarItem(placement: .principal) {
                         Text("History")
                             .font(.lato(type: .light, size: .toolbarTitle))
@@ -32,12 +32,7 @@ struct HistoryView: View {
                 Text("No Workouts Yet")
                     .font(.lato(type: .light, isItalic: true))
             }
-        } detail: {
-            Text("Select a Workout")
-                .font(.lato(type: .light, isItalic: true))
-
         }
-
     }
 }
 
