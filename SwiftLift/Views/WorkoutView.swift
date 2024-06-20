@@ -12,6 +12,7 @@ struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
     @Query private var history: [History]
+    @Query private var exercises: [Exercise]
     @Query private var currentWorkoutSave: [CurrentWorkout]
     @Binding var currentWorkout: Workout
     @Binding var workoutInProgress: Bool
@@ -169,6 +170,9 @@ struct WorkoutView: View {
                 totalSets += 1
                 totalWeight += Double(set.weight) * Double(set.reps)
             }
+            // Update exercise
+            var exercise = exercises.first(where: {$0.name == activity.name})
+            exercise?.update(activity: activity)
         }
         // Assign calculated totals to currentWorkout
         currentWorkout.totalReps = totalReps
