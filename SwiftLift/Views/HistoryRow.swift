@@ -18,6 +18,7 @@ struct HistoryRow: View {
                 Image(systemName: "calendar")
                     .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
                 Text("\(workout.startDate.formatted(.dateTime.month().day().year().hour().minute()))")
+                    .font(.lato(type: .regular, size: .large))
                 Spacer()
             }
             .padding(.bottom, 1.0)
@@ -27,10 +28,12 @@ struct HistoryRow: View {
                 Image(systemName: "mappin.and.ellipse")
                     .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
                 Text("\(workout.gym)")
+                    .font(.lato(type: .regular))
                     .padding(.trailing, 5.0)
                 Image(systemName: "clock")
                     .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
                 Text("\(formatTimeInterval(workout.time))")
+                    .font(.lato(type: .regular))
                     .padding(.trailing, 5.0)
                 Spacer()
             }

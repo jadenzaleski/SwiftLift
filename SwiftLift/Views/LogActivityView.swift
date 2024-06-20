@@ -11,6 +11,7 @@ import SwiftData
 struct LogActivityView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
+//    @Environment(\.dismiss) var dismiss
     @Query private var history: [History]
     @Query private var exercises: [Exercise]
     @Binding var activity: Activity
@@ -22,14 +23,14 @@ struct LogActivityView: View {
         ScrollView(showsIndicators: false) {
             HStack {
                 Text("\(activity.name)")
-                    .font(.largeTitle)
+                    .font(.lato(type: .light, size: .title))
                 Spacer()
             }
             Divider()
             HStack {
                 let count = activity.warmUpSets.count
                 Text(count == 1 ? "\(count) warmup set:" : "\(count) warmup sets:")
-                    .font(.title2)
+                    .font(.lato(type: .light, size: .subtitle))
                 Spacer()
             }
             .padding(.horizontal)
@@ -64,7 +65,7 @@ struct LogActivityView: View {
                     Image(systemName: "plus")
                         .font(.title3)
                     Text("Add warm up set")
-                        .font(.title3)
+                        .font(.lato(type: .regular, size: .subtitle))
                     Spacer()
                 }
             })
@@ -73,7 +74,7 @@ struct LogActivityView: View {
             HStack {
                 let count = activity.workingSets.count
                 Text(count == 1 ? "\(count) working set:" : "\(count) working sets:")
-                    .font(.title2)
+                    .font(.lato(type: .light, size: .subtitle))
                 Spacer()
             }
             .padding([.top, .horizontal])
@@ -108,7 +109,7 @@ struct LogActivityView: View {
                     Image(systemName: "plus")
                         .font(.title3)
                     Text("Add working set")
-                        .font(.title3)
+                        .font(.lato(type: .regular, size: .subtitle))
                     Spacer()
                 }
             })
@@ -116,13 +117,14 @@ struct LogActivityView: View {
 
             HStack {
                 Text("Notes:")
-                    .font(.title2)
+                    .font(.lato(type: .light, size: .subtitle))
                     .padding(.leading)
                 Spacer()
             }
             .padding(.top)
             TextField("Add note", text: $notes, axis: .vertical)
                 .padding(/*@START_MENU_TOKEN@*/.all/*@END_MENU_TOKEN@*/)
+                .font(.lato(type: .regular, size: .body))
                 .onAppear {
                     notes = exercises[getExerciseIndex(name: activity.name)].notes
                 }
@@ -140,14 +142,19 @@ struct LogActivityView: View {
         .scrollDismissesKeyboard(.immediately)
         .padding(.horizontal)
         // for some strange reason xcode throws and error if you combine the below two toolbars
+        .navigationBarBackButtonHidden(true)
         .toolbar {
-            Button(isDeleting ? "Done" : "Edit") {
-                withAnimation(.interactiveSpring) {
-                    isDeleting.toggle()
+            ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        withAnimation(.interactiveSpring) {
+                            isDeleting.toggle()
+                        }
+                    } label: {
+                        Text(isDeleting ? "Done" : "Edit")
+                            .font(.lato(type: .regular))
+                    }
                 }
-            }
-        }
-        .toolbar {
+
             ToolbarItemGroup(placement: .keyboard) {
                 Spacer()
                 Button {
@@ -167,5 +174,5 @@ struct LogActivityView: View {
 
 #Preview {
     LogActivityView(activity: .constant(Activity.sampleActivites[0]))
-        .modelContainer(previewContainer)
+        .modelContainer(for: [History.self, Exercise.self], inMemory: false)
 }

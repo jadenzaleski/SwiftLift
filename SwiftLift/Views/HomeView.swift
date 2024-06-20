@@ -36,8 +36,7 @@ struct HomeView: View {
                             }
                         } label: {
                             Text("Lifetime")
-                                .font(.headline)
-                                .fontWeight(.bold)
+                                .font(.lato(type: .bold, size: .medium))
                             Image(systemName: "chevron.left")
                                 .rotationEffect(.degrees(showLifetime ? -90 : 0))
                         }
@@ -49,8 +48,11 @@ struct HomeView: View {
                             HStack {
                                 Image(systemName: "number")
                                 Text("\(history[0].totalWorkouts)")
+                                    .font(.lato(type: .regular, size: .body))
                                 Spacer()
                                 Text("\(history[0].getTimeFormattedLetters(useDays: true))")
+                                    .font(.lato(type: .regular, size: .body))
+
                                 Image(systemName: "clock")
                             }
                             .padding(.horizontal)
@@ -58,8 +60,11 @@ struct HomeView: View {
                             HStack {
                                 Image(systemName: "repeat")
                                 Text("\(history[0].totalReps)")
+                                    .font(.lato(type: .regular, size: .body))
+
                                 Spacer()
                                 Text("\(Int(history[0].totalWeight))")
+                                    .font(.lato(type: .regular, size: .body))
                                 Image(systemName: "scalemass")
                             }
                             .padding(.horizontal)
@@ -86,7 +91,8 @@ struct HomeView: View {
 
                             }
                             Text("Start a Workout")
-                                .fontWeight(Font.Weight.bold)
+                                .font(.lato(type: .black, size: .medium))
+
                         }
                         .padding(25.0)
                         .foregroundStyle(Color("mainSystemColor"))
@@ -100,12 +106,18 @@ struct HomeView: View {
                     HStack {
                         Text("Gym:")
                             .padding(10.0)
+                            .font(.lato(type: .regular, size: .medium))
+
                         Spacer()
                         Picker("Select a gym", selection: $selectedGym) {
                             ForEach(history[0].gyms, id: \.self) { gym in
-                                Text(gym).tag(gym)
+                                Text(gym)
+                                    .font(.lato(type: .regular, size: .medium))
+                                    .tag(gym)
+
                             }
                         }
+
                         .padding(10.0)
                         .onAppear {
                             if !history[0].gyms.contains(selectedGym) {
@@ -124,13 +136,14 @@ struct HomeView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        NavigationLink(destination: ProfileView()) {
+                        NavigationLink(destination: ProfileView().withCustomBackButton()) {
                             Image(systemName: "person.crop.circle")
                         }
 
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
-                        NavigationLink(destination: SettingsView()) {
+                        NavigationLink(destination: SettingsView().withCustomBackButton()
+) {
                             Image(systemName: "gear")
                         }
                     }

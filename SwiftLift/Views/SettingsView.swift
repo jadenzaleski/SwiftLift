@@ -36,6 +36,7 @@ struct SettingsView: View {
                     }
                 } header: {
                     Text("General")
+                        .font(.lato(type: .regular, size: .caption))
                 }
 
                 Section {
@@ -52,6 +53,7 @@ struct SettingsView: View {
 
                 } header: {
                     Text("Appearance")
+                        .font(.lato(type: .regular, size: .caption))
                 }
 
                 Section {
@@ -75,8 +77,11 @@ struct SettingsView: View {
                     }
                 } header: {
                     Text("Gyms")
+                        .font(.lato(type: .regular, size: .caption))
                 } footer: {
                     Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
+                        .font(.lato(type: .light, size: .caption))
+
                 }
 
                 Section {
@@ -98,21 +103,45 @@ struct SettingsView: View {
                     }
                 } header: {
                     Text("Feedback")
+                        .font(.lato(type: .regular, size: .caption))
                 }
 
                 Section {
                     Text("Version: \(appVersion ?? "-")")
                     Text("Build: \(buildNumber ?? "-")")
+                    Link(destination: URL(string: "https://github.com")!) {
+                        HStack {
+                            Image("github")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
+                            Text("Contribute")
+                                .foregroundColor(.primary)
+                            Spacer()
+                            Image(systemName: "chevron.right") // Arrow indicator
+                                .font(.custom("", size: 13))
+                                .foregroundStyle(Color(UIColor.lightGray))
+                        }
+                    }
+
                 } header: {
                     Text("About")
                 } footer: {
-                    Text("Main icon by [Solar" +
-                         "Icons](https://www.figma.com/community/file/1166831539721848736?ref=svgrepo.com) in CC" +
-                         "Attribution License via [SVG Repo](https://www.svgrepo.com/).")
+                    // The below text needs to be in one string to allow for
+                    // swift to recognize markdown.
+                    // swiftlint:disable:next line_length
+                    Text("Main icon by [SolarIcons](https://www.figma.com/community/file/1166831539721848736?ref=svgrepo.com) in CC Attribution License via [SVG Repo](https://www.svgrepo.com/).")
+                    .font(.lato(type: .light, size: .caption))
+
                 }
             }
-            .navigationTitle("Settings")
+            .font(.lato(type: .regular, size: .body))
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Settings")
+                        .font(.lato(type: .light, size: .toolbarTitle))
+                }
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
                     Button {

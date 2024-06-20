@@ -38,59 +38,53 @@ struct StatsView: View {
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
-
         ScrollView {
             LazyVStack(alignment: .center, spacing: 20, pinnedViews: .sectionHeaders) {
                 Section {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Lifetime totals:")
-                            .font(.title3)
-                            .bold()
+                            .font(.lato(type: .light, size: .subtitle))
                         Divider()
                             .padding(.vertical, 3)
 
                         HStack {
                             Image(systemName: "number")
+                                .fontWeight(.regular)
                             Text("Workouts:")
-                                .bold()
                             Text("\(history[0].totalWorkouts)")
-                                .bold()
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "clock")
+                                .fontWeight(.regular)
                             Text("Time:")
-                                .bold()
                             Text("\(formatTimeInterval(history[0].totalTime))")
-                                .bold()
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "scalemass")
+                                .fontWeight(.regular)
                             Text("Weight:")
-                                .bold()
                             Text("\(Int(history[0].totalWeight))")
-                                .bold()
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "checklist.checked")
+                                .fontWeight(.regular)
                             Text("Sets:")
-                                .bold()
                             Text("\(history[0].totalSets)")
-                                .bold()
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "repeat")
+                                .fontWeight(.regular)
                             Text("Reps:")
-                                .bold()
                             Text("\(history[0].totalReps)")
-                                .bold()
                                 .foregroundStyle(gradient)
                         }
 
                     }
+                    .font(.lato(type: .regular, size: .body))
                     .padding()
                     .background()
                     .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -117,19 +111,18 @@ struct StatsView: View {
 
                         HStack {
                             Text("\(selectedYDateValue.text.capitalized) vs. Date")
-                                .font(.title3)
-                                .bold()
+                                .font(.lato(type: .light, size: .subtitle))
                             Spacer()
                         }
                         .padding(.top, 20.0)
                         HStack {
                             if selectedPastLength == -1 {
                                 Text("All workouts")
-                                    .font(.subheadline)
+                                    .font(.lato(type: .light, size: .body))
                                     .foregroundStyle(.secondary)
                             } else {
                                 Text("Past \(selectedPastLength) workouts")
-                                    .font(.subheadline)
+                                    .font(.lato(type: .light, size: .body))
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
@@ -142,52 +135,24 @@ struct StatsView: View {
                     .shadow(color: colorScheme == .dark ?
                             Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
                     .padding(.bottom, 100)
-//                    VStack {
-//                        Text("hey")
-//                            .padding(100)
-//                    }
-//                    .padding()
-//                    .background()
-//                    .clipShape(RoundedRectangle(cornerRadius: 15))
-//                    .shadow(color: colorScheme == .dark ?
-//                    Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
 
                 } header: {
                     VStack(spacing: 0) {
                         VStack(spacing: 0) {
                             Spacer()
                             HStack {
-                                Text("Stats")
-                                    .font(.largeTitle)
+                                Spacer()
+                                Text("Statistics")
+                                    .font(.lato(type: .light, size: .toolbarTitle))
                                 Spacer()
 
-//                                Menu {
-//                                    Picker("Select a gym", selection: $selectedGym) {
-//                                        Text("All Gyms").tag("All Gyms")
-//                                        ForEach(history[0].gyms, id: \.self) { gym in
-//                                            Text(gym).tag(gym)
-//                                        }
-//                                        
-//                                    }
-//                                    .tint(.black)
-//                                } label: {
-//                                    Image(systemName: "mappin.and.ellipse")
-//                                        .font(.title)
-//                                        .tint(.black)
-//                                    Text(selectedGym)
-//                                        .font(.largeTitle)
-//                                        .tint(.black)
-//                                }
-
                             }
-                            .padding(.horizontal, 20)
-                            .padding(.bottom, 5.0)
+                            .padding(.bottom, 10)
 
                         }
-                        .frame(height: 120)
+                        .frame(height: 90)
                         .background(Color("offset"))
                         .ignoresSafeArea(.all)
-                        .padding(.horizontal, -20.0)
 
                         LinearGradient(colors: [Color(UIColor.systemGray5), .clear],
                                        startPoint: .top, endPoint: .bottom)

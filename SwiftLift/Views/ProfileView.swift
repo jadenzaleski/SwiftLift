@@ -20,16 +20,16 @@ struct ProfileView: View {
                 .foregroundStyle(Color.accentColor)
             HStack {
                 TextField("Name", text: $name)
-                    .font(.title)
+                    .font(.lato(type: .regular, size: .title))
                     .multilineTextAlignment(.center)
 
             }
             HStack {
                 Text("Joined:")
-                    .font(.callout)
                 Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
-                    .font(.callout)
             }
+            .padding(.vertical, 5)
+
             VStack {
                 HStack {
                     Image(systemName: "number")
@@ -50,6 +50,7 @@ struct ProfileView: View {
                 .padding(.horizontal)
             }
         }
+        .font(.lato(type: .regular, size: .body))
     }
 }
 

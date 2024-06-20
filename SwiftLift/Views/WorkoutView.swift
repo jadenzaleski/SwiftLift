@@ -27,9 +27,7 @@ struct WorkoutView: View {
                 VStack(spacing: 0) {
                     HStack {
                         Image(systemName: "timer")
-                            .font(.title2)
                         Text("\(formatTimeInterval(time))")
-                            .font(.title2)
                             .onReceive(timer) { _ in
                                 time = abs(currentWorkout.startDate.timeIntervalSinceNow)
                             }
@@ -37,16 +35,14 @@ struct WorkoutView: View {
                         Spacer()
 
                         Text(selectedGym)
-                            .font(.title2)
                             .lineLimit(1)
                         Image(systemName: "mappin.circle")
-                            .font(.title2)
                     }
-                    .padding()
+                    .font(.lato(type: .light, size: .heading))
+                    .padding(.vertical)
                     Spacer()
                     HStack {
                         Text("\(currentWorkout.activities.count) Exercises:")
-                            .font(.title)
                         Spacer()
                         Button {
                             withAnimation(.interactiveSpring) {
@@ -55,11 +51,10 @@ struct WorkoutView: View {
                         } label: {
                             Image(systemName: "pencil")
                                 .foregroundStyle(isDeleting ? .red : .blue)
-                                .font(.title)
                         }
                     }
-                    .padding(.horizontal)
-                    .padding(.vertical, 5.0)
+                    .font(.lato(type: .light, size: .heading))
+                    .padding(.bottom, 10.0)
 
                     ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, _ in
                         HStack {
@@ -80,17 +75,16 @@ struct WorkoutView: View {
                             }
                         }
                     }
-                    .padding(.vertical, 5.0)
+                    .padding(.vertical, 5)
 
                     Button {
                         isPresentingExerciseSearch.toggle()
                     } label: {
                         HStack {
                             Image(systemName: "plus")
-                                .font(.title2)
                             Text("Add exercise")
-                                .font(.title2)
                         }
+                        .font(.lato(type: .regular, size: .subtitle))
                         .padding(10.0)
                     }
                 }
@@ -110,6 +104,7 @@ struct WorkoutView: View {
                                 workoutInProgress = false
                             } label: {
                                 Text("Confirm")
+
                             }
                         } message: {
                             Text("All recorded data will be lost. This action cannot be undone.")
