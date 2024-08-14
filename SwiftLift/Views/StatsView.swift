@@ -38,8 +38,8 @@ struct StatsView: View {
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
-        ScrollView {
-            LazyVStack(alignment: .center, spacing: 20, pinnedViews: .sectionHeaders) {
+        NavigationStack {
+            List {
                 Section {
                     VStack(alignment: .leading, spacing: 5) {
                         Text("Lifetime totals:")
@@ -90,7 +90,9 @@ struct StatsView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 15))
                     .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray5),
                             radius: 5, x: 0, y: 0)
-
+                }
+                .listRowInsets(EdgeInsets())
+                Section {
                     VStack {
                         Picker("Y Value", selection: $selectedYDateValue) {
                             Text("Volume").tag(DateYValue.volume)
@@ -131,43 +133,19 @@ struct StatsView: View {
                     }
                     .padding()
                     .background()
-                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                    .shadow(color: colorScheme == .dark ?
-                            Color.clear : Color(UIColor.systemGray5), radius: 5, x: 0, y: 0)
-                    .padding(.bottom, 100)
 
-                } header: {
-                    VStack(spacing: 0) {
-                        VStack(spacing: 0) {
-                            Spacer()
-                            HStack {
-                                Spacer()
-                                Text("Statistics")
-                                    .font(.lato(type: .light, size: .toolbarTitle))
-                                Spacer()
-
-                            }
-                            .padding(.bottom, 10)
-
-                        }
-                        .frame(height: 90)
-                        .background(Color("offset"))
-                        .ignoresSafeArea(.all)
-
-                        LinearGradient(colors: [Color(UIColor.systemGray5), .clear],
-                                       startPoint: .top, endPoint: .bottom)
-                            .frame(height: 10)
-                            .padding(.horizontal, -20.0)
-                    }
                 }
-
+                .listRowInsets(EdgeInsets())
             }
-            .padding()
-
+            .listSectionSpacing(15)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text("Statistics")
+                        .font(.lato(type: .light, size: .toolbarTitle))
+                }
+            }
         }
-        .background(Color("offset"))
-        .ignoresSafeArea(.all)
-
     }
 
     // format the times into 0h 0m
@@ -179,7 +157,6 @@ struct StatsView: View {
         guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
             return "Invalid Duration"
         }
-
         return formattedDuration
     }
 
