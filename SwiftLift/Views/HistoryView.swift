@@ -22,7 +22,6 @@ struct HistoryView: View {
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-
                     ToolbarItem(placement: .principal) {
                         Text("History")
                             .font(.lato(type: .light, size: .toolbarTitle))
