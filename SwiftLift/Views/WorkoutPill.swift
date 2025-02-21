@@ -12,48 +12,47 @@ struct WorkoutPill: View {
     @State private var isComplete: Bool = false
     @State private var inProgress: Bool = false
     var body: some View {
-        NavigationStack {
-            NavigationLink(destination: LogActivityView(activity: $activity).withCustomBackButton()) {
-                HStack {
-                    if isComplete {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.custom("", size: 24))
-                            .foregroundStyle(.green)
-                    } else if inProgress {
-                        Image(systemName: "exclamationmark.circle")
-                            .font(.custom("", size: 24))
-                            .foregroundStyle(.yellow)
-                    } else {
-                        Image(systemName: "circle")
-                            .font(.custom("", size: 24))
-                            .foregroundStyle(Color("ld"))
-                    }
-                    Text("\(activity.name)")
-                        .padding(.leading)
-                        .foregroundStyle(Color.ld)
-                    Spacer()
-                    Image(systemName: "chevron.forward")
-
-                        .foregroundStyle(Color.ld)
+        NavigationLink(destination: LogActivityView(activity: $activity).withCustomBackButton()) {
+            HStack {
+                if isComplete {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.custom("", size: 24))
+                        .foregroundStyle(.green)
+                } else if inProgress {
+                    Image(systemName: "exclamationmark.circle")
+                        .font(.custom("", size: 24))
+                        .foregroundStyle(.yellow)
+                } else {
+                    Image(systemName: "circle")
+                        .font(.custom("", size: 24))
+                        .foregroundStyle(Color("ld"))
                 }
-                .font(.lato(type: .regular, size: .subtitle))
-                .padding()
-                .background(Color("offset"))
-                .clipShape(Capsule())
-                .overlay(isComplete ?
-                         Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
-                .onChange(of: (activity.warmUpSets + activity.workingSets)) {
-                    let allSets = activity.warmUpSets + activity.workingSets
-                    isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
-                    inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
-                }
-                .onAppear {
-                    let allSets = activity.warmUpSets + activity.workingSets
-                    isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
-                    inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
-                }
+                Text("\(activity.name)")
+                    .padding(.leading)
+                    .foregroundStyle(Color.ld)
+                Spacer()
+                Image(systemName: "chevron.forward")
+                
+                    .foregroundStyle(Color.ld)
+            }
+            .font(.lato(type: .regular, size: .subtitle))
+            .padding()
+            .background(Color("offset"))
+            .clipShape(Capsule())
+            .overlay(isComplete ?
+                     Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
+            .onChange(of: (activity.warmUpSets + activity.workingSets)) {
+                let allSets = activity.warmUpSets + activity.workingSets
+                isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
+                inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
+            }
+            .onAppear {
+                let allSets = activity.warmUpSets + activity.workingSets
+                isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
+                inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
             }
         }
+        .id(UUID())
     }
 }
 

@@ -23,106 +23,104 @@ struct WorkoutView: View {
     @State var time = TimeInterval()
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var body: some View {
-        NavigationStack {
-            ScrollView(showsIndicators: false) {
-                VStack(spacing: 0) {
-                    HStack {
-                        Image(systemName: "timer")
-                        Text("\(formatTimeInterval(time))")
-                            .onReceive(timer) { _ in
-                                time = abs(currentWorkout.startDate.timeIntervalSinceNow)
-                            }
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                HStack {
+                    Image(systemName: "timer")
+                    Text("\(formatTimeInterval(time))")
+                        .onReceive(timer) { _ in
+                            time = abs(currentWorkout.startDate.timeIntervalSinceNow)
+                        }
 
-                        Spacer()
-
-                        Text(selectedGym)
-                            .lineLimit(1)
-                        Image(systemName: "mappin.circle")
-                    }
-                    .font(.lato(type: .light, size: .heading))
-                    .padding(.vertical)
                     Spacer()
-                    HStack {
-                        Text("\(currentWorkout.activities.count) Exercises:")
-                        Spacer()
-                        Button {
-                            withAnimation(.interactiveSpring) {
-                                isDeleting.toggle()
-                            }
-                        } label: {
-                            Image(systemName: "pencil")
-                                .foregroundStyle(isDeleting ? .red : .blue)
-                        }
-                    }
-                    .font(.lato(type: .light, size: .heading))
-                    .padding(.bottom, 10.0)
 
-                    ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, _ in
-                        HStack {
-                            WorkoutPill(activity: $currentWorkout.activities[index])
-                                .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4),
-                                        radius: 5)
-                            if isDeleting {
-                                Button(action: {
-                                    currentWorkout.activities.remove(at: index)
-                                    // haptic feedback
-                                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                }, label: {
-                                    Image(systemName: "trash")
-                                        .font(.title2)
-                                        .foregroundStyle(Color.red)
-                                })
-                                .padding(.leading, 5.0)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 5)
-
+                    Text(selectedGym)
+                        .lineLimit(1)
+                    Image(systemName: "mappin.circle")
+                }
+                .font(.lato(type: .light, size: .heading))
+                .padding(.vertical)
+                Spacer()
+                HStack {
+                    Text("\(currentWorkout.activities.count) Exercises:")
+                    Spacer()
                     Button {
-                        isPresentingExerciseSearch.toggle()
+                        withAnimation(.interactiveSpring) {
+                            isDeleting.toggle()
+                        }
                     } label: {
-                        HStack {
-                            Image(systemName: "plus")
-                            Text("Add exercise")
-                        }
-                        .font(.lato(type: .regular, size: .subtitle))
-                        .padding(10.0)
+                        Image(systemName: "pencil")
+                            .foregroundStyle(isDeleting ? .red : .blue)
                     }
                 }
-                .padding(.horizontal)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarLeading) {
-                        Button {
-                            showDeleteAlert = true
-                        } label: {
-                            Image(systemName: "xmark")
-                        }
-                        .alert(
-                            "Cancel your lift?",
-                            isPresented: $showDeleteAlert
-                        ) {
-                            Button(role: .destructive) {
-                                workoutInProgress = false
-                            } label: {
-                                Text("Confirm")
+                .font(.lato(type: .light, size: .heading))
+                .padding(.bottom, 10.0)
 
-                            }
-                        } message: {
-                            Text("All recorded data will be lost. This action cannot be undone.")
-                        }
-                    }
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button {
-                            stopWorkout()
-                        } label: {
-                            Image(systemName: "flag.checkered")
+                ForEach(Array(currentWorkout.activities.enumerated()), id: \.element.id) { index, _ in
+                    HStack {
+                        WorkoutPill(activity: $currentWorkout.activities[index])
+                            .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4),
+                                    radius: 5)
+                        if isDeleting {
+                            Button(action: {
+                                currentWorkout.activities.remove(at: index)
+                                // haptic feedback
+                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                            }, label: {
+                                Image(systemName: "trash")
+                                    .font(.title2)
+                                    .foregroundStyle(Color.red)
+                            })
+                            .padding(.leading, 5.0)
                         }
                     }
                 }
+                .padding(.vertical, 5)
+
+                Button {
+                    isPresentingExerciseSearch.toggle()
+                } label: {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("Add exercise")
+                    }
+                    .font(.lato(type: .regular, size: .subtitle))
+                    .padding(10.0)
+                }
             }
-            .sheet(isPresented: $isPresentingExerciseSearch) {
-                ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
+            .padding(.horizontal)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showDeleteAlert = true
+                    } label: {
+                        Image(systemName: "xmark")
+                    }
+                    .alert(
+                        "Cancel your lift?",
+                        isPresented: $showDeleteAlert
+                    ) {
+                        Button(role: .destructive) {
+                            workoutInProgress = false
+                        } label: {
+                            Text("Confirm")
+
+                        }
+                    } message: {
+                        Text("All recorded data will be lost. This action cannot be undone.")
+                    }
+                }
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button {
+                        stopWorkout()
+                    } label: {
+                        Image(systemName: "flag.checkered")
+                    }
+                }
             }
+        }
+        .sheet(isPresented: $isPresentingExerciseSearch) {
+            ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
         }
     }
 
