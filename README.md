@@ -59,9 +59,6 @@ SwiftLift is a comprehensive fitness-tracking app designed to help you monitor y
   <li>Build and run the app on your device or simulator.</li>
 </ol>
 <hr>
-<h3>Contributing</h3>
-<p>Refer to the Contribution Guide <a href="https://github.com/jadenzaleski/SwiftLift/blob/257d0ca99159e89952ee3dc60d6f59f9cf68bbcf/CONTRIBUTING.md">here</a>.</p>
-<hr>
 <h3>Activity</h3>
 <img alt="stats" src="https://repobeats.axiom.co/api/embed/86f2ab22b543bf7ab5a2be344bb944b05753f303.svg" width=100%>
 
