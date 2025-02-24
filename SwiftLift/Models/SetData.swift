@@ -6,48 +6,35 @@
 //
 
 import Foundation
+import SwiftData
 
-struct SetData: Identifiable, Codable, Hashable {
-    var id = UUID()
+/// Represents a set of an ``Exercise`` during a ``Workout``. Each set records the number of repetitions, weight lifted, and whether it is complete.
+/// You can create a `SetData` instance using the ``init(reps:weight:isComplete:parentActivity:)`` initializer.
+@Model
+final class SetData {
+    /// The number of repetitions in the set.
     var reps: Int
-    var weight: Double
-    var isChecked: Bool = false
 
-    init(id: UUID = UUID(), reps: Int, weight: Double, isChecked: Bool) {
+    /// The weight lifted during the set.
+    var weight: Int
+
+    /// A boolean indicating if the set is completed.
+    var isComplete: Bool
+
+    /// The parent ``Activity`` of this ``SetData``.  Relationship handled in ``Activity``.
+    var parentActivity: Activity?
+
+    /// Initializes a new ``SetData`` instance.
+    ///
+    /// - Parameters:
+    ///   - reps: The number of repetitions in the set.
+    ///   - weight: The weight lifted for each rep in the set.
+    ///   - isComplete: A boolean indicating whether the set is complete.
+    ///   - parentActivity: The ``Activity`` this set is associated with (default is `nil`).
+    init(reps: Int, weight: Int, isComplete: Bool, parentActivity: Activity? = nil) {
         self.reps = reps
         self.weight = weight
-        self.isChecked = isChecked
-    }
-
-    static func randomSet() -> SetData {
-        let randomReps = Int.random(in: 1...12)
-        let randomWeight = Double.random(in: 10.0...315.0).rounded(.down)
-        let randomIsChecked = Bool.random()
-
-        return SetData(reps: randomReps, weight: randomWeight, isChecked: randomIsChecked)
-    }
-
-    static func randomSets(count: Int) -> [SetData] {
-        return (0..<count).map { _ in randomSet() } // Adjust the number of sets as needed
-    }
-
-    mutating func setReps(string: String) {
-        if Int(string) != nil {
-            self.reps = Int(string)!
-        }
-    }
-
-    mutating func setWeight(string: String) {
-        if Double(string) != nil {
-            self.weight = Double(string)!
-        }
-    }
-
-    func getReps() -> String {
-        return String(self.reps)
-    }
-
-    func getWeight() -> String {
-        return String(self.weight)
+        self.isComplete = isComplete
+        self.parentActivity = parentActivity
     }
 }
