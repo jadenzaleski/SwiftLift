@@ -37,3 +37,29 @@ final class Workout {
         self.activities = activities
     }
 }
+
+// MARK: - Computed Properties
+extension Workout {
+    /// The total number of sets completed in this ``Workout``. Includes warm-up and working sets.
+    var totalSets: Int {
+        activities.reduce(0) { total, activity in
+            total + activity.warmUpSets.count + activity.workingSets.count
+        }
+    }
+
+    /// The total number of reps completed in this ``Workout``. Includes warm-up and working sets.
+    var totalReps: Int {
+        activities.reduce(0) { total, activity in
+            total + activity.warmUpSets.reduce(0) { $0 + $1.reps }
+            + activity.workingSets.reduce(0) { $0 + $1.reps }
+        }
+    }
+
+    /// The total weight lifted in this ``Workout``. Includes warm-up and working sets.
+    var totalWeight: Double {
+        activities.reduce(0) { total, activity in
+            total + activity.warmUpSets.reduce(0) { $0 + $1.weight }
+            + activity.workingSets.reduce(0) { $0 + $1.weight }
+        }
+    }
+}

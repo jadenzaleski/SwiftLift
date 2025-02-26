@@ -9,54 +9,45 @@ import SwiftUI
 
 struct HistoryRow: View {
     var workout: Workout
+
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
-        VStack {
+        VStack(alignment: .leading, spacing: 5) {
             HStack {
-                Image(systemName: "calendar")
-                    .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-                Text("\(workout.startDate.formatted(.dateTime.month().day().year().hour().minute()))")
-                    .font(.lato(type: .regular, size: .large))
+                Label(
+                    title: { Text(workout.startDate.formatted(.dateTime.month().day().year().hour().minute())) },
+                    icon: { Image(systemName: "calendar") }
+                )
                 Spacer()
             }
-            .padding(.bottom, 1.0)
-            .font(.title3)
+            .font(.lato(type: .regular, size: .large))
             .foregroundStyle(gradient)
-            HStack {
-                Image(systemName: "mappin.and.ellipse")
-                    .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-                Text("\(workout.gym)")
-                    .font(.lato(type: .regular))
-                    .padding(.trailing, 5.0)
-                Image(systemName: "clock")
-                    .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-                Text("\(formatTimeInterval(workout.time))")
-                    .font(.lato(type: .regular))
-                    .padding(.trailing, 5.0)
+
+            HStack(spacing: 10) {
+                Label(workout.gym, systemImage: "mappin.and.ellipse")
+                Label(formatTimeInterval(workout.duration), systemImage: "clock")
                 Spacer()
             }
+            .font(.lato(type: .regular))
         }
         .padding(/*@START_MENU_TOKEN@*/.all, 5.0/*@END_MENU_TOKEN@*/)
-//        .background(.red)
     }
 
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
-        let durationFormatter = DateComponentsFormatter()
-        durationFormatter.unitsStyle = .abbreviated
-        durationFormatter.allowedUnits = [.hour, .minute, .second]
-
-        guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
-            return "Invalid Duration"
-        }
-
-        return formattedDuration
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.hour, .minute, .second]
+        return formatter.string(from: abs(timeInterval)) ?? "Invalid Duration"
     }
 }
 
 #Preview {
-    HistoryRow(workout: Workout(startDate: Date.now, time: TimeInterval.pi,
-                                activities: [Activity(name: "yep", gym: "mm")],
-                                totalWeight: 20.0, totalReps: 30, totalSets: 30, gym: "gymString"))
+    HistoryRow(workout: Workout(
+        startDate: Date(),
+        duration: 3600, // 1 hour
+        gym: "Local Gym",
+        activities: [Activity(name: "Bench Press", gym: "Local Gym", completedDate: Date())]
+    ))
 }

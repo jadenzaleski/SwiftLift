@@ -10,15 +10,32 @@ import SwiftData
 
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var history: [History]
-    @Query private var exercises: [Exercise]
+    /// A list of completed workouts sorted by start date.
+    @Query(filter: #Predicate<Workout> { $0.duration > 0 }, sort: \Workout.startDate, order: .reverse)
+    private var workouts: [Workout]
+
     var body: some View {
         NavigationStack {
-            if let workouts = history.first?.workouts, !workouts.isEmpty {
-                List(workouts.reversed()) { workout in
-                    NavigationLink(destination: HistoryDetail(workout: workout)) {
+            if workouts.isEmpty {
+                VStack {
+                    Image(systemName: "dumbbell.fill")
+                        .font(.largeTitle)
+                        .foregroundColor(.gray)
+                    Text("No Workouts Yet")
+                        .font(.lato(type: .light, isItalic: true))
+                    Button("Start Your First Workout") {
+                        // TODO: Navigate to workout creation screen
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+            } else {
+                List(workouts) { workout in
+                    NavigationLink(value: workout) {
                         HistoryRow(workout: workout)
                     }
+                }
+                .navigationDestination(for: Workout.self) { workout in
+                    HistoryDetail(workout: workout)
                 }
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -27,9 +44,6 @@ struct HistoryView: View {
                             .font(.lato(type: .light, size: .toolbarTitle))
                     }
                 }
-            } else {
-                Text("No Workouts Yet")
-                    .font(.lato(type: .light, isItalic: true))
             }
         }
     }
@@ -37,6 +51,5 @@ struct HistoryView: View {
 
 #Preview {
     HistoryView()
-        .modelContainer(for: [History.self, Exercise.self], inMemory: false)
-
+        .modelContainer(for: [Workout.self], inMemory: false)
 }

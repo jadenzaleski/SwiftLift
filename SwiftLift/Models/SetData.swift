@@ -16,7 +16,7 @@ final class SetData {
     var reps: Int
 
     /// The weight lifted during the set.
-    var weight: Int
+    var weight: Double
 
     /// A boolean indicating if the set is completed.
     var isComplete: Bool
@@ -31,7 +31,7 @@ final class SetData {
     ///   - weight: The weight lifted for each rep in the set.
     ///   - isComplete: A boolean indicating whether the set is complete.
     ///   - parentActivity: The ``Activity`` this set is associated with (default is `nil`).
-    init(reps: Int, weight: Int, isComplete: Bool, parentActivity: Activity? = nil) {
+    init(reps: Int, weight: Double, isComplete: Bool, parentActivity: Activity? = nil) {
         self.reps = reps
         self.weight = weight
         self.isComplete = isComplete
