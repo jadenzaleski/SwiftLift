@@ -32,7 +32,6 @@ struct WorkoutPill: View {
                     .foregroundStyle(Color.ld)
                 Spacer()
                 Image(systemName: "chevron.forward")
-                
                     .foregroundStyle(Color.ld)
             }
             .font(.lato(type: .regular, size: .subtitle))
@@ -43,19 +42,26 @@ struct WorkoutPill: View {
                      Capsule(style: .continuous).stroke(Color.green, lineWidth: 2).padding(.horizontal, 1.0) : nil)
             .onChange(of: (activity.warmUpSets + activity.workingSets)) {
                 let allSets = activity.warmUpSets + activity.workingSets
-                isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
-                inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
+                isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isComplete }
+                inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isComplete }) != nil)
             }
             .onAppear {
                 let allSets = activity.warmUpSets + activity.workingSets
-                isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isChecked }
-                inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isChecked }) != nil)
+                isComplete = !allSets.isEmpty && allSets.allSatisfy { $0.isComplete }
+                inProgress = !allSets.isEmpty && (allSets.first(where: {$0.isComplete }) != nil)
             }
         }
-        .id(UUID())
+//        .id(UUID())
     }
 }
 
 #Preview {
-    WorkoutPill(activity: .constant(Activity.sampleActivites[0]))
+    WorkoutPill(activity: .constant(
+        Activity(name: "Tester",
+                 gym: "Default",
+                 completedDate: .now,
+                 warmUpSets: [SetData(reps: 10, weight: 20.0, isComplete: false )],
+                 workingSets: [SetData(reps: 10, weight: 20.0, isComplete: false )]
+                )
+    ))
 }

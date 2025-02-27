@@ -11,8 +11,15 @@ import SwiftData
 struct StatsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @Query private var history: [History]
+    /// An array of exercises.
     @Query private var exercises: [Exercise]
+
+    @State private var totalWorkouts: Int = 0
+    @State private var totalTime: TimeInterval = 0
+    @State private var totalWeight: Double = 0
+    @State private var totalSets: Int = 0
+    @State private var totalReps: Int = 0
+
     enum DateYValue: String, CaseIterable, Identifiable {
         case volume, reps, duration
         var id: Self { self }
@@ -31,9 +38,11 @@ struct StatsView: View {
             }
         }
     }
+
     @State private var selectedYDateValue: DateYValue = .volume
     @State private var selectedPastLength: Int = 7
     @State private var selectedGym = "All Gyms"
+
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
@@ -51,35 +60,35 @@ struct StatsView: View {
                             Image(systemName: "number")
                                 .fontWeight(.regular)
                             Text("Workouts:")
-                            Text("\(history[0].totalWorkouts)")
+                            Text("\(exercises.count)")
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "clock")
                                 .fontWeight(.regular)
                             Text("Time:")
-                            Text("\(formatTimeInterval(history[0].totalTime))")
+                            Text("\(formatTimeInterval(totalTime))")
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "scalemass")
                                 .fontWeight(.regular)
                             Text("Weight:")
-                            Text("\(Int(history[0].totalWeight))")
+                            Text("\(Int(totalWeight))")
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "checklist.checked")
                                 .fontWeight(.regular)
                             Text("Sets:")
-                            Text("\(history[0].totalSets)")
+                            Text("\(totalSets)")
                                 .foregroundStyle(gradient)
                         }
                         HStack {
                             Image(systemName: "repeat")
                                 .fontWeight(.regular)
                             Text("Reps:")
-                            Text("\(history[0].totalReps)")
+                            Text("\(totalReps)")
                                 .foregroundStyle(gradient)
                         }
 
@@ -148,16 +157,43 @@ struct StatsView: View {
         }
     }
 
-    // format the times into 0h 0m
-    func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
-        let durationFormatter = DateComponentsFormatter()
-        durationFormatter.unitsStyle = .abbreviated
-        durationFormatter.allowedUnits = [.day, .hour, .minute]
+    /// Computes statistics.
+    private func calculateStats() {
+        totalWorkouts = exercises.count
 
-        guard let formattedDuration = durationFormatter.string(from: abs(timeInterval)) else {
-            return "Invalid Duration"
+        totalTime = exercises.reduce(0) { total, exercise in
+            total + exercise.activities.reduce(0) { $0 + ($1.completedDate?.timeIntervalSince1970 ?? 0) }
         }
-        return formattedDuration
+
+        totalWeight = exercises.reduce(0) { total, exercise in
+            let activityWeight = exercise.activities.reduce(0) { actTotal, activity in
+                let warmUpWeight = activity.warmUpSets.reduce(0) { $0 + $1.weight }
+                let workingSetWeight = activity.workingSets.reduce(0) { $0 + $1.weight }
+                return actTotal + warmUpWeight + workingSetWeight
+            }
+            return total + activityWeight
+        }
+
+        totalSets = exercises.reduce(0) { total, exercise in
+            total + exercise.activities.reduce(0) { $0 + $1.warmUpSets.count + $1.workingSets.count }
+        }
+
+        totalReps = exercises.reduce(0) { total, exercise in
+            let reps = exercise.activities.reduce(0) { actTotal, activity in
+                let warmUpReps = activity.warmUpSets.reduce(0) { $0 + $1.reps }
+                let workingSetReps = activity.workingSets.reduce(0) { $0 + $1.reps }
+                return actTotal + warmUpReps + workingSetReps
+            }
+            return total + reps
+        }
+    }
+
+    // format the times into 0h 0m
+    private func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.day, .hour, .minute]
+        return formatter.string(from: abs(timeInterval)) ?? "Invalid Duration"
     }
 
 }

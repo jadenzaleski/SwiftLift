@@ -18,7 +18,7 @@ final class Activity {
     /// The name of the gym where the ``Activity`` takes place.
     var gym: String
     /// The date at which the ``Activity`` was completed
-    var completedDate: Date
+    var completedDate: Date?
 
     /// All of the warm-up sets for this ``Activity``.
     @Relationship(deleteRule: .cascade, inverse: \SetData.parentActivity)
@@ -44,7 +44,7 @@ final class Activity {
     ///   - workingSets: An array of ``SetData`` representing working sets associated with the activity. Defaults to an empty array.
     ///   - parentExercise: An optional reference to the `Exercise` this activity belongs to. Defaults to nil.
     ///   - parentWorkout: An optional reference to the `Workout` this activity is part of. Defaults to nil.
-    init(name: String, gym: String, completedDate: Date,
+    init(name: String, gym: String, completedDate: Date? = nil,
          warmUpSets: [SetData] = [], workingSets: [SetData] = [],
          parentExercise: Exercise? = nil, parentWorkout: Workout? = nil) {
         self.name = name

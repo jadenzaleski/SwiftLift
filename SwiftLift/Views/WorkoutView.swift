@@ -11,16 +11,20 @@ import SwiftData
 struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) private var colorScheme
-    @Query private var history: [History]
+
     @Query private var exercises: [Exercise]
-    @Query private var currentWorkoutSave: [CurrentWorkout]
+
     @Binding var currentWorkout: Workout
     @Binding var workoutInProgress: Bool
     @Binding var selectedGym: String
+
     @State private var showDeleteAlert = false
     @State private var isDeleting: Bool = false
+
     @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
+
     @State var time = TimeInterval()
+
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -89,36 +93,37 @@ struct WorkoutView: View {
                 }
             }
             .padding(.horizontal)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        showDeleteAlert = true
-                    } label: {
-                        Image(systemName: "xmark")
-                    }
-                    .alert(
-                        "Cancel your lift?",
-                        isPresented: $showDeleteAlert
-                    ) {
-                        Button(role: .destructive) {
-                            workoutInProgress = false
-                        } label: {
-                            Text("Confirm")
-
-                        }
-                    } message: {
-                        Text("All recorded data will be lost. This action cannot be undone.")
-                    }
+            }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                    showDeleteAlert = true
+                } label: {
+                    Image(systemName: "xmark")
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button {
-                        stopWorkout()
+                .alert(
+                    "Cancel your lift?",
+                    isPresented: $showDeleteAlert
+                ) {
+                    Button(role: .destructive) {
+                        workoutInProgress = false
                     } label: {
-                        Image(systemName: "flag.checkered")
+                        Text("Confirm")
+
                     }
+                } message: {
+                    Text("All recorded data will be lost. This action cannot be undone.")
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    stopWorkout()
+                } label: {
+                    Image(systemName: "flag.checkered")
                 }
             }
         }
+
         .sheet(isPresented: $isPresentingExerciseSearch) {
             ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
         }
@@ -137,60 +142,53 @@ struct WorkoutView: View {
     }
 
     private func stopWorkout() {
-        // Update current workout time
-        currentWorkout.time = time
-        // Filter activities to get only those with checked sets
+        // Ensure workout duration is updated
+        currentWorkout.duration = time
+
+        // Filter activities to retain only those with checked sets
         currentWorkout.activities = currentWorkout.activities.compactMap { activity in
-            // Filter sets within the activity to include only checked sets with non-zero reps and weight
-            let checkedWarmUpSets = activity.warmUpSets.filter { $0.isChecked && $0.reps > 0 && $0.weight > 0 }
-            let checkedWorkingSets = activity.workingSets.filter { $0.isChecked && $0.reps > 0 && $0.weight > 0 }
-            // Check if there are any checked sets in either warm-up or working sets
+            let checkedWarmUpSets = activity.warmUpSets.filter { $0.isComplete && $0.reps > 0 && $0.weight > 0 }
+            let checkedWorkingSets = activity.workingSets.filter { $0.isComplete && $0.reps > 0 && $0.weight > 0 }
+
             if !checkedWarmUpSets.isEmpty || !checkedWorkingSets.isEmpty {
-                // Replace activity with filtered sets
                 var filteredActivity = activity
                 filteredActivity.warmUpSets = checkedWarmUpSets
                 filteredActivity.workingSets = checkedWorkingSets
                 return filteredActivity
-            } else {
-                // Exclude activity if no sets are checked or all have zero reps or weight
-                return nil
             }
+            return nil
         }
-        // Calculate totals based on checked sets with non-zero reps and weight
-        var totalReps = 0
-        var totalSets = 0
-        var totalWeight = 0.0
-        // Iterate through filtered activities and their sets
+
         for activity in currentWorkout.activities {
-            for set in activity.warmUpSets + activity.workingSets {
-                // Include set in totals
-                totalReps += set.reps
-                totalSets += 1
-                totalWeight += Double(set.weight) * Double(set.reps)
+            // Update exercise stats if applicable
+            if let exercise = exercises.first(where: { $0.name == activity.name }) {
+                exercise.activities.append(activity)
             }
-            // Update exercise
-            var exercise = exercises.first(where: {$0.name == activity.name})
-            exercise?.update(activity: activity)
         }
-        // Assign calculated totals to currentWorkout
-        currentWorkout.totalReps = totalReps
-        currentWorkout.totalSets = totalSets
-        currentWorkout.totalWeight = totalWeight
-        // Set selected gym to current workout
+
         currentWorkout.gym = selectedGym
-        // Add current workout to history
-        history[0].addWorkout(workout: currentWorkout)
-        // Reset workout in progress flag
+
+        // Add currentWorkout to SwiftData storage
+        modelContext.insert(currentWorkout)
+
+        // Save the changes to persist data
+        try? modelContext.save()
+
+        // Reset state
         workoutInProgress = false
-        // Provide haptic feedback for success
+
+        // Haptic feedback for success
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
 
 }
 
-#Preview {
-    WorkoutView(currentWorkout: .constant(Workout.sampleWorkout),
-                workoutInProgress: .constant(true), selectedGym: .constant("Default"))
-    .modelContainer(for: [History.self, Exercise.self], inMemory: true)
 
+#Preview {
+    WorkoutView(
+        currentWorkout: .constant(Workout(startDate: .now, duration: 3600, gym: "Sample Gym")),
+        workoutInProgress: .constant(true),
+        selectedGym: .constant("Default")
+    )
+    .modelContainer(previewContainer)
 }

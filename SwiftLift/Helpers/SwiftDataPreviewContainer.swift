@@ -13,10 +13,11 @@ import SwiftData
 let previewContainer: ModelContainer = {
     do {
         let container = try ModelContainer(
-            for: History.self, Exercise.self
+            for: Workout.self, Exercise.self
         )
 
-        container.mainContext.insert(History.sample)
+        let sampleWorkout = Workout(startDate: .now, duration: 3600, gym: "Sample Gym")
+        container.mainContext.insert(sampleWorkout)
 
         return container
     } catch {

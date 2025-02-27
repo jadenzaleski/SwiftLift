@@ -11,7 +11,6 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @Query private var history: [History]
     @State private var newGym = ""
     @State private var color = Color.accentColor
     @AppStorage("selectedTheme") private var selectedTheme = "Automatic"
@@ -56,33 +55,34 @@ struct SettingsView: View {
                         .font(.lato(type: .regular, size: .caption))
                 }
 
-                Section {
-                    ForEach(history[0].gyms, id: \.self) { gym in
-                        Text(gym)
-                    }
-                    .onDelete(perform: { indexSet in
-                        history[0].gyms.remove(atOffsets: indexSet)
-                    })
-                    .deleteDisabled(history[0].gyms.count <= 1)
-
-                    HStack {
-                        TextField("Add a new gym", text: $newGym)
-
-                        Button(action: {
-                            addNewGym()
-                        }, label: {
-                            Image(systemName: "plus.circle.fill")
-                        })
-                        .disabled(newGym.isEmpty)
-                    }
-                } header: {
-                    Text("Gyms")
-                        .font(.lato(type: .regular, size: .caption))
-                } footer: {
-                    Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
-                        .font(.lato(type: .light, size: .caption))
-
-                }
+                // TODO: update gyms here
+//                Section {
+//                    ForEach(history[0].gyms, id: \.self) { gym in
+//                        Text(gym)
+//                    }
+//                    .onDelete(perform: { indexSet in
+//                        history[0].gyms.remove(atOffsets: indexSet)
+//                    })
+//                    .deleteDisabled(history[0].gyms.count <= 1)
+//
+//                    HStack {
+//                        TextField("Add a new gym", text: $newGym)
+//
+//                        Button(action: {
+//                            addNewGym()
+//                        }, label: {
+//                            Image(systemName: "plus.circle.fill")
+//                        })
+//                        .disabled(newGym.isEmpty)
+//                    }
+//                } header: {
+//                    Text("Gyms")
+//                        .font(.lato(type: .regular, size: .caption))
+//                } footer: {
+//                    Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
+//                        .font(.lato(type: .light, size: .caption))
+//
+//                }
 
                 Section {
 
@@ -155,18 +155,19 @@ struct SettingsView: View {
         }
     }
 
-    private func addNewGym() {
-        if !history[0].gyms.isEmpty && !history[0].gyms.contains(newGym) {
-            withAnimation {
-                history[0].gyms.append(newGym.capitalized)
-                self.hideKeyboard()
-            }
-            newGym = ""
-            // haptic feedback
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-        }
-
-    }
+    // TODO: part of todo up top
+//    private func addNewGym() {
+//        if !history[0].gyms.isEmpty && !history[0].gyms.contains(newGym) {
+//            withAnimation {
+//                history[0].gyms.append(newGym.capitalized)
+//                self.hideKeyboard()
+//            }
+//            newGym = ""
+//            // haptic feedback
+//            UINotificationFeedbackGenerator().notificationOccurred(.success)
+//        }
+//
+//    }
 }
 
 #Preview {

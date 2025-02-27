@@ -13,16 +13,18 @@ struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
     @Environment(\.scenePhase) var scenePhase
-    @Query private var history: [History]
+
     @Query private var exercises: [Exercise]
-    @Query private var currentWorkoutSave: [CurrentWorkout]
+    @Query private var workouts: [Workout]
+
     @SceneStorage("workoutInProgress") private var workoutInProgress = false
     @SceneStorage("selectedGym") private var selectedGym = "Default"
     @SceneStorage("newGym") private var newGym = ""
-    @State private var currentWorkout = Workout(startDate: .now, time: 0, activities: [],
-                                                totalWeight: 0, totalReps: 0, totalSets: 0, gym: "")
     @SceneStorage("showLifetime") private var showLifetime = true
+
+    @State private var currentWorkout = Workout(startDate: .now, duration: 0, gym: "", activities: [])
     @State private var rotationAngle: Double = 0
+
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
@@ -47,23 +49,24 @@ struct HomeView: View {
                         VStack {
                             HStack {
                                 Image(systemName: "number")
-                                Text("\(history[0].totalWorkouts)")
+                                Text("\(workouts.count)")
                                     .font(.lato(type: .regular, size: .body))
                                 Spacer()
-                                Text("\(history[0].getTimeFormattedLetters(useDays: true))")
+                                // FIXME: get sum of time worked out.
+                                Text("\(workouts.first?.startDate.formatted(date: .abbreviated, time: .shortened) ?? "N/A")")
                                     .font(.lato(type: .regular, size: .body))
-
                                 Image(systemName: "clock")
                             }
                             .padding(.horizontal)
                             .padding(.vertical, 3.0)
+
                             HStack {
                                 Image(systemName: "repeat")
-                                Text("\(history[0].totalReps)")
+                                Text("\(workouts.reduce(0) { $0 + $1.totalReps })")
                                     .font(.lato(type: .regular, size: .body))
 
                                 Spacer()
-                                Text("\(Int(history[0].totalWeight))")
+                                Text("\(Int(workouts.reduce(0) { $0 + $1.totalWeight }))")
                                     .font(.lato(type: .regular, size: .body))
                                 Image(systemName: "scalemass")
                             }
@@ -110,18 +113,18 @@ struct HomeView: View {
 
                         Spacer()
                         Picker("Select a gym", selection: $selectedGym) {
-                            ForEach(history[0].gyms, id: \.self) { gym in
+                            ForEach(Array(Set(workouts.map { $0.gym })), id: \.self) { gym in
                                 Text(gym)
                                     .font(.lato(type: .regular, size: .medium))
                                     .tag(gym)
-
                             }
                         }
 
                         .padding(10.0)
                         .onAppear {
-                            if !history[0].gyms.contains(selectedGym) {
-                                selectedGym = history[0].gyms.first ?? "Default"
+                            let availableGyms = Set(workouts.map { $0.gym })
+                            if !availableGyms.contains(selectedGym) {
+                                selectedGym = availableGyms.first ?? "Default"
                             }
                         }
                     }
@@ -150,33 +153,35 @@ struct HomeView: View {
                 }
                 .navigationDestination(isPresented: $workoutInProgress) {
                     WorkoutView(currentWorkout: $currentWorkout,
-                                workoutInProgress: $workoutInProgress, selectedGym: $selectedGym)
-                        .navigationBarBackButtonHidden()
+                                workoutInProgress: $workoutInProgress,
+                                selectedGym: $selectedGym
+                    )
+                    .navigationBarBackButtonHidden()
 
                 }
         }
         .scrollDismissesKeyboard(.immediately)
-        .onChange(of: scenePhase) {
+        .onChange(of: scenePhase) { newPhase in
             if workoutInProgress {
-                if scenePhase == .inactive {
+                switch newPhase {
+                case .inactive:
                     print("[+] SwiftLift inactive")
-                } else if scenePhase == .active {
+                case .active:
                     print("[+] SwiftLift active")
-                    // update the State
-                    currentWorkout = currentWorkoutSave[0].workout
-                    print("[+] Updated currentWorkout @State")
-                } else if scenePhase == .background {
+                case .background:
                     print("[+] SwiftLift now in background")
+                default:
+                    break
                 }
             }
         }
         .onChange(of: currentWorkout) {
-            currentWorkoutSave[0].save(workout: currentWorkout)
+            // TODO: Handle persistence if needed
         }
     }
 
     private func startWorkout() {
-        currentWorkout = Workout.blank(selectedGym: selectedGym)
+        currentWorkout = Workout(startDate: .now, duration: 0, gym: selectedGym, activities: [])
         workoutInProgress = true
     }
 }

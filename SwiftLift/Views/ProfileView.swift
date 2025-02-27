@@ -10,8 +10,8 @@ import SwiftData
 
 struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var history: [History]
     @Query private var exercises: [Exercise]
+    @Query private var workouts: [Workout]
     @AppStorage("name") private var name = ""
     var body: some View {
         VStack {
@@ -26,25 +26,27 @@ struct ProfileView: View {
             }
             HStack {
                 Text("Joined:")
-                Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
+                // TODO: update
+//                Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
             }
             .padding(.vertical, 5)
 
             VStack {
                 HStack {
                     Image(systemName: "number")
-                    Text("\(history[0].totalWorkouts)")
+                    Text("\(workouts.count)")
                     Spacer()
-                    Text("\(history[0].getTimeFormattedLetters(useDays: true))")
+                    // FIXME: get sum of time worked out
+                    Text("\(workouts.first?.startDate.formatted(date: .abbreviated, time: .shortened) ?? "N/A")")
                     Image(systemName: "clock")
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 3.0)
                 HStack {
                     Image(systemName: "repeat")
-                    Text("\(history[0].totalReps)")
+                    Text("\(workouts.reduce(0) { $0 + $1.totalReps })")
                     Spacer()
-                    Text("\(Int(history[0].totalWeight))")
+                    Text("\(Int(workouts.reduce(0) { $0 + $1.totalWeight }))")
                     Image(systemName: "scalemass")
                 }
                 .padding(.horizontal)
