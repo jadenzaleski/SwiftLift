@@ -106,6 +106,57 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D76786E02D70B493001FFF69 /* Tabs */ = {
+			isa = PBXGroup;
+			children = (
+				D76786E32D70B4A8001FFF69 /* Stats */,
+				D76786E22D70B4A0001FFF69 /* History */,
+				D76786E12D70B49A001FFF69 /* Home */,
+			);
+			path = Tabs;
+			sourceTree = "<group>";
+		};
+		D76786E12D70B49A001FFF69 /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				D76786E42D70F8EC001FFF69 /* Workout */,
+				D74270542AA90D900020503C /* HomeView.swift */,
+				D78474082AC7D73700725EB1 /* ProfileView.swift */,
+				D74270532AA90D900020503C /* SettingsView.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		D76786E22D70B4A0001FFF69 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				D74270572AA90D910020503C /* HistoryView.swift */,
+				D7A2C00B2B33E2E7000E3C58 /* HistoryRow.swift */,
+				D7A2C00D2B364DF5000E3C58 /* HistoryDetail.swift */,
+			);
+			path = History;
+			sourceTree = "<group>";
+		};
+		D76786E32D70B4A8001FFF69 /* Stats */ = {
+			isa = PBXGroup;
+			children = (
+				D74270522AA90D900020503C /* StatsView.swift */,
+			);
+			path = Stats;
+			sourceTree = "<group>";
+		};
+		D76786E42D70F8EC001FFF69 /* Workout */ = {
+			isa = PBXGroup;
+			children = (
+				D74270592AA90D910020503C /* ExerciseSearch.swift */,
+				D74270512AA90D900020503C /* WorkoutView.swift */,
+				D742705A2AA90D910020503C /* LogActivityView.swift */,
+				D74270562AA90D910020503C /* SetPill.swift */,
+				D74270582AA90D910020503C /* WorkoutPill.swift */,
+			);
+			path = Workout;
+			sourceTree = "<group>";
+		};
 		D78D94702C00E99E00DBEF7C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,8 +173,8 @@
 			isa = PBXGroup;
 			children = (
 				D742706E2AA924250020503C /* README.md */,
-				D7B90E6F2AA8309500F9EC41 /* SwiftLift */,
 				D7B90E6E2AA8309500F9EC41 /* Products */,
+				D7B90E6F2AA8309500F9EC41 /* SwiftLift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -163,21 +214,10 @@
 		D7B90E9E2AA8EC1C00F9EC41 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				D74270592AA90D910020503C /* ExerciseSearch.swift */,
-				D74270572AA90D910020503C /* HistoryView.swift */,
-				D74270542AA90D900020503C /* HomeView.swift */,
-				D742705A2AA90D910020503C /* LogActivityView.swift */,
-				D7A2C00B2B33E2E7000E3C58 /* HistoryRow.swift */,
-				D7A2C00D2B364DF5000E3C58 /* HistoryDetail.swift */,
+				D76786E02D70B493001FFF69 /* Tabs */,
 				D74270502AA90D900020503C /* MainTabView.swift */,
 				D7384D332AF9EE1500D48669 /* ComingSoon.swift */,
-				D78474082AC7D73700725EB1 /* ProfileView.swift */,
-				D74270562AA90D910020503C /* SetPill.swift */,
-				D74270532AA90D900020503C /* SettingsView.swift */,
-				D74270522AA90D900020503C /* StatsView.swift */,
 				D742705B2AA90D910020503C /* Tester.swift */,
-				D74270582AA90D910020503C /* WorkoutPill.swift */,
-				D74270512AA90D900020503C /* WorkoutView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
