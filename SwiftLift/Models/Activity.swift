@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftData
+import SwiftUI
 
 /// Represents an activity performed during a ``Workout``, including details such as the activity's name, gym, completed date,
 /// and the sets associated with the activity. This class also holds relationships to ``Exercise`` and ``Workout`` instances.
@@ -54,5 +55,21 @@ final class Activity {
         self.workingSets = workingSets
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
+    }
+
+    // TODO: Understand this
+    static func activityBinding(id: PersistentIdentifier, in activities: Binding<[Activity]>) -> Binding<Activity>? {
+        guard let index = activities.wrappedValue.firstIndex(where: { $0.id == id }) else {
+            return nil
+        }
+
+        return Binding<Activity>(
+            get: {
+                activities.wrappedValue[index]
+            },
+            set: { newValue in
+                activities.wrappedValue[index] = newValue
+            }
+        )
     }
 }

@@ -24,6 +24,8 @@
 		D74270692AA90DA80020503C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D74270682AA90DA80020503C /* LaunchScreen.storyboard */; };
 		D742706B2AA91C5E0020503C /* SwiftLiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */; };
 		D742706C2AA91CF20020503C /* OpenSans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7B90EA12AA8EC3B00F9EC41 /* OpenSans.ttf */; };
+		D76786E62D72B271001FFF69 /* WV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76786E52D72B271001FFF69 /* WV.swift */; };
+		D76786E82D72C48E001FFF69 /* AV.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76786E72D72C48E001FFF69 /* AV.swift */; };
 		D76A5F582C212B9100813F51 /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F4E2C212B9000813F51 /* Lato-Bold.ttf */; };
 		D76A5F592C212B9100813F51 /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F4F2C212B9000813F51 /* Lato-Black.ttf */; };
 		D76A5F5A2C212B9100813F51 /* Lato-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F502C212B9000813F51 /* Lato-ThinItalic.ttf */; };
@@ -67,6 +69,8 @@
 		D74270682AA90DA80020503C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftLiftApp.swift; sourceTree = "<group>"; };
 		D742706E2AA924250020503C /* README.md */ = {isa = PBXFileReference; explicitFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D76786E52D72B271001FFF69 /* WV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WV.swift; sourceTree = "<group>"; };
+		D76786E72D72C48E001FFF69 /* AV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AV.swift; sourceTree = "<group>"; };
 		D76A5F4E2C212B9000813F51 /* Lato-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Bold.ttf"; sourceTree = "<group>"; };
 		D76A5F4F2C212B9000813F51 /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
 		D76A5F502C212B9000813F51 /* Lato-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-ThinItalic.ttf"; sourceTree = "<group>"; };
@@ -153,6 +157,8 @@
 				D742705A2AA90D910020503C /* LogActivityView.swift */,
 				D74270562AA90D910020503C /* SetPill.swift */,
 				D74270582AA90D910020503C /* WorkoutPill.swift */,
+				D76786E52D72B271001FFF69 /* WV.swift */,
+				D76786E72D72C48E001FFF69 /* AV.swift */,
 			);
 			path = Workout;
 			sourceTree = "<group>";
@@ -385,6 +391,7 @@
 			files = (
 				D742706B2AA91C5E0020503C /* SwiftLiftApp.swift in Sources */,
 				D7B90EAB2AA8ECA100F9EC41 /* Activity.swift in Sources */,
+				D76786E82D72C48E001FFF69 /* AV.swift in Sources */,
 				D7B90EAA2AA8ECA100F9EC41 /* Exercise.swift in Sources */,
 				D742705D2AA90D910020503C /* WorkoutView.swift in Sources */,
 				D77FD0E62B54AA710095644A /* LineChart.swift in Sources */,
@@ -403,6 +410,7 @@
 				D74270612AA90D910020503C /* NumbersOnlyViewModifier.swift in Sources */,
 				D7384D342AF9EE1500D48669 /* ComingSoon.swift in Sources */,
 				D7B90EA82AA8ECA100F9EC41 /* Workout.swift in Sources */,
+				D76786E62D72B271001FFF69 /* WV.swift in Sources */,
 				D74270652AA90D910020503C /* ExerciseSearch.swift in Sources */,
 				D742705E2AA90D910020503C /* StatsView.swift in Sources */,
 				D78D94722C00E9B900DBEF7C /* Debouncer.swift in Sources */,
