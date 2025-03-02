@@ -33,6 +33,7 @@ struct SwiftLiftApp: App {
     var body: some Scene {
         WindowGroup {
             MainTabView()
+                .environment(\.font, .lato(type: .regular))
         }
         .modelContainer(appContainer) // Attach SwiftData model container
     }

@@ -56,20 +56,13 @@ final class Activity {
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
     }
+}
 
-    // TODO: Understand this
-    static func activityBinding(id: PersistentIdentifier, in activities: Binding<[Activity]>) -> Binding<Activity>? {
-        guard let index = activities.wrappedValue.firstIndex(where: { $0.id == id }) else {
-            return nil
-        }
-
-        return Binding<Activity>(
-            get: {
-                activities.wrappedValue[index]
-            },
-            set: { newValue in
-                activities.wrappedValue[index] = newValue
-            }
-        )
+// MARK: - Computed Properties
+extension Activity {
+    /// Calculate wether or not this activity is complete.
+    /// Completion is determined by the wether or not all ``warmUpSets`` and ``workingSets`` are complete
+    var isComplete: Bool {
+        warmUpSets.allSatisfy(\.isComplete) && workingSets.allSatisfy(\.isComplete)
     }
 }
