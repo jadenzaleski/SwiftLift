@@ -16,10 +16,10 @@ struct WV: View {
     /// Keeps track of the offsets for each activity in the ``ForEach`` loop in ``activityList``.
     @State var offsets = [CGSize](repeating: CGSize.zero, count: 6)
 
-    private let swipeLeftLimit: CGFloat = -50
-    private let swipeRightLimit: CGFloat = 50
-    private let swipeLeftLimitToShow: CGFloat = -30
-    private let swipeRightLimitToHide: CGFloat = 30
+    private let swipeLeftLimit: CGFloat = -60
+    private let swipeRightLimit: CGFloat = 60
+    private let swipeLeftLimitToShow: CGFloat = -40
+    private let swipeRightLimitToHide: CGFloat = 40
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -84,7 +84,8 @@ struct WV: View {
                     item(index: index)
                 }
                 .offset(x: offsets[index].width)
-                .gesture(dragGesture(for: index))
+                // If this is not a highPriorityGesture, the NavigationLink will take precedent
+                .highPriorityGesture(dragGesture(for: index))
                 .zIndex(2) // Always above deleteButton initially
             }
             .padding(.bottom, 8.0)
@@ -132,15 +133,16 @@ struct WV: View {
             } label: {
                 Image(systemName: "trash")
                     .foregroundColor(.white)
-                    .padding()
+                    .padding(12)
                     .background(Color.red)
                     .clipShape(Circle())
+                    .opacity(offsets[index].width < swipeLeftLimitToShow ? 1 : 0)
+                    .animation(.easeIn(duration: 0.2), value: offsets[index].width)
             }
             .padding(.trailing, 3.0)
             .contentShape(Rectangle()) // Ensures tap recognition
         }
     }
-
     // MARK: - Toolbar
     @ToolbarContentBuilder
     private func workoutToolbar() -> some ToolbarContent {
