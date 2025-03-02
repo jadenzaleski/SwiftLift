@@ -14,20 +14,25 @@ struct WV: View {
     @State var showDeleteAlert: Bool = false
     @State var currentworkout = Workout(startDate: .now, duration: 0, gym: "The testing gym")
     /// Keeps track of the offsets for each activity in the ``ForEach`` loop in ``activityList``.
-    @State var offsets = [CGSize](repeating: CGSize.zero, count: 6)
-
+    @State var offsets: [CGSize] = []
+    // Limits for the swipe gesture
     private let swipeLeftLimit: CGFloat = -60
     private let swipeRightLimit: CGFloat = 60
     private let swipeLeftLimitToShow: CGFloat = -40
     private let swipeRightLimitToHide: CGFloat = 40
 
+    @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
+
     var body: some View {
         ScrollView(showsIndicators: false) {
             workoutHeader()
+                .padding(.horizontal)
             activityList()
+                .padding(.horizontal)
 
             Button {
-                currentworkout.activities.append(Activity(name: "test", gym: "gym"))
+                isPresentingExerciseSearch.toggle()
+                updateOffsets()
             } label: {
                 HStack {
                     Image(systemName: "plus")
@@ -37,9 +42,19 @@ struct WV: View {
             }
             .padding(.top)
         }
-        .padding()
         .toolbar {
             workoutToolbar()
+        }
+        .onChange(of: currentworkout.activities) {
+            updateOffsets()
+            print("onChange updateOffsets")
+        }
+        .onAppear {
+            updateOffsets()
+            print("onAppear updateOffsets")
+        }
+        .sheet(isPresented: $isPresentingExerciseSearch) {
+            ExerciseSearch(currentWorkout: $currentworkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
         }
     }
 
@@ -74,19 +89,38 @@ struct WV: View {
     @ViewBuilder
     private func activityList() -> some View {
         ForEach(currentworkout.activities.indices, id: \.self) { index in
-            ZStack(alignment: .trailing) {
-                // DELETE BUTTON (Initially behind)
-                deleteButton(for: index)
-                    .zIndex(offsets[index].width < 0 ? 1 : 0) // Move forward only on swipe
+            // If you want to slide the whole item to the left:
+            /*
+             ZStack(alignment: .trailing) {
+             // DELETE BUTTON (Initially behind)
+             deleteButton(for: index)
+             .zIndex(offsets[index].width < 0 ? 1 : 0) // Move forward only on swipe
 
-                // NAVIGATION LINK (Above by default)
+             // NAVIGATION LINK (Above by default)
+             NavigationLink(value: index) {
+             item(index: index)
+             }
+             .offset(x: offsets[index].width)
+             .gesture(dragGesture(for: index))
+             .zIndex(2) // Always above deleteButton initially
+             }
+             .padding(.bottom, 8.0)
+             */
+            // If you only want to shrink the width of the item:
+            HStack {
                 NavigationLink(value: index) {
-                    item(index: index)
+                    // If there is a moment where the index and count are not in sync, don't display the item.
+                    if index < currentworkout.activities.count {
+                        item(index: index)
+                    }
                 }
-                .offset(x: offsets[index].width)
                 // If this is not a highPriorityGesture, the NavigationLink will take precedent
                 .highPriorityGesture(dragGesture(for: index))
-                .zIndex(2) // Always above deleteButton initially
+                .animation(.spring(response: 0.25, dampingFraction: 0.5), value: safeOffset(for: index).width)
+                // Show delete button only when swiped left
+                if safeOffset(for: index).width < 0 {
+                    deleteButton(for: index)
+                }
             }
             .padding(.bottom, 8.0)
         }
@@ -99,13 +133,28 @@ struct WV: View {
     @ViewBuilder
     private func item(index: Int) -> some View {
         let activity = currentworkout.activities[index]
+        let activityState: Int = {
+            // Sets are either empty, complete, or in progress
+            if (activity.warmUpSets + activity.workingSets).isEmpty {
+                return 0
+            } else if activity.isComplete {
+                return 1
+            } else {
+                return 2
+            }
+        }()
+
         HStack {
             // Change the color and the type of image based on activity compeltion status
-            Image(systemName: activity.isComplete ? "checkmark.circle.fill" : "exclamationmark.circle")
-                .foregroundStyle(activity.isComplete ? .green : .yellow)
-                .font(.lato(type: .thin, size: .subtitle))
-            Text("\(activity.name)")
+            Image(systemName:
+                    activityState == 1 ? "checkmark.circle.fill" : activityState == 0 ? "circle" : "exclamationmark.circle"
+            )
+            .foregroundStyle(activityState == 1 ? .green :
+                                activityState == 0 ? Color.ld : .yellow)
+            .font(.lato(type: .thin, size: .subtitle))
+            Text("\(activity.name) \(index)")
                 .font(.lato(type: .bold, size: .subtitle))
+                .lineLimit(1)
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.lato(type: .thin, size: .subtitle))
@@ -115,34 +164,33 @@ struct WV: View {
         .padding()
         .background(Color("offset"))
         .clipShape(Capsule())
-        .overlay(
-            activity.isComplete ?
-            Capsule(style: .continuous)
-                .stroke(Color.green, lineWidth: 2)
-                .padding(.horizontal, 1.0) : nil
-        )
+        .overlay {
+            if let borderColor = borderColor(for: activityState) {
+                Capsule(style: .continuous)
+                    .stroke(borderColor, lineWidth: 2)
+                    .padding(.horizontal, 1.0)
+            }
+        }
     }
 
     /// Creates a delete button for an activity
     @ViewBuilder
     private func deleteButton(for index: Int) -> some View {
-        HStack {
-            Spacer()
-            Button {
-                deleteActivity(at: index)
-            } label: {
-                Image(systemName: "trash")
-                    .foregroundColor(.white)
-                    .padding(12)
-                    .background(Color.red)
-                    .clipShape(Circle())
-                    .opacity(offsets[index].width < swipeLeftLimitToShow ? 1 : 0)
-                    .animation(.easeIn(duration: 0.2), value: offsets[index].width)
-            }
-            .padding(.trailing, 3.0)
-            .contentShape(Rectangle()) // Ensures tap recognition
+        Button {
+            deleteActivity(at: index)
+        } label: {
+            Image(systemName: "trash")
+                .foregroundColor(.white)
+                .padding(12)
+                .background(Color.red)
+                .clipShape(Circle())
+                .opacity(offsets[index].width < swipeLeftLimitToShow ? 1 : 0)
+                .animation(.easeIn(duration: 0.2), value: offsets[index].width)
         }
+        .padding(.trailing, 3.0)
+        .contentShape(Rectangle())
     }
+
     // MARK: - Toolbar
     @ToolbarContentBuilder
     private func workoutToolbar() -> some ToolbarContent {
@@ -194,10 +242,10 @@ struct WV: View {
     // swiftlint:disable:next line_length
     /// Code from: [Stackoverflow question](https://stackoverflow.com/questions/67238383/how-to-swipe-to-delete-in-swiftui-with-only-a-foreach-and-not-a-list)
     /// Creates a drag gesture for handling swipe-to-delete functionality.
-    ///
-    /// This gesture allows users to swipe an item to the left to reveal a delete option. It prevents
+    /// 
+    /// This gesture allows users to swipe an ``item`` to the left to reveal a delete option. It prevents
     /// swiping to the right beyond the original position and ensures a smooth swipe animation.
-    ///
+    /// This is overkill if we only want to change the with of the ``item`` but it will work for either implementation.
     /// - Parameter index: The index of the item being swiped.
     /// - Returns: A `Gesture` that handles swipe interactions.
     private func dragGesture(for index: Int) -> some Gesture {
@@ -265,15 +313,53 @@ struct WV: View {
             }
     }
 
-    /// Deletes an activity at the given index
+    /// Deletes an activity at the given index.
+    /// - Parameter index: The index of the activity to delete.
     private func deleteActivity(at index: Int) {
-        /*
         withAnimation {
+            offsets.remove(at: index)
             currentworkout.activities.remove(at: index)
-            offsets.remove(at: index) // Keep offsets array in sync
+            updateOffsets()
         }
-         */
         print("deleting \(index)")
+    }
+
+    /// This function ensures the ``offsets`` array matches the number of activities.
+    private func updateOffsets() {
+        // Ensure the offsets array matches the size of the activities array
+        if offsets.count < currentworkout.activities.count {
+            // Append new zero-sized offsets for new activities
+            offsets.append(contentsOf: [CGSize](
+                repeating: .zero,
+                count: currentworkout.activities.count - offsets.count
+            ))
+        } else if offsets.count > currentworkout.activities.count {
+            // Trim excess offsets in case activities are removed
+            offsets = Array(offsets.prefix(currentworkout.activities.count))
+        }
+    }
+
+    /// Function that returns 0 if the offset does not yet exist for the item.
+    /// - Parameter index: The index of the offset.
+    /// - Returns: The offset or zero if it does not exist.
+    private func safeOffset(for index: Int) -> CGSize {
+        if index < offsets.count {
+            return offsets[index]
+        } else {
+            return .zero // Prevent index out of bounds
+        }
+    }
+    
+    /// Helps return the overlay color for the item border.
+    /// - Parameter state: Current state of the activity.
+    /// - Returns: A ``Color`` or ``nil``.
+    private func borderColor(for state: Int) -> Color? {
+        switch state {
+        case 1: return .green   // Completed
+        case 0: return .clear // No sets
+        case 2: return .yellow  // In progress
+        default: return nil     // No border
+        }
     }
 }
 

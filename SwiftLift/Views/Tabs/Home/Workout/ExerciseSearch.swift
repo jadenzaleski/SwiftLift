@@ -132,6 +132,7 @@ struct ExerciseSearch: View {
         for name in selectedExercises {
             let newActivity = Activity(name: name, gym: currentWorkout.gym)
             currentWorkout.activities.append(newActivity)
+            print("appended \(name)")
         }
         isPresentingExerciseSearch = false
     }
