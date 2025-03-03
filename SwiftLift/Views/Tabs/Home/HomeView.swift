@@ -56,7 +56,7 @@ struct HomeView: View {
                 }
                 .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
             } else {
-                WV(workoutInProgress: $workoutInProgress)
+                WorkoutView(workoutInProgress: $workoutInProgress)
             }
         }
     }
