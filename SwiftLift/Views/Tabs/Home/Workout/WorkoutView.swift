@@ -115,7 +115,10 @@ struct WorkoutView: View {
                     }
                 }
                 // If this is not a highPriorityGesture or simultaneousGesture, the NavigationLink will take precedent
-                .simultaneousGesture(dragGesture(for: index))
+                .onTapGesture {
+                    print("tapped: \(index)")
+                }
+                .highPriorityGesture(dragGesture(for: index))
                 .animation(.spring(response: 0.25, dampingFraction: 0.5), value: safeOffset(for: index).width)
                 // Show delete button only when swiped left
                 if safeOffset(for: index).width < 0 {
@@ -249,8 +252,13 @@ struct WorkoutView: View {
     /// - Parameter index: The index of the item being swiped.
     /// - Returns: A `Gesture` that handles swipe interactions.
     private func dragGesture(for index: Int) -> some Gesture {
-        DragGesture()
+        DragGesture(minimumDistance: 15)
             .onChanged { gesture in
+                // Ensure the gesture is more horizontal than vertical
+                guard abs(gesture.translation.width) > abs(gesture.translation.height) else {
+                    return
+                }
+
                 // Prevent swipe to the right in default position
                 if offsets[index].width == 0 && gesture.translation.width > 0 {
                     return
@@ -287,6 +295,11 @@ struct WorkoutView: View {
                 self.offsets[index] = gesture.translation
             }
             .onEnded { gesture in
+                // Ensure the gesture is more horizontal than vertical
+                guard abs(gesture.translation.width) > abs(gesture.translation.height) else {
+                    return
+                }
+
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
                     // Left swipe handle:
                     if self.offsets[index].width < swipeLeftLimitToShow {
