@@ -115,9 +115,6 @@ struct WorkoutView: View {
                     }
                 }
                 // If this is not a highPriorityGesture or simultaneousGesture, the NavigationLink will take precedent
-                .onTapGesture {
-                    print("tapped: \(index)")
-                }
                 .highPriorityGesture(dragGesture(for: index))
                 .animation(.spring(response: 0.25, dampingFraction: 0.5), value: safeOffset(for: index).width)
                 // Show delete button only when swiped left
