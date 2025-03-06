@@ -12,8 +12,8 @@ import SwiftData
 /// You can create an instance of `Workout` using the initializer ``init(startDate:duration:gym:activities:)``.
 @Model
 final class Workout {
-    /// The start date of this ``Workout``.
-    var startDate: Date
+    /// The completion date of this ``Workout``.
+    var completionDate: Date?
     /// The duration of this ``Workout``.
     var duration: TimeInterval
     /// The gym at which this ``Workout`` takes place.
@@ -26,12 +26,12 @@ final class Workout {
     /// Initializes a new ``Workout`` instance.
     ///
     /// - Parameters:
-    ///   - startDate: The date when the workout started.
+    ///   - completionDate: The date when the workout ended.
     ///   - duration: The total duration of the workout in seconds.
     ///   - gym: The name of the gym where the workout took place.
     ///   - activities: A list of `Activity` objects associated with this workout. Defaults to an empty array.
-    init(startDate: Date, duration: TimeInterval, gym: String, activities: [Activity] = []) {
-        self.startDate = startDate
+    init(completionDate: Date? = nil, duration: TimeInterval = 0, gym: String, activities: [Activity] = []) {
+        self.completionDate = completionDate
         self.duration = duration
         self.gym = gym
         self.activities = activities

@@ -12,7 +12,7 @@ struct WorkoutView: View {
     @Binding var workoutInProgress: Bool
     /// Boolean to keep track of wether or not the delete workout alert is showing. In ``workoutToolbar``.
     @State var showDeleteAlert: Bool = false
-    @State var currentworkout = Workout(startDate: .now, duration: 0, gym: "The testing gym")
+    @State var currentworkout = Workout(gym: "The testing gym")
     /// Keeps track of the offsets for each activity in the ``ForEach`` loop in ``activityList``.
     @State var offsets: [CGSize] = []
     // Limits for the swipe gesture

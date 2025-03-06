@@ -144,7 +144,7 @@ struct HistoryDetail: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("\(workout.startDate.formatted(.dateTime.month().day().year().hour().minute()))")
+                Text("\(workout.completionDate?.formatted(.dateTime.month().day().year().hour().minute()) ?? "In Progress")")
                     .font(.lato(type: .light, size: .subtitle))
             }
         }

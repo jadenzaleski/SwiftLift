@@ -30,6 +30,10 @@ struct SwiftLiftApp: App {
         }
     }()
 
+    init() {
+        print(appContainer.configurations.first?.url.path(percentEncoded: false) ?? "No URL")
+    }
+
     var body: some Scene {
         WindowGroup {
             MainTabView()

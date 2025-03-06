@@ -11,7 +11,7 @@ import UIKit
 struct Tester: View {
     @State var index = 0
     var body: some View {
-        VStack {
+        ScrollView {
             Text("Hello World")
                 .font(Font.custom("OpenSans-Regular", size: 16))
                 .fontWeight(.light)
@@ -83,6 +83,8 @@ struct Tester: View {
                     index = 0
                 }
             }
+
+            
         }
     }
 }

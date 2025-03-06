@@ -11,7 +11,7 @@ import SwiftData
 struct HistoryView: View {
     @Environment(\.modelContext) private var modelContext
     /// A list of completed workouts sorted by start date.
-    @Query(filter: #Predicate<Workout> { $0.duration > 0 }, sort: \Workout.startDate, order: .reverse)
+    @Query(filter: #Predicate<Workout> { $0.duration > 0 }, sort: \Workout.completionDate, order: .reverse)
     private var workouts: [Workout]
 
     var body: some View {

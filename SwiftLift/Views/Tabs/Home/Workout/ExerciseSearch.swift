@@ -130,7 +130,7 @@ struct ExerciseSearch: View {
 
     private func addSelectedExercisesToWorkout() {
         for name in selectedExercises {
-            let newActivity = Activity(name: name, gym: currentWorkout.gym)
+            let newActivity = Activity(name: name, gym: currentWorkout.gym, parentWorkout: currentWorkout)
             currentWorkout.activities.append(newActivity)
             print("appended \(name)")
         }
@@ -140,7 +140,7 @@ struct ExerciseSearch: View {
 
 #Preview {
     ExerciseSearch(
-        currentWorkout: .constant(Workout(startDate: .now, duration: 3600, gym: "Sample Gym")),
+        currentWorkout: .constant(Workout(gym: "Sample Gym")),
         isPresentingExerciseSearch: .constant(true)
     )
     .modelContainer(previewContainer)
