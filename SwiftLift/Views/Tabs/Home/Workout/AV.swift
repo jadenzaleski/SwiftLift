@@ -103,7 +103,6 @@ struct AV: View {
     AV(
         activity: .constant(
             Activity(
-                name: "tester", gym: "default",
                 warmUpSets: [
                     SetData(reps: 10, weight: 20.0, isComplete: true),
                     SetData(reps: 15, weight: 30.0, isComplete: false)
@@ -112,7 +111,9 @@ struct AV: View {
                     SetData(reps: 8, weight: 50.5, isComplete: false),
                     SetData(reps: 8, weight: 50.0, isComplete: false),
                     SetData(reps: 12, weight: 30.0, isComplete: false)
-                ]
+                ],
+                parentExercise: Exercise(name: "Bench Press"),
+                parentWorkout: Workout(gym: "tester")
             )
         ))
 }

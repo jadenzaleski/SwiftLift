@@ -162,7 +162,7 @@ struct StatsView: View {
         totalWorkouts = exercises.count
 
         totalTime = exercises.reduce(0) { total, exercise in
-            total + exercise.activities.reduce(0) { $0 + ($1.completedDate?.timeIntervalSince1970 ?? 0) }
+            total + exercise.activities.reduce(0) { $0 + ($1.completionDate?.timeIntervalSince1970 ?? 0) }
         }
 
         totalWeight = exercises.reduce(0) { total, exercise in

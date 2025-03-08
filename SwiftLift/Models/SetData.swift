@@ -22,6 +22,7 @@ final class SetData {
     var isComplete: Bool
 
     /// The parent ``Activity`` of this ``SetData``.  Relationship handled in ``Activity``.
+    /// This must be optional in order to allow cascade deletion.
     var parentActivity: Activity?
 
     /// Initializes a new ``SetData`` instance.

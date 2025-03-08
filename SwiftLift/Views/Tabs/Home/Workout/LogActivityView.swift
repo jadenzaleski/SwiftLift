@@ -9,7 +9,7 @@ struct LogActivityView: View {
     @State private var notes = ""
     @SceneStorage("isDeleting") private var isDeleting: Bool = false
     private let debouncer = Debouncer()
-
+    
     var body: some View {
         ScrollView(showsIndicators: false) {
             activityHeader
@@ -26,7 +26,7 @@ struct LogActivityView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar { toolbarContent }
     }
-
+    
     private var activityHeader: some View {
         HStack {
             Text(activity.name)
@@ -34,7 +34,7 @@ struct LogActivityView: View {
             Spacer()
         }
     }
-
+    
     private func setSection(title: String, sets: Binding<[SetData]>) -> some View {
         VStack(alignment: .leading) {
             Text("\(sets.wrappedValue.count) \(title) set\(sets.wrappedValue.count == 1 ? ":" : "s:")")
@@ -52,7 +52,7 @@ struct LogActivityView: View {
             }
         }
     }
-
+    
     private func deleteButton(for sets: Binding<[SetData]>, index: Int) -> some View {
         Button(action: {
             sets.wrappedValue.remove(at: index)
@@ -64,7 +64,7 @@ struct LogActivityView: View {
         }
         .padding(.leading, 5.0)
     }
-
+    
     private func addSetButton(for sets: Binding<[SetData]>, title: String) -> some View {
         Button(action: {
             sets.wrappedValue.append(SetData(reps: 0, weight: 0.0, isComplete: false))
@@ -81,7 +81,7 @@ struct LogActivityView: View {
         }
         .padding(.top, 5.0)
     }
-
+    
     private var notesSection: some View {
         VStack(alignment: .leading) {
             Text("Notes:")
@@ -98,7 +98,7 @@ struct LogActivityView: View {
         }
         .padding(.top)
     }
-
+    
     private var toolbarContent: some ToolbarContent {
         Group {
             ToolbarItem(placement: .confirmationAction) {
@@ -120,11 +120,11 @@ struct LogActivityView: View {
             }
         }
     }
-
+    
     private func loadNotes() {
         notes = exercises.first(where: { $0.name == activity.name })?.notes ?? ""
     }
-
+    
     private func saveNotes() {
         debouncer.debounce(interval: 3.0) {
             if let index = exercises.firstIndex(where: { $0.name == activity.name }) {
@@ -136,12 +136,19 @@ struct LogActivityView: View {
 
 #Preview {
     LogActivityView(activity: .constant(
-        Activity(name: "Tester",
-                 gym: "Default",
-                 completedDate: .now,
-                 warmUpSets: [SetData(reps: 10, weight: 20.0, isComplete: false )],
-                 workingSets: [SetData(reps: 10, weight: 20.0, isComplete: false )]
-                )
+        Activity(
+            warmUpSets: [
+                SetData(reps: 10, weight: 20.0, isComplete: true),
+                SetData(reps: 15, weight: 30.0, isComplete: false)
+            ],
+            workingSets: [
+                SetData(reps: 8, weight: 50.5, isComplete: false),
+                SetData(reps: 8, weight: 50.0, isComplete: false),
+                SetData(reps: 12, weight: 30.0, isComplete: false)
+            ],
+            parentExercise: Exercise(name: "Bench Press"),
+            parentWorkout: Workout(gym: "tester")
+        )
     ))
     .modelContainer(previewContainer)
 }

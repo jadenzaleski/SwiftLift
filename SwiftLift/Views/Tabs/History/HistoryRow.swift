@@ -48,6 +48,19 @@ struct HistoryRow: View {
         completionDate: Date(),
         duration: 3600, // 1 hour
         gym: "Local Gym",
-        activities: [Activity(name: "Bench Press", gym: "Local Gym", completedDate: Date())]
+        activities: [
+            Activity(
+                warmUpSets: [
+                    SetData(reps: 10, weight: 20.0, isComplete: true),
+                    SetData(reps: 15, weight: 30.0, isComplete: false)
+                ],
+                workingSets: [
+                    SetData(reps: 8, weight: 50.5, isComplete: false),
+                    SetData(reps: 8, weight: 50.0, isComplete: false),
+                    SetData(reps: 12, weight: 30.0, isComplete: false)
+                ],
+                parentExercise: Exercise(name: "Bench Press"),
+                parentWorkout: Workout(gym: "tester")
+            )]
     ))
 }

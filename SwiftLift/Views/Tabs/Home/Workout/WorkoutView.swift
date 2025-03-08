@@ -9,10 +9,14 @@ import SwiftUI
 import Combine
 
 struct WorkoutView: View {
+    @Environment(\.modelContext) private var modelContext
     @Binding var workoutInProgress: Bool
     /// Boolean to keep track of wether or not the delete workout alert is showing. In ``workoutToolbar``.
     @State var showDeleteAlert: Bool = false
-    @State var currentworkout = Workout(gym: "The testing gym")
+    @State var currentWorkout: Workout
+    /// This comes from ``HomeView`` `stopWorkout` and is the function used to stop the workout.
+    /// Pass in a ``Bool`` that tells the function to save it to the database or not.
+    var stopWorkout: (Bool) -> Void
     /// Keeps track of the offsets for each activity in the ``ForEach`` loop in ``activityList``.
     @State var offsets: [CGSize] = []
     // Limits for the swipe gesture
@@ -45,7 +49,7 @@ struct WorkoutView: View {
         .toolbar {
             workoutToolbar()
         }
-        .onChange(of: currentworkout.activities) {
+        .onChange(of: currentWorkout.activities) {
             updateOffsets()
             print("onChange updateOffsets")
         }
@@ -54,7 +58,7 @@ struct WorkoutView: View {
             print("onAppear updateOffsets")
         }
         .sheet(isPresented: $isPresentingExerciseSearch) {
-            ExerciseSearch(currentWorkout: $currentworkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
+            ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
         }
     }
 
@@ -67,7 +71,7 @@ struct WorkoutView: View {
                 Image(systemName: "timer")
                 Text("00:00:00")
                 Spacer()
-                Text(currentworkout.gym)
+                Text(currentWorkout.gym)
                     .lineLimit(1)
                 Image(systemName: "location")
             }
@@ -75,9 +79,9 @@ struct WorkoutView: View {
             .font(.lato(type: .light, size: .heading))
 
             HStack {
-                let count = currentworkout.activities.count
+                let count = currentWorkout.activities.count
                 let text = count == 1 ? "Exercise" : "Exercises"
-                Text("\(currentworkout.activities.count) \(text):")
+                Text("\(currentWorkout.activities.count) \(text):")
                     .font(.lato(type: .light, size: .heading))
                 Spacer()
             }
@@ -88,7 +92,7 @@ struct WorkoutView: View {
     /// Displays a list of activities with navigation links.
     @ViewBuilder
     private func activityList() -> some View {
-        ForEach(currentworkout.activities.indices, id: \.self) { index in
+        ForEach(currentWorkout.activities.indices, id: \.self) { index in
             // If you want to slide the whole item to the left:
             /*
              ZStack(alignment: .trailing) {
@@ -110,7 +114,7 @@ struct WorkoutView: View {
             HStack {
                 NavigationLink(value: index) {
                     // If there is a moment where the index and count are not in sync, don't display the item.
-                    if index < currentworkout.activities.count {
+                    if index < currentWorkout.activities.count {
                         item(index: index)
                     }
                 }
@@ -132,7 +136,7 @@ struct WorkoutView: View {
     /// For each item in the ``activityList``, display this view.
     @ViewBuilder
     private func item(index: Int) -> some View {
-        let activity = currentworkout.activities[index]
+        let activity = currentWorkout.activities[index]
         let activityState: Int = {
             // Sets are either empty, complete, or in progress
             if (activity.warmUpSets + activity.workingSets).isEmpty {
@@ -205,7 +209,7 @@ struct WorkoutView: View {
                 isPresented: $showDeleteAlert
             ) {
                 Button(role: .destructive) {
-                    workoutInProgress = false
+                    stopWorkout(false)
                 } label: {
                     Text("Confirm")
                 }
@@ -216,7 +220,7 @@ struct WorkoutView: View {
 
         ToolbarItem(placement: .navigationBarTrailing) {
             Button {
-                workoutInProgress = false
+                stopWorkout(true)
             } label: {
                 Image(systemName: "flag.checkered")
             }
@@ -232,10 +236,10 @@ struct WorkoutView: View {
     private func activityBinding(for id: Array<Activity>.Index) -> Binding<Activity> {
         Binding {
             // Retrieves the activity at the specified index from the activities array.
-            currentworkout.activities[id]
+            currentWorkout.activities[id]
         } set: { newValue in
             // Updates the activity at the specified index when changes occur.
-            currentworkout.activities[id] = newValue
+            currentWorkout.activities[id] = newValue
         }
     }
 
@@ -327,25 +331,29 @@ struct WorkoutView: View {
     /// - Parameter index: The index of the activity to delete.
     private func deleteActivity(at index: Int) {
         withAnimation {
-            offsets.remove(at: index)
-            currentworkout.activities.remove(at: index)
+            let activityToDelete = currentWorkout.activities[index]
+            // Remove from model context to actually delete the object
+            modelContext.delete(activityToDelete)
+            // Remove reference from the list
+            currentWorkout.activities.remove(at: index)
             updateOffsets()
+            try? modelContext.save()
         }
-        print("deleting \(index)")
+        print("Deleted activity at index \(index)")
     }
 
     /// This function ensures the ``offsets`` array matches the number of activities.
     private func updateOffsets() {
         // Ensure the offsets array matches the size of the activities array
-        if offsets.count < currentworkout.activities.count {
+        if offsets.count < currentWorkout.activities.count {
             // Append new zero-sized offsets for new activities
             offsets.append(contentsOf: [CGSize](
                 repeating: .zero,
-                count: currentworkout.activities.count - offsets.count
+                count: currentWorkout.activities.count - offsets.count
             ))
-        } else if offsets.count > currentworkout.activities.count {
+        } else if offsets.count > currentWorkout.activities.count {
             // Trim excess offsets in case activities are removed
-            offsets = Array(offsets.prefix(currentworkout.activities.count))
+            offsets = Array(offsets.prefix(currentWorkout.activities.count))
         }
     }
 
@@ -374,7 +382,10 @@ struct WorkoutView: View {
 }
 
 #Preview {
-    WorkoutView(workoutInProgress: .constant(true))
-        .environment(\.font, .lato(type: .regular))
-
+    WorkoutView(
+        workoutInProgress: .constant(true),
+        currentWorkout: Workout(gym: "Preview Test"),
+        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }
+    )
+    .environment(\.font, .lato(type: .regular))
 }

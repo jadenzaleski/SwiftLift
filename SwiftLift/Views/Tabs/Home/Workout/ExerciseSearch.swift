@@ -106,7 +106,7 @@ struct ExerciseSearch: View {
         }
     }
 
-    // MARK: - Functions
+    // MARK: - Helpers
 
     private func toggleSelection(for exerciseName: String) {
         if selectedExercises.contains(exerciseName) {
@@ -123,17 +123,31 @@ struct ExerciseSearch: View {
 
         let newExerciseObj = Exercise(name: trimmedName, notes: "")
         modelContext.insert(newExerciseObj)
-
+        try? modelContext.save()
         UINotificationFeedbackGenerator().notificationOccurred(.success)
         newExercise = ""
     }
 
     private func addSelectedExercisesToWorkout() {
+        // Iterate over the selected exercises
         for name in selectedExercises {
-            let newActivity = Activity(name: name, gym: currentWorkout.gym, parentWorkout: currentWorkout)
-            currentWorkout.activities.append(newActivity)
-            print("appended \(name)")
+            // Fetch the exercise object by matching the name
+            if let exercise = exercises.first(where: { $0.name == name }) {
+                // Create a new activity for each selected exercise
+                let newActivity = Activity(parentExercise: exercise, parentWorkout: currentWorkout)
+
+                // Append the new activity to the current workout's activities
+                currentWorkout.activities.append(newActivity)
+
+                // Log the addition of the new activity for debugging
+                print("Appended activity for exercise: \(name)")
+            } else {
+                // If the exercise wasn't found, log an error or handle appropriately
+                print("Error: Exercise with name \(name) not found!")
+            }
         }
+
+        // Close the exercise selection UI
         isPresentingExerciseSearch = false
     }
 }
