@@ -17,13 +17,9 @@ final class Activity {
     /// The date at which the ``Activity`` was completed
     var completionDate: Date?
 
-    /// All of the warm-up sets for this ``Activity``.
+    /// All of the sets for this ``Activity``.
     @Relationship(deleteRule: .cascade, inverse: \SetData.parentActivity)
-    var warmUpSets: [SetData]
-
-    /// All of the working sets for this ``Activity``.
-    @Relationship(deleteRule: .cascade, inverse: \SetData.parentActivity)
-    var workingSets: [SetData]
+    var sets: [SetData]
 
     /// The parent ``Exercise`` of this ``Activity``. Relationship handled in ``Exercise``
     /// This must be optional in order to allow cascade deletion.
@@ -44,11 +40,11 @@ final class Activity {
     ///   - parentExercise: An reference to the `Exercise` this activity belongs to.
     ///   - parentWorkout: An reference to the `Workout` this activity is part of.
     init(completionDate: Date? = nil,
-         warmUpSets: [SetData] = [], workingSets: [SetData] = [],
-         parentExercise: Exercise, parentWorkout: Workout) {
+         sets: [SetData] = [],
+         parentExercise: Exercise,
+         parentWorkout: Workout) {
         self.completionDate = completionDate
-        self.warmUpSets = warmUpSets
-        self.workingSets = workingSets
+        self.sets = sets
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
     }
@@ -56,12 +52,22 @@ final class Activity {
 
 // MARK: - Computed Properties
 extension Activity {
-    /// Calculate wether or not this activity is complete.
-    /// Completion is determined by the wether or not all ``warmUpSets`` and ``workingSets`` are complete
-    var isComplete: Bool {
-        warmUpSets.allSatisfy(\.isComplete) && workingSets.allSatisfy(\.isComplete)
+    /// All the warm up sets in this ``Activity``
+    var warmUpSets: [SetData] {
+        sets.filter { $0.type == .warmUp }
     }
 
+    /// All the working sets in this ``Activity``
+    var workingSets: [SetData] {
+        sets.filter { $0.type == .working }
+    }
+
+    /// Calculate wether or not this activity is complete.
+    /// Completion is determined by the wether or not all ``sets`` are complete
+    var isComplete: Bool {
+        sets.allSatisfy(\.isComplete)
+    }
+    /// Name of the ``Activity``.
     var name: String {
         return parentExercise?.name ?? ""
     }

@@ -50,14 +50,12 @@ struct HistoryRow: View {
         gym: "Local Gym",
         activities: [
             Activity(
-                warmUpSets: [
-                    SetData(reps: 10, weight: 20.0, isComplete: true),
-                    SetData(reps: 15, weight: 30.0, isComplete: false)
-                ],
-                workingSets: [
-                    SetData(reps: 8, weight: 50.5, isComplete: false),
-                    SetData(reps: 8, weight: 50.0, isComplete: false),
-                    SetData(reps: 12, weight: 30.0, isComplete: false)
+                sets: [
+                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true),
+                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false),
+                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false),
+                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false),
+                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false)
                 ],
                 parentExercise: Exercise(name: "Bench Press"),
                 parentWorkout: Workout(gym: "tester")

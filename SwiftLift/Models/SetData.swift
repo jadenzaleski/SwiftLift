@@ -12,6 +12,15 @@ import SwiftData
 /// You can create a `SetData` instance using the ``init(reps:weight:isComplete:parentActivity:)`` initializer.
 @Model
 final class SetData {
+    /// Enum representing the type of set.
+    /// Currently, either ``warmUp`` or ``working``
+    enum SetType: String, Codable {
+        case warmUp
+        case working
+    }
+    /// The type of set.
+    var type: SetType
+
     /// The number of repetitions in the set.
     var reps: Int
 
@@ -26,13 +35,15 @@ final class SetData {
     var parentActivity: Activity?
 
     /// Initializes a new ``SetData`` instance.
-    ///
+    /// 
     /// - Parameters:
+    ///   - type: The ``SetType`` for the set.
     ///   - reps: The number of repetitions in the set.
     ///   - weight: The weight lifted for each rep in the set.
     ///   - isComplete: A boolean indicating whether the set is complete.
     ///   - parentActivity: The ``Activity`` this set is associated with (default is `nil`).
-    init(reps: Int, weight: Double, isComplete: Bool, parentActivity: Activity? = nil) {
+    init(type: SetType = .working, reps: Int = 0, weight: Double = 0.0, isComplete: Bool = false, parentActivity: Activity? = nil) {
+        self.type = type
         self.reps = reps
         self.weight = weight
         self.isComplete = isComplete

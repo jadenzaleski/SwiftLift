@@ -14,10 +14,10 @@ struct AV: View {
 
     var body: some View {
         ScrollView(showsIndicators: false) {
-            sets(title: "warmup", sets: $activity.warmUpSets)
+            sets(type: .warmUp, sets: $activity.sets)
                 .padding(.horizontal)
 
-            sets(title: "working", sets: $activity.workingSets)
+            sets(type: .working, sets: $activity.sets)
                 .padding(.horizontal)
         }
         .navigationTitle(Text(activity.name))
@@ -54,30 +54,44 @@ struct AV: View {
 
     /// This view shows a list of sets for the provided input.
     /// - Parameters:
-    ///   - title: The title of the sets.
-    ///   - sets: and Array of ``SetData`` objects.
+    ///   - type: The type of the sets.
+    ///   - sets: an array of ``SetData`` objects.
     /// - Returns: A ``View`` displaying the count of sets, a title, list of set items, and the add activity button.
     @ViewBuilder
-    private func sets(title: String, sets: Binding<[SetData]>) -> some View {
+    private func sets(type: SetData.SetType, sets: Binding<[SetData]>) -> some View {
+        let filteredSets = sets.wrappedValue.indices.filter { sets.wrappedValue[$0].type == type }
+
         HStack {
-            Text("\(sets.count) \(title) set\(sets.count == 1 ? ":" : "s:")")
+            let title = type == .warmUp ? "warm up" : "working"
+            Text("\(filteredSets.count) \(title) set\(filteredSets.count == 1 ? ":" : "s:")")
                 .font(.lato(type: .light, size: .subtitle))
             Spacer()
         }
 
-        ForEach(sets) { $set in
-            item(set: $set)
+        ForEach(filteredSets, id: \.self) { index in
+            item(set: sets[index]) // Use direct binding to modify set
         }
 
+        addSetButton(type: type)
+    }
+    
+    /// The add set button for the list of sets.
+    /// - Parameter type: The type of set. Can be any ``SetData.SetType``.
+    /// - Returns: A ``View`` of the add set button.
+    @ViewBuilder
+    private func addSetButton(type: SetData.SetType) -> some View {
         Button(action: {
             withAnimation(.easeInOut(duration: 0.2)) {
-                sets.wrappedValue.append(SetData(reps: 0, weight: 0.0, isComplete: false, parentActivity: activity))
+                // For now, use the defualt values
+                let newSet = SetData(type: type, parentActivity: activity)
+                activity.sets.append(newSet)
             }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }) {
             HStack {
                 Image(systemName: "plus")
                     .font(.title3)
+                let title = type == .warmUp ? "warm up" : "working"
                 Text("Add \(title) set")
                     .font(.lato(type: .regular, size: .subtitle))
             }
@@ -103,14 +117,12 @@ struct AV: View {
     AV(
         activity: .constant(
             Activity(
-                warmUpSets: [
-                    SetData(reps: 10, weight: 20.0, isComplete: true),
-                    SetData(reps: 15, weight: 30.0, isComplete: false)
-                ],
-                workingSets: [
-                    SetData(reps: 8, weight: 50.5, isComplete: false),
-                    SetData(reps: 8, weight: 50.0, isComplete: false),
-                    SetData(reps: 12, weight: 30.0, isComplete: false)
+                sets: [
+                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true),
+                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false),
+                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false),
+                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false),
+                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false)
                 ],
                 parentExercise: Exercise(name: "Bench Press"),
                 parentWorkout: Workout(gym: "tester")

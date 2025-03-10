@@ -17,7 +17,6 @@
 		D74270622AA90D910020503C /* SetPill.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270562AA90D910020503C /* SetPill.swift */; };
 		D74270632AA90D910020503C /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270572AA90D910020503C /* HistoryView.swift */; };
 		D74270652AA90D910020503C /* ExerciseSearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270592AA90D910020503C /* ExerciseSearch.swift */; };
-		D74270662AA90D910020503C /* LogActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742705A2AA90D910020503C /* LogActivityView.swift */; };
 		D74270672AA90D910020503C /* Tester.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742705B2AA90D910020503C /* Tester.swift */; };
 		D74270692AA90DA80020503C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D74270682AA90DA80020503C /* LaunchScreen.storyboard */; };
 		D742706B2AA91C5E0020503C /* SwiftLiftApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */; };
@@ -60,7 +59,6 @@
 		D74270562AA90D910020503C /* SetPill.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SetPill.swift; sourceTree = "<group>"; };
 		D74270572AA90D910020503C /* HistoryView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		D74270592AA90D910020503C /* ExerciseSearch.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExerciseSearch.swift; sourceTree = "<group>"; };
-		D742705A2AA90D910020503C /* LogActivityView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogActivityView.swift; sourceTree = "<group>"; };
 		D742705B2AA90D910020503C /* Tester.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tester.swift; sourceTree = "<group>"; };
 		D74270682AA90DA80020503C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D742706A2AA91C5E0020503C /* SwiftLiftApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwiftLiftApp.swift; sourceTree = "<group>"; };
@@ -149,7 +147,6 @@
 			isa = PBXGroup;
 			children = (
 				D74270592AA90D910020503C /* ExerciseSearch.swift */,
-				D742705A2AA90D910020503C /* LogActivityView.swift */,
 				D74270562AA90D910020503C /* SetPill.swift */,
 				D76786E52D72B271001FFF69 /* WorkoutView.swift */,
 				D76786E72D72C48E001FFF69 /* AV.swift */,
@@ -392,7 +389,6 @@
 				D7A2C00C2B33E2E7000E3C58 /* HistoryRow.swift in Sources */,
 				D74270602AA90D910020503C /* HomeView.swift in Sources */,
 				D74270672AA90D910020503C /* Tester.swift in Sources */,
-				D74270662AA90D910020503C /* LogActivityView.swift in Sources */,
 				D742705F2AA90D910020503C /* SettingsView.swift in Sources */,
 				D76A5F632C22755600813F51 /* LatoFont.swift in Sources */,
 				D7A2C00E2B364DF5000E3C58 /* HistoryDetail.swift in Sources */,
