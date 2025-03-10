@@ -9,8 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct AV: View {
+    @Environment(\.modelContext) private var modelContext
     @Binding var activity: Activity
     @FocusState private var focusedField: PersistentIdentifier?
+    @State private var swipedSetID: PersistentIdentifier? = nil
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -24,18 +26,28 @@ struct AV: View {
         .onTapGesture {
             // Clears focus to dismiss the keyboard
             focusedField = nil
+            withAnimation(.snappy) {
+                swipedSetID = nil
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            withAnimation(.snappy) {
+                swipedSetID = nil // Dismiss swipe when keyboard appears
+            }
         }
     }
-    
+
     /// This makes up each item in the warmp and working sets list.
     /// - Parameter set: The set to be edited by the TextFields
     /// - Returns: Return the item view for a singluar ``SetData``
     @ViewBuilder
     private func item(set: Binding<SetData>) -> some View {
+        let isSwiped = swipedSetID == set.wrappedValue.id
         HStack {
             Button(action: { set.wrappedValue.isComplete.toggle() }) {
                 Image(systemName: set.wrappedValue.isComplete ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(set.wrappedValue.isComplete ? .green : .gray)
+                    .font(.lato(type: .regular, size: .medium))
             }
             TextField("Reps", value: set.reps, formatter: NumberFormatter())
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -49,7 +61,38 @@ struct AV: View {
                 .textFieldStyle(RoundedBorderTextFieldStyle())
                 .keyboardType(.decimalPad)
                 .focused($focusedField, equals: set.id)
+
+            if isSwiped {
+                Button(action: {
+                    withAnimation(.snappy) {
+                        if let index = activity.sets.firstIndex(where: { $0.id == set.wrappedValue.id }) {
+                            deleteSet(at: index)
+                        }
+                        swipedSetID = nil
+                    }
+                }) {
+                    Image(systemName: "trash")
+                        .foregroundColor(.white)
+                        .frame(width: 30, height: 30)
+                        .background(Color.red)
+                        .clipShape(Circle())
+                }
+//                .transition(.move(edge: .trailing))
+            }
         }
+        .padding(.vertical, 5.0)
+        .contentShape(Rectangle()) // Makes the whole row draggable
+        .gesture(
+            DragGesture()
+            
+                .onChanged { value in
+                    if value.translation.width < -50 {
+                        withAnimation {
+                            swipedSetID = set.wrappedValue.id
+                        }
+                    }
+                }
+        )
     }
 
     /// This view shows a list of sets for the provided input.
@@ -74,7 +117,7 @@ struct AV: View {
 
         addSetButton(type: type)
     }
-    
+
     /// The add set button for the list of sets.
     /// - Parameter type: The type of set. Can be any ``SetData.SetType``.
     /// - Returns: A ``View`` of the add set button.
@@ -111,6 +154,20 @@ struct AV: View {
         formatter.alwaysShowsDecimalSeparator = false // No forced decimal unless needed
         return formatter
     }()
+
+    /// Deletes an ``SetData`` at the given index.
+    /// - Parameter index: The index of the set to delete.
+    private func deleteSet(at index: Int) {
+        withAnimation {
+            let setToDelete = activity.sets[index]
+            // Remove from model context to actually delete the object
+            modelContext.delete(setToDelete)
+            // Remove reference from the list
+            activity.sets.remove(at: index)
+            try? modelContext.save()
+        }
+        print("Deleted activity at index \(index)")
+    }
 }
 
 #Preview {

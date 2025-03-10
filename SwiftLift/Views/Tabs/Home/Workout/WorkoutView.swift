@@ -327,7 +327,7 @@ struct WorkoutView: View {
             }
     }
 
-    /// Deletes an activity at the given index.
+    /// Deletes an ``Activity`` at the given index.
     /// - Parameter index: The index of the activity to delete.
     private func deleteActivity(at index: Int) {
         withAnimation {
