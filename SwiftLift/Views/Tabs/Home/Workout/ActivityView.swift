@@ -8,11 +8,11 @@
 import SwiftUI
 import SwiftData
 
-struct AV: View {
+struct ActivityView: View {
     @Environment(\.modelContext) private var modelContext
     @Binding var activity: Activity
     @FocusState private var focusedField: PersistentIdentifier?
-    @State private var swipedSetID: PersistentIdentifier? = nil
+    @State private var swipedSetID: PersistentIdentifier?
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -84,7 +84,6 @@ struct AV: View {
         .contentShape(Rectangle()) // Makes the whole row draggable
         .gesture(
             DragGesture()
-            
                 .onChanged { value in
                     if value.translation.width < -50 {
                         withAnimation {
@@ -171,7 +170,7 @@ struct AV: View {
 }
 
 #Preview {
-    AV(
+    ActivityView(
         activity: .constant(
             Activity(
                 sets: [

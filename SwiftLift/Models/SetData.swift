@@ -8,7 +8,8 @@
 import Foundation
 import SwiftData
 
-/// Represents a set of an ``Exercise`` during a ``Workout``. Each set records the number of repetitions, weight lifted, and whether it is complete.
+/// Represents a set of an ``Exercise`` during a ``Workout``.
+/// Each set records the number of repetitions, weight lifted, and whether it is complete.
 /// You can create a `SetData` instance using the ``init(reps:weight:isComplete:parentActivity:)`` initializer.
 @Model
 final class SetData {
@@ -42,7 +43,8 @@ final class SetData {
     ///   - weight: The weight lifted for each rep in the set.
     ///   - isComplete: A boolean indicating whether the set is complete.
     ///   - parentActivity: The ``Activity`` this set is associated with (default is `nil`).
-    init(type: SetType = .working, reps: Int = 0, weight: Double = 0.0, isComplete: Bool = false, parentActivity: Activity? = nil) {
+    init(type: SetType = .working, reps: Int = 0, weight: Double = 0.0,
+         isComplete: Bool = false, parentActivity: Activity? = nil) {
         self.type = type
         self.reps = reps
         self.weight = weight

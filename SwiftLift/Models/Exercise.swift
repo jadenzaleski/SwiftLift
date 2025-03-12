@@ -36,4 +36,3 @@ final class Exercise {
         self.activities = activities
     }
 }
-

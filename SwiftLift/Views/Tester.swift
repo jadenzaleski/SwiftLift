@@ -83,8 +83,6 @@ struct Tester: View {
                     index = 0
                 }
             }
-
-            
         }
     }
 }

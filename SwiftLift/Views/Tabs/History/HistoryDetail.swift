@@ -165,8 +165,6 @@ struct HistoryDetail: View {
     }
 }
 
-
-// TODO: Update Preview
-//#Preview {
-//    HistoryDetail(workout: Workout.randomWorkout())
-//}
+#Preview {
+    HistoryDetail(workout: Workout(gym: "Sample Gym"))
+}

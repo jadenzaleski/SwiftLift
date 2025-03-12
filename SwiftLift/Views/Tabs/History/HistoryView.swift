@@ -23,10 +23,6 @@ struct HistoryView: View {
                         .foregroundColor(.gray)
                     Text("No Workouts Yet")
                         .font(.lato(type: .light, isItalic: true))
-                    Button("Start Your First Workout") {
-                        // TODO: Navigate to workout creation screen
-                    }
-                    .buttonStyle(.borderedProminent)
                 }
             } else {
                 List(workouts) { workout in

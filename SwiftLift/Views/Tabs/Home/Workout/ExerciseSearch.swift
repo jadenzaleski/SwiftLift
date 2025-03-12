@@ -52,8 +52,7 @@ struct ExerciseSearch: View {
             HStack {
                 Text(exercise.name)
                 Spacer()
-                // FIXME: Somehow Query all uses
-//                Text("\(exercise.count)")
+                Text("\(exercise.activities.count)")
                 Image(systemName: selectedExercises.contains(exercise.name) ? "checkmark.square.fill" : "square")
             }
             .padding(.vertical, 10.0)
@@ -140,7 +139,7 @@ struct ExerciseSearch: View {
                 currentWorkout.activities.append(newActivity)
 
                 // Log the addition of the new activity for debugging
-                print("Appended activity for exercise: \(name)")
+                print("Appended activity to workout for exercise: \(name)")
             } else {
                 // If the exercise wasn't found, log an error or handle appropriately
                 print("Error: Exercise with name \(name) not found!")

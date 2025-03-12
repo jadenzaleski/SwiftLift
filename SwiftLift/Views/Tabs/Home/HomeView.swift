@@ -56,7 +56,10 @@ struct HomeView: View {
                 }
                 .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
             } else if let workout = currentWorkout {
-                WorkoutView(workoutInProgress: $workoutInProgress, elapsedTime: elapsedTime, stopWorkout: stopWorkout, currentWorkout: workout)
+                WorkoutView(workoutInProgress: $workoutInProgress,
+                            elapsedTime: elapsedTime,
+                            stopWorkout: stopWorkout,
+                            currentWorkout: workout)
             }
         }
         .onAppear {
@@ -130,6 +133,29 @@ struct HomeView: View {
         if let workout = currentWorkout {
             stopTimer()
             if saveIt {
+                // We need to go through and remove any sets that are not completed, or 0s
+                for activity in workout.activities {
+                    for set in activity.sets {
+                        if set.reps == 0 || set.weight == 0 || !set.isComplete {
+                            if let setToDelete = activity.sets.first(where: { $0 === set }) {
+                                modelContext.delete(setToDelete)
+                                activity.sets.removeAll { $0 === set }
+                                print("Deleted set:", set, "because it was incomplete or empty.")
+                            }
+                        }
+                    }
+
+                    // Now remove any activites that have no completed sets in them
+                    if activity.sets.isEmpty {
+                        if let activityToDelete = workout.activities.first(where: { $0 === activity }) {
+                            modelContext.delete(activityToDelete)
+                            workout.activities.removeAll { $0 === activity }
+                            print("Deleted activity:", activity,
+                                  "because it had no completed sets.")
+                        }
+                    }
+                }
+
                 print("Workout has been stopped and saved!")
                 workout.completionDate = .now
                 try? modelContext.save()  // Persist changes

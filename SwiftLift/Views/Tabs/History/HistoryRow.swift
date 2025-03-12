@@ -17,7 +17,10 @@ struct HistoryRow: View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
                 Label(
-                    title: { Text(workout.completionDate?.formatted(.dateTime.month().day().year().hour().minute()) ?? "In progress...") },
+                    title: {
+                        Text(workout.completionDate?.formatted(
+                            .dateTime.month().day().year().hour().minute()) ?? "In progress...")
+                    },
                     icon: { Image(systemName: "calendar") }
                 )
                 Spacer()

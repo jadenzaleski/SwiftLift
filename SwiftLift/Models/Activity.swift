@@ -11,12 +11,10 @@ import SwiftUI
 
 /// Represents an activity performed during a ``Workout``, including details such as the activity's name, gym, completed date,
 /// and the sets associated with the activity. This class also holds relationships to ``Exercise`` and ``Workout`` instances.
-/// You can create an instance of `Activity` using the initializer ``init(name:gym:completionDate:warmUpSets:workingSets:parentExercise:parentWorkout:)``.
+/// You can create an instance of `Activity` using the initializer
+/// ``init(completionDate:sets:parentExercise:parentWorkout:)``.
 @Model
 final class Activity {
-    /// The date at which the ``Activity`` was completed
-    var completionDate: Date?
-
     /// All of the sets for this ``Activity``.
     @Relationship(deleteRule: .cascade, inverse: \SetData.parentActivity)
     var sets: [SetData]
@@ -39,11 +37,9 @@ final class Activity {
     ///   Defaults to an empty array.
     ///   - parentExercise: An reference to the `Exercise` this activity belongs to.
     ///   - parentWorkout: An reference to the `Workout` this activity is part of.
-    init(completionDate: Date? = nil,
-         sets: [SetData] = [],
+    init(sets: [SetData] = [],
          parentExercise: Exercise,
          parentWorkout: Workout) {
-        self.completionDate = completionDate
         self.sets = sets
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
@@ -71,6 +67,11 @@ extension Activity {
     }
     /// Name of the ``Activity``.
     var name: String {
-        return parentExercise?.name ?? ""
+        parentExercise?.name ?? ""
+    }
+
+    /// The date at which the ``Activity`` was completed
+    var completionDate: Date? {
+        parentWorkout?.completionDate
     }
 }

@@ -135,7 +135,7 @@ struct WorkoutView: View {
             .padding(.bottom, 8.0)
         }
         .navigationDestination(for: Int.self) { index in
-            AV(activity: activityBinding(for: index))
+            ActivityView(activity: activityBinding(for: index))
         }
     }
 
@@ -163,7 +163,7 @@ struct WorkoutView: View {
             .foregroundStyle(activityState == 1 ? .green :
                                 activityState == 0 ? Color.ld : .yellow)
             .font(.lato(type: .thin, size: .subtitle))
-            Text("\(activity.name) \(index)")
+            Text("\(activity.name)")
                 .font(.lato(type: .bold, size: .subtitle))
                 .lineLimit(1)
             Spacer()
@@ -233,8 +233,10 @@ struct WorkoutView: View {
             }
         }
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
+extension WorkoutView {
     /// Returns a binding to an ``Activity`` within the `currentworkout.activities` array based on the provided index.
     /// This allows for two-way data binding, enabling modifications to ``Activity`` instances directly in views.
     ///
@@ -253,7 +255,7 @@ struct WorkoutView: View {
     // swiftlint:disable:next line_length
     /// Code from: [Stackoverflow question](https://stackoverflow.com/questions/67238383/how-to-swipe-to-delete-in-swiftui-with-only-a-foreach-and-not-a-list)
     /// Creates a drag gesture for handling swipe-to-delete functionality.
-    /// 
+    ///
     /// This gesture allows users to swipe an ``item`` to the left to reveal a delete option. It prevents
     /// swiping to the right beyond the original position and ensures a smooth swipe animation.
     /// This is overkill if we only want to change the with of the ``item`` but it will work for either implementation.
@@ -375,7 +377,7 @@ struct WorkoutView: View {
             return .zero // Prevent index out of bounds
         }
     }
-    
+
     /// Helps return the overlay color for the item border.
     /// - Parameter state: Current state of the activity.
     /// - Returns: A ``Color`` or ``nil``.
@@ -387,7 +389,6 @@ struct WorkoutView: View {
         default: return nil     // No border
         }
     }
-
     /// Converts elapsed time into HH:MM:SS format
     private func timeString(from interval: TimeInterval) -> String {
         let hours = Int(interval) / 3600
@@ -400,7 +401,8 @@ struct WorkoutView: View {
 #Preview {
     WorkoutView(
         workoutInProgress: .constant(true), elapsedTime: 100,
-        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }, currentWorkout: Workout(gym: "Preview Test")
+        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") },
+        currentWorkout: Workout(gym: "Preview Test")
     )
     .environment(\.font, .lato(type: .regular))
 }

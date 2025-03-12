@@ -36,7 +36,6 @@ struct ProfileView: View {
                     Image(systemName: "number")
                     Text("\(workouts.count)")
                     Spacer()
-                    // FIXME: get sum of time worked out
                     Text("\(workouts.first?.completionDate?.formatted(date: .abbreviated, time: .shortened) ?? "N/A")")
                     Image(systemName: "clock")
                 }
