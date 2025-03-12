@@ -10,9 +10,32 @@ import SwiftData
 
 struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
+
     @Query private var exercises: [Exercise]
-    @Query private var workouts: [Workout]
+    @Query(
+        filter: #Predicate<Workout> { $0.completionDate != nil },
+        sort: \Workout.completionDate,
+        order: .reverse
+    )
+    private var workouts: [Workout]
+
     @AppStorage("name") private var name = ""
+
+    var totalWorkoutDuration: String {
+        let totalSeconds = workouts.compactMap { $0.duration }.reduce(0, +)
+
+        let days = Int(totalSeconds / 86400)
+        let hours = Int((totalSeconds.truncatingRemainder(dividingBy: 86400)) / 3600)
+        let minutes = Int((totalSeconds.truncatingRemainder(dividingBy: 3600)) / 60)
+
+        var formatted = ""
+        if days > 0 { formatted += "\(days)d " }
+        if hours > 0 { formatted += "\(hours)h " }
+        if minutes > 0 { formatted += "\(minutes)m" }
+
+        return formatted.isEmpty ? "0m" : formatted.trimmingCharacters(in: .whitespaces)
+    }
+
     var body: some View {
         VStack {
             Image(systemName: "person.crop.circle")
@@ -26,7 +49,7 @@ struct ProfileView: View {
             }
             HStack {
                 Text("Joined:")
-                // TODO: update
+                Text("\(workouts.first?.completionDate?.formatted(date: .abbreviated, time: .shortened) ?? "No workouts yet")")
 //                Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
             }
             .padding(.vertical, 5)
@@ -36,7 +59,7 @@ struct ProfileView: View {
                     Image(systemName: "number")
                     Text("\(workouts.count)")
                     Spacer()
-                    Text("\(workouts.first?.completionDate?.formatted(date: .abbreviated, time: .shortened) ?? "N/A")")
+                    Text("\(totalWorkoutDuration)")
                     Image(systemName: "clock")
                 }
                 .padding(.horizontal)

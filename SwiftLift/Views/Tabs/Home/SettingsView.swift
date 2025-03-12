@@ -11,11 +11,14 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @State private var newGym = ""
-    @State private var color = Color.accentColor
+
+    @EnvironmentObject var appStorageManager: AppStorageManager
+
     @AppStorage("selectedTheme") private var selectedTheme = "Automatic"
     @AppStorage("bold") private var bold = false
     @AppStorage("metric") private var metric = false
+    @State private var newGym = ""
+    @State private var color = Color.accentColor
 
     let themes = ["Automatic", "Light", "Dark"]
     let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
@@ -56,33 +59,33 @@ struct SettingsView: View {
                 }
 
                 // TODO: update gyms here
-//                Section {
-//                    ForEach(history[0].gyms, id: \.self) { gym in
-//                        Text(gym)
-//                    }
-//                    .onDelete(perform: { indexSet in
-//                        history[0].gyms.remove(atOffsets: indexSet)
-//                    })
-//                    .deleteDisabled(history[0].gyms.count <= 1)
-//
-//                    HStack {
-//                        TextField("Add a new gym", text: $newGym)
-//
-//                        Button(action: {
-//                            addNewGym()
-//                        }, label: {
-//                            Image(systemName: "plus.circle.fill")
-//                        })
-//                        .disabled(newGym.isEmpty)
-//                    }
-//                } header: {
-//                    Text("Gyms")
-//                        .font(.lato(type: .regular, size: .caption))
-//                } footer: {
-//                    Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
-//                        .font(.lato(type: .light, size: .caption))
-//
-//                }
+                Section {
+                    ForEach(appStorageManager.gyms, id: \.self) { gym in
+                        Text(gym)
+                    }
+                    .onDelete(perform: { indexSet in
+                        appStorageManager.gyms.remove(atOffsets: indexSet)
+                    })
+                    .deleteDisabled(appStorageManager.gyms.count <= 1)
+
+                    HStack {
+                        TextField("Add a new gym", text: $newGym)
+
+                        Button(action: {
+                            addNewGym()
+                        }, label: {
+                            Image(systemName: "plus.circle.fill")
+                        })
+                        .disabled(newGym.isEmpty)
+                    }
+                } header: {
+                    Text("Gyms")
+                        .font(.lato(type: .regular, size: .caption))
+                } footer: {
+                    Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
+                        .font(.lato(type: .light, size: .caption))
+
+                }
 
                 Section {
 
@@ -156,21 +159,22 @@ struct SettingsView: View {
     }
 
     // TODO: part of todo up top
-//    private func addNewGym() {
-//        if !history[0].gyms.isEmpty && !history[0].gyms.contains(newGym) {
-//            withAnimation {
-//                history[0].gyms.append(newGym.capitalized)
-//                self.hideKeyboard()
-//            }
-//            newGym = ""
-//            // haptic feedback
-//            UINotificationFeedbackGenerator().notificationOccurred(.success)
-//        }
-//
-//    }
+    private func addNewGym() {
+        if !appStorageManager.gyms.contains(newGym) {
+            withAnimation {
+                appStorageManager.gyms.append(newGym.capitalized)
+                self.hideKeyboard()
+            }
+            newGym = ""
+            // haptic feedback
+            UINotificationFeedbackGenerator().notificationOccurred(.success)
+        }
+
+    }
 }
 
 #Preview {
     SettingsView()
         .modelContainer(previewContainer)
+        .environmentObject(AppStorageManager())
 }

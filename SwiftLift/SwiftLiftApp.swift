@@ -12,6 +12,8 @@ import SwiftData
 @main
 @MainActor
 struct SwiftLiftApp: App {
+    @StateObject private var appStorageManager = AppStorageManager()
+
     let appContainer: ModelContainer = {
         // Define schema with the current models
         let schema = Schema([
@@ -38,6 +40,7 @@ struct SwiftLiftApp: App {
         WindowGroup {
             MainTabView()
                 .environment(\.font, .lato(type: .regular))
+                .environmentObject(appStorageManager)
         }
         .modelContainer(appContainer) // Attach SwiftData model container
     }

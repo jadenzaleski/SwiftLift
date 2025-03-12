@@ -16,7 +16,7 @@ let previewContainer: ModelContainer = {
             for: Workout.self, Exercise.self
         )
 
-        let sampleWorkout = Workout(gym: "Sample Gym")
+        let sampleWorkout = Workout(completionDate: .now, duration: 10000, gym: "Sample Gym")
         container.mainContext.insert(sampleWorkout)
 
         return container

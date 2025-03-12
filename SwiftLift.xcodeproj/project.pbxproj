@@ -46,6 +46,7 @@
 		D7B90EA82AA8ECA100F9EC41 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA32AA8ECA100F9EC41 /* Workout.swift */; };
 		D7B90EAA2AA8ECA100F9EC41 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA52AA8ECA100F9EC41 /* Exercise.swift */; };
 		D7B90EAB2AA8ECA100F9EC41 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA62AA8ECA100F9EC41 /* Activity.swift */; };
+		D7D6E3AD2D81F9790038A4B1 /* AppStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -91,6 +92,7 @@
 		D7B90EA32AA8ECA100F9EC41 /* Workout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
 		D7B90EA52AA8ECA100F9EC41 /* Exercise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		D7B90EA62AA8ECA100F9EC41 /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
+		D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -157,6 +159,7 @@
 		D78D94702C00E99E00DBEF7C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */,
 				D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */,
 				D78D94712C00E9B900DBEF7C /* Debouncer.swift */,
 				D74270552AA90D900020503C /* NumbersOnlyViewModifier.swift */,
@@ -383,6 +386,7 @@
 				D742706B2AA91C5E0020503C /* SwiftLiftApp.swift in Sources */,
 				D7B90EAB2AA8ECA100F9EC41 /* Activity.swift in Sources */,
 				D76786E82D72C48E001FFF69 /* ActivityView.swift in Sources */,
+				D7D6E3AD2D81F9790038A4B1 /* AppStorageManager.swift in Sources */,
 				D7B90EAA2AA8ECA100F9EC41 /* Exercise.swift in Sources */,
 				D77FD0E62B54AA710095644A /* LineChart.swift in Sources */,
 				D7B90EA72AA8ECA100F9EC41 /* SetData.swift in Sources */,
