@@ -53,11 +53,13 @@ final class Activity {
 // MARK: - Computed Properties
 extension Activity {
     /// All the warm up sets in this ``Activity``
+    @Transient
     var warmUpSets: [SetData] {
         sets.filter { $0.type == .warmUp }
     }
 
     /// All the working sets in this ``Activity``
+    @Transient
     var workingSets: [SetData] {
         sets.filter { $0.type == .working }
     }

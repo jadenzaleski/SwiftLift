@@ -10,22 +10,27 @@ import Combine
 
 struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
+
     @Binding var workoutInProgress: Bool
-    /// Boolean to keep track of wether or not the delete workout alert is showing. In ``workoutToolbar``.
-    @State var showDeleteAlert: Bool = false
-    @State var currentWorkout: Workout
+    var elapsedTime: TimeInterval
     /// This comes from ``HomeView`` `stopWorkout` and is the function used to stop the workout.
     /// Pass in a ``Bool`` that tells the function to save it to the database or not.
     var stopWorkout: (Bool) -> Void
+
+    @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
+
+    /// Boolean to keep track of wether or not the delete workout alert is showing. In ``workoutToolbar``.
+    @State var showDeleteAlert: Bool = false
+    /// The current ``Workout``, if any.
+    @State var currentWorkout: Workout
     /// Keeps track of the offsets for each activity in the ``ForEach`` loop in ``activityList``.
     @State var offsets: [CGSize] = []
+
     // Limits for the swipe gesture
     private let swipeLeftLimit: CGFloat = -60
     private let swipeRightLimit: CGFloat = 60
     private let swipeLeftLimitToShow: CGFloat = -40
     private let swipeRightLimitToHide: CGFloat = 40
-
-    @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -69,7 +74,8 @@ struct WorkoutView: View {
         VStack {
             HStack(alignment: .center) {
                 Image(systemName: "timer")
-                Text("00:00:00")
+                Text(timeString(from: elapsedTime)) // Format elapsed time
+                    .monospacedDigit()
                 Spacer()
                 Text(currentWorkout.gym)
                     .lineLimit(1)
@@ -151,7 +157,8 @@ struct WorkoutView: View {
         HStack {
             // Change the color and the type of image based on activity compeltion status
             Image(systemName:
-                    activityState == 1 ? "checkmark.circle.fill" : activityState == 0 ? "circle" : "exclamationmark.circle"
+                    activityState == 1 ? "checkmark.circle.fill" :
+                    activityState == 0 ? "circle" : "exclamationmark.circle"
             )
             .foregroundStyle(activityState == 1 ? .green :
                                 activityState == 0 ? Color.ld : .yellow)
@@ -334,10 +341,11 @@ struct WorkoutView: View {
             let activityToDelete = currentWorkout.activities[index]
             // Remove from model context to actually delete the object
             modelContext.delete(activityToDelete)
+            try? modelContext.save()
             // Remove reference from the list
             currentWorkout.activities.remove(at: index)
             updateOffsets()
-            try? modelContext.save()
+
         }
         print("Deleted activity at index \(index)")
     }
@@ -379,13 +387,20 @@ struct WorkoutView: View {
         default: return nil     // No border
         }
     }
+
+    /// Converts elapsed time into HH:MM:SS format
+    private func timeString(from interval: TimeInterval) -> String {
+        let hours = Int(interval) / 3600
+        let minutes = (Int(interval) % 3600) / 60
+        let seconds = Int(interval) % 60
+        return String(format: "%02d:%02d:%02d", hours, minutes, seconds)
+    }
 }
 
 #Preview {
     WorkoutView(
-        workoutInProgress: .constant(true),
-        currentWorkout: Workout(gym: "Preview Test"),
-        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }
+        workoutInProgress: .constant(true), elapsedTime: 100,
+        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }, currentWorkout: Workout(gym: "Preview Test")
     )
     .environment(\.font, .lato(type: .regular))
 }

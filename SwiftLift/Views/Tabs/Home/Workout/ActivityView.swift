@@ -162,9 +162,9 @@ struct AV: View {
             let setToDelete = activity.sets[index]
             // Remove from model context to actually delete the object
             modelContext.delete(setToDelete)
+            try? modelContext.save()
             // Remove reference from the list
             activity.sets.remove(at: index)
-            try? modelContext.save()
         }
         print("Deleted activity at index \(index)")
     }

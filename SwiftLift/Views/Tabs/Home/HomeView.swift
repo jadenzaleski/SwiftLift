@@ -23,6 +23,9 @@ struct HomeView: View {
 
     @State private var currentWorkout: Workout?
     @State private var showAlert = false
+    /// Time since the workout has started.
+    @State private var elapsedTime: TimeInterval = 0
+    @State private var timer: Timer?
 
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -53,7 +56,7 @@ struct HomeView: View {
                 }
                 .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
             } else if let workout = currentWorkout {
-                WorkoutView(workoutInProgress: $workoutInProgress, currentWorkout: workout, stopWorkout: stopWorkout)
+                WorkoutView(workoutInProgress: $workoutInProgress, elapsedTime: elapsedTime, stopWorkout: stopWorkout, currentWorkout: workout)
             }
         }
         .onAppear {
@@ -75,7 +78,7 @@ struct HomeView: View {
         // Logging to indicate the workout has started
         print("Started Workout!")
         // Check if there is already a workout in progress
-        if let existingWorkout = currentWorkout {
+        if currentWorkout != nil {
             // If a workout is already ongoing, just mark it as in progress
             workoutInProgress = true
         } else {
@@ -87,6 +90,7 @@ struct HomeView: View {
             currentWorkout = newWorkout
             // Mark the workout as in progress
             workoutInProgress = true
+            startTimer()
         }
         // Trigger a haptic feedback to indicate the workout has started successfully
         UINotificationFeedbackGenerator().notificationOccurred(.success)
@@ -105,9 +109,26 @@ struct HomeView: View {
         }
     }
 
+    /// Starts the timer and updates elapsed time every second
+    private func startTimer() {
+        timer?.invalidate() // Ensure previous timer is stopped
+        timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            elapsedTime += 1
+            currentWorkout?.duration = elapsedTime
+            print("duration: ", currentWorkout?.duration ?? "error")
+        }
+    }
+
+    /// Stops the timer when the view disappears
+    private func stopTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
+
     /// Stops the current workout
     private func stopWorkout(saveIt: Bool) {
         if let workout = currentWorkout {
+            stopTimer()
             if saveIt {
                 print("Workout has been stopped and saved!")
                 workout.completionDate = .now
