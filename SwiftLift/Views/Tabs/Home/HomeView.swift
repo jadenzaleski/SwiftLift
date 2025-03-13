@@ -12,6 +12,9 @@ import SwiftData
 struct HomeView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.scenePhase) var scenePhase
+
+    @EnvironmentObject var appStorageManager: AppStorageManager
 
     @Query private var exercises: [Exercise]
     @Query private var workouts: [Workout]
@@ -24,7 +27,7 @@ struct HomeView: View {
     @State private var currentWorkout: Workout?
     @State private var showAlert = false
     /// Time since the workout has started.
-    @State private var elapsedTime: TimeInterval = 0
+    @AppStorage("elapsedTime") private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
 
     private let gradient = LinearGradient(gradient: Gradient(colors: [
@@ -33,6 +36,9 @@ struct HomeView: View {
     var body: some View {
         NavigationStack {
             if !workoutInProgress {
+                header()
+                    .padding(.horizontal)
+                Spacer()
                 Button {
                     startWorkout()
                 } label: {
@@ -55,6 +61,9 @@ struct HomeView: View {
                     .clipShape(Capsule())
                 }
                 .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
+                Spacer()
+                footer()
+                    .padding([.leading, .bottom, .trailing])
             } else if let workout = currentWorkout {
                 WorkoutView(workoutInProgress: $workoutInProgress,
                             elapsedTime: elapsedTime,
@@ -66,14 +75,57 @@ struct HomeView: View {
             restoreWorkout()
         }
         .alert("Workout Restored", isPresented: $showAlert) {
-            Button("OK", role: .cancel) {}
+            Button("OK", role: .cancel) {
+                startTimer()
+            }
         } message: {
             Text("Your previous workout has been restored.")
         }
     }
 
-    // MARK: - Helpers
+    @ViewBuilder
+    private func header() -> some View {
+        HStack {
+            NavigationLink(destination: ProfileView()) {
+                Image(systemName: "person.circle")
+            }
 
+            Spacer() // Pushes right link to the edge
+
+            NavigationLink(destination: SettingsView()) {
+                Image(systemName: "gear")
+            }
+
+            #if targetEnvironment(simulator)
+            NavigationLink(destination: Tester()) {
+                Image(systemName: "hammer.fill")
+            }
+            #endif
+        }
+        .font(.lato(type: .regular, size: .heading))
+    }
+
+    @ViewBuilder
+    private func footer() -> some View {
+        HStack {
+            Text("Gym:")
+            Spacer()
+            Picker("Gym:", selection: $selectedGym) {
+                ForEach(appStorageManager.gyms, id: \.self) { gym in
+                    Text(gym)
+                }
+            }
+            .pickerStyle(.menu)
+        }
+        .padding(10)
+        .background(Color("offset"))
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .font(.lato(type: .regular, size: .medium))
+    }
+}
+
+// MARK: - Helpers
+extension HomeView {
     /// Starts a workout session.
     /// If an existing workout is already in progress, it sets the ``workoutInProgress`` flag to `true`.
     /// Otherwise, it creates a new ``Workout`` instance, inserts it into the model context, and starts a new workout session.
@@ -93,8 +145,8 @@ struct HomeView: View {
             currentWorkout = newWorkout
             // Mark the workout as in progress
             workoutInProgress = true
-            startTimer()
         }
+        startTimer()
         // Trigger a haptic feedback to indicate the workout has started successfully
         UINotificationFeedbackGenerator().notificationOccurred(.success)
     }
@@ -167,10 +219,12 @@ struct HomeView: View {
         }
         workoutInProgress = false
         currentWorkout = nil
+        elapsedTime = 0
     }
 }
 
 #Preview {
     HomeView()
         .modelContainer(previewContainer)
+        .environmentObject(AppStorageManager())
 }

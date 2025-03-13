@@ -10,6 +10,10 @@ import UIKit
 
 struct Tester: View {
     @State var index = 0
+    @State var num = 0.0
+
+    @FocusState private var focusedField: UUID?
+
     var body: some View {
         ScrollView {
             Text("Hello World")
@@ -43,6 +47,7 @@ struct Tester: View {
             Button("Tap") {
                 index += 1
                 print("[+] Running Tester: \(index)")
+                focusedField = nil
 
                 switch index {
                 case 1:
@@ -83,8 +88,24 @@ struct Tester: View {
                     index = 0
                 }
             }
+
+            TextField("TesterField", value: $num, formatter: decimalFormatter)
+                .textFieldStyle(RoundedBorderTextFieldStyle())
+                .keyboardType(.decimalPad)
+                .focused($focusedField, equals: UUID())
+                .padding()
+            Text("My num: \(num)")
         }
     }
+
+    private let decimalFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        formatter.minimumFractionDigits = 0   // Allow whole numbers without decimal places
+        formatter.maximumFractionDigits = 2   // Allow up to two decimal places
+        formatter.alwaysShowsDecimalSeparator = false // No forced decimal unless needed
+        return formatter
+    }()
 }
 
 struct Tester_Previews: PreviewProvider {

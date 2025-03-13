@@ -5,7 +5,6 @@
 //  Created by Jaden Zaleski on 3/12/25.
 //
 
-
 import SwiftUI
 // Note: This class is exandable if I want to add more lists to UserDefaults.
 /// Manages a list of gym names stored in `UserDefaults` using `@AppStorage`.
@@ -38,6 +37,7 @@ class AppStorageManager: ObservableObject {
     /// Encodes `gyms` into JSON and saves it to `UserDefaults`.
     private func saveGyms() {
         if let data = try? JSONEncoder().encode(gyms),
+           // swiftlint:disable:next non_optional_string_data_conversion
            let jsonString = String(data: data, encoding: .utf8) {
             gymList = jsonString
         }

@@ -58,7 +58,6 @@ struct SettingsView: View {
                         .font(.lato(type: .regular, size: .caption))
                 }
 
-                // TODO: update gyms here
                 Section {
                     ForEach(appStorageManager.gyms, id: \.self) { gym in
                         Text(gym)
@@ -158,7 +157,6 @@ struct SettingsView: View {
         }
     }
 
-    // TODO: part of todo up top
     private func addNewGym() {
         if !appStorageManager.gyms.contains(newGym) {
             withAnimation {
