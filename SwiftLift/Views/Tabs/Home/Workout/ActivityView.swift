@@ -173,7 +173,10 @@ struct ActivityView: View {
     /// - Returns: A ``View`` displaying the count of sets, a title, list of set items, and the add activity button.
     @ViewBuilder
     private func sets(type: SetData.SetType, sets: Binding<[SetData]>) -> some View {
-        let filteredSets = sets.wrappedValue.indices.filter { sets.wrappedValue[$0].type == type }
+//        let filteredSets = sets.wrappedValue.indices.filter { sets.wrappedValue[$0].type == type }
+        let filteredSets = sets.wrappedValue
+            .filter { $0.type == type }
+            .sorted(by: { $0.created < $1.created })
 
         HStack {
             let title = type == .warmUp ? "warm up" : "working"
@@ -182,8 +185,13 @@ struct ActivityView: View {
             Spacer()
         }
 
-        ForEach(filteredSets, id: \.self) { index in
-            item(set: sets[index]) // Use direct binding to modify set
+//        ForEach(filteredSets, id: \.self) { index in
+//            item(set: sets[index]) // Use direct binding to modify set
+//        }
+        ForEach(filteredSets, id: \.id) { set in
+            if let binding = sets.first(where: { $0.id == set.id }) {
+                item(set: binding)
+            }
         }
 
         addSetButton(type: type)
@@ -289,9 +297,9 @@ struct ActivityView: View {
             modelContext.delete(setToDelete)
             try? modelContext.save()
             // Remove reference from the list
-            activity.sets.remove(at: index)
+//            activity.sets.remove(at: index)
         }
-        print("Deleted activity at index \(index)")
+        print("sets count: \(activity.sets.count)")
     }
 }
 

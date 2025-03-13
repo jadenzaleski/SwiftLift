@@ -345,7 +345,7 @@ extension WorkoutView {
             modelContext.delete(activityToDelete)
             try? modelContext.save()
             // Remove reference from the list
-            currentWorkout.activities.remove(at: index)
+//            currentWorkout.activities.remove(at: index)
             updateOffsets()
 
         }
