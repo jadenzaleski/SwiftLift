@@ -10,9 +10,32 @@ import SwiftData
 
 struct ProfileView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var history: [History]
+
     @Query private var exercises: [Exercise]
+    @Query(
+        filter: #Predicate<Workout> { $0.completionDate != nil },
+        sort: \Workout.completionDate,
+        order: .reverse
+    )
+    private var workouts: [Workout]
+
     @AppStorage("name") private var name = ""
+
+    var totalWorkoutDuration: String {
+        let totalSeconds = workouts.compactMap { $0.duration }.reduce(0, +)
+
+        let days = Int(totalSeconds / 86400)
+        let hours = Int((totalSeconds.truncatingRemainder(dividingBy: 86400)) / 3600)
+        let minutes = Int((totalSeconds.truncatingRemainder(dividingBy: 3600)) / 60)
+
+        var formatted = ""
+        if days > 0 { formatted += "\(days)d " }
+        if hours > 0 { formatted += "\(hours)h " }
+        if minutes > 0 { formatted += "\(minutes)m" }
+
+        return formatted.isEmpty ? "0m" : formatted.trimmingCharacters(in: .whitespaces)
+    }
+
     var body: some View {
         VStack {
             Image(systemName: "person.crop.circle")
@@ -26,25 +49,26 @@ struct ProfileView: View {
             }
             HStack {
                 Text("Joined:")
-                Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
+                Text("\(workouts.first?.completionDate?.formatted(date: .abbreviated, time: .shortened) ?? "No workouts yet")")
+//                Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
             }
             .padding(.vertical, 5)
 
             VStack {
                 HStack {
                     Image(systemName: "number")
-                    Text("\(history[0].totalWorkouts)")
+                    Text("\(workouts.count)")
                     Spacer()
-                    Text("\(history[0].getTimeFormattedLetters(useDays: true))")
+                    Text("\(totalWorkoutDuration)")
                     Image(systemName: "clock")
                 }
                 .padding(.horizontal)
                 .padding(.vertical, 3.0)
                 HStack {
                     Image(systemName: "repeat")
-                    Text("\(history[0].totalReps)")
+                    Text("\(workouts.reduce(0) { $0 + $1.totalReps })")
                     Spacer()
-                    Text("\(Int(history[0].totalWeight))")
+                    Text("\(Int(workouts.reduce(0) { $0 + $1.totalWeight }))")
                     Image(systemName: "scalemass")
                 }
                 .padding(.horizontal)

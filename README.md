@@ -59,6 +59,41 @@ SwiftLift is a comprehensive fitness-tracking app designed to help you monitor y
   <li>Build and run the app on your device or simulator.</li>
 </ol>
 <hr>
+
+### SwiftData ER Diagram
+```mermaid
+erDiagram
+
+Exercise {
+    String name
+    String notes
+}
+
+Activity {
+    String name
+    SetData warmUpSets
+    SetData workingSets
+    Date completedDate
+    String gym
+}
+
+SetData {
+    Int reps
+    Double weight
+    Bool isComplete
+}
+
+Workout {
+    Date startDate
+    TimeInterval duration
+    String gym
+}
+
+Exercise ||--o{ Activity : has
+Activity ||--|{ SetData : has
+Workout ||--|{ Activity : has
+```
+
 <h3>Activity</h3>
 <img alt="stats" src="https://repobeats.axiom.co/api/embed/86f2ab22b543bf7ab5a2be344bb944b05753f303.svg" width=100%>
 

@@ -10,12 +10,18 @@ import SwiftUI
 struct HistoryDetail: View {
     @Environment(\.colorScheme) var colorScheme
     var workout: Workout
-    private let leftGradient = LinearGradient(gradient: Gradient(colors: [
-        Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
-    private let rightGradient = LinearGradient(gradient: Gradient(colors: [
-        Color("customGreen"), Color("customPurple")]), startPoint: .bottomTrailing, endPoint: .topLeading)
-    var body: some View {
 
+    private let leftGradient = LinearGradient(
+        gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]),
+        startPoint: .topLeading, endPoint: .bottomTrailing
+    )
+
+    private let rightGradient = LinearGradient(
+        gradient: Gradient(colors: [Color("customGreen"), Color("customPurple")]),
+        startPoint: .bottomTrailing, endPoint: .topLeading
+    )
+
+    var body: some View {
         ScrollView {
             VStack {
                 VStack {
@@ -27,10 +33,10 @@ struct HistoryDetail: View {
                     .font(.lato(type: .regular, size: .subtitle))
                     VStack {
                         HStack {
-                            // time
+                            // duration
                             Image(systemName: "clock")
                                 .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-                            Text("\(formatTimeInterval(workout.time))")
+                            Text("\(formatTimeInterval(workout.duration))")
                                 .foregroundStyle(leftGradient)
                                 .padding(.trailing, 5.0)
                             Spacer()
@@ -83,13 +89,13 @@ struct HistoryDetail: View {
                             }
                             ForEach(activity.warmUpSets, id: \.id) { warmUpSet in
                                 HStack(alignment: .firstTextBaseline) {
-                                    Text("\(warmUpSet.getReps())")
+                                    Text("\(warmUpSet.reps)")
                                         .frame(width: 100, height: 20, alignment: .leading)
                                     Spacer()
                                     Text("/")
                                         .frame(width: 10, height: 20, alignment: .center)
                                     Spacer()
-                                    Text("\(warmUpSet.getWeight())")
+                                    Text("\(warmUpSet.weight)")
                                         .frame(width: 100, height: 20, alignment: .trailing)
                                 }
                                 .font(.lato(type: .regular, size: .body))
@@ -109,13 +115,13 @@ struct HistoryDetail: View {
                             .padding(.top, 10)
                             ForEach(activity.workingSets, id: \.id) { workingSet in
                                 HStack(alignment: .firstTextBaseline) {
-                                    Text("\(workingSet.getReps())")
+                                    Text("\(workingSet.reps)")
                                         .frame(width: 100, height: 20, alignment: .leading)
                                     Spacer()
                                     Text("/")
                                         .frame(width: 10, height: 20, alignment: .center)
                                     Spacer()
-                                    Text("\(workingSet.getWeight())")
+                                    Text("\(workingSet.weight)")
                                         .frame(width: 100, height: 20, alignment: .trailing)
                                 }
                                 .font(.lato(type: .regular, size: .body))
@@ -138,7 +144,7 @@ struct HistoryDetail: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .principal) {
-                Text("\(workout.startDate.formatted(.dateTime.month().day().year().hour().minute()))")
+                Text("\(workout.completionDate?.formatted(.dateTime.month().day().year().hour().minute()) ?? "In Progress")")
                     .font(.lato(type: .light, size: .subtitle))
             }
         }
@@ -160,5 +166,5 @@ struct HistoryDetail: View {
 }
 
 #Preview {
-    HistoryDetail(workout: Workout.randomWorkout())
+    HistoryDetail(workout: Workout(gym: "Sample Gym"))
 }

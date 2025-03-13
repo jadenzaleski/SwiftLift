@@ -8,62 +8,31 @@
 import Foundation
 import SwiftData
 
+/// Represents an exercise performed by the user, such as "Bench Press" or "Squat".
+/// You can create an instance of `Exercise` using ``init(name:notes:activities:)``.
+/// - Important: Deleting an `Exercise` does **not** delete the activities (``Activity``) associatied with it.
 @Model
-class Exercise: Identifiable {
-    @Attribute(.unique) var id: String = UUID().uuidString
-    @Attribute(.unique) var name: String
-    var notes: String
-    var count: Int
-    var history: [Activity]? = []
-    var maxWeight: Double
-    var maxReps: Int
-    var totalWeight: Double
-    var totalReps: Int
+final class Exercise {
+    /// The name of the ``Exercise`` (e.g., "Bench Press").
+    var name: String
+    /// Additional notes about the ``Exercise`` (optional).
+    /// You can use this field to store any additional information or instructions.
+    var notes: String?
 
-    init(id: String = UUID().uuidString, name: String, notes: String, count: Int = 0, history: [Activity] = [],
-         maxWeight: Double = 0.0, maxReps: Int = 0, totalWeight: Double = 0, totalReps: Int = 0) {
-        self.id = id
+    /// The list of activities (``Activity``)  associated with this ``Exercise``.
+    /// Each activity represents a specific instance of the exercise performed during a workout.
+    @Relationship(deleteRule: .nullify, inverse: \Activity.parentExercise)
+    var activities: [Activity]
+
+    /// Initializes a new ``Exercise`` instance.
+    ///
+    /// - Parameters:
+    ///   - name: The name of the exercise (e.g., "Bench Press").
+    ///   - notes: Optional additional notes about the exercise.
+    ///   - activities: Optional list of activities related to this exercise. Defaults to an empty list.
+    init(name: String, notes: String? = nil, activities: [Activity] = []) {
         self.name = name
         self.notes = notes
-        self.count = count
-        self.history = history
-        self.maxWeight = maxWeight
-        self.maxReps = maxReps
-        self.totalWeight = totalWeight
-        self.totalReps = totalReps
-    }
-
-    static var sampleExercises: [Exercise] = [
-        Exercise(name: "Bench Press", notes: "Note for bench press",
-                 count: 4, history: [Activity(name: "", gym: "")],
-                 maxWeight: 100.0, maxReps: 10, totalWeight: 2000.0, totalReps: 100),
-        Exercise(name: "Back Squat", notes: "Note for back squat",
-                 count: 3, history: [Activity(name: "", gym: "")],
-                 maxWeight: 200.0, maxReps: 20, totalWeight: 3000.0, totalReps: 200)
-    ]
-
-    func update(activity: Activity) {
-        self.history?.append(activity)
-        self.count += 1
-        activity.warmUpSets.forEach { set in
-            if set.reps > self.maxReps {
-                self.maxReps = set.reps
-            }
-            if set.weight > self.maxWeight {
-                self.maxWeight = set.weight
-            }
-            self.totalReps += set.reps
-            self.totalWeight += set.weight
-        }
-        activity.workingSets.forEach { set in
-            if set.reps > self.maxReps {
-                self.maxReps = set.reps
-            }
-            if set.weight > self.maxWeight {
-                self.maxWeight = set.weight
-            }
-            self.totalReps += set.reps
-            self.totalWeight += set.weight
-        }
+        self.activities = activities
     }
 }

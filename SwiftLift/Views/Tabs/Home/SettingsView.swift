@@ -11,12 +11,14 @@ import SwiftData
 struct SettingsView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.colorScheme) var colorScheme
-    @Query private var history: [History]
-    @State private var newGym = ""
-    @State private var color = Color.accentColor
+
+    @EnvironmentObject var appStorageManager: AppStorageManager
+
     @AppStorage("selectedTheme") private var selectedTheme = "Automatic"
     @AppStorage("bold") private var bold = false
     @AppStorage("metric") private var metric = false
+    @State private var newGym = ""
+    @State private var color = Color.accentColor
 
     let themes = ["Automatic", "Light", "Dark"]
     let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
@@ -57,13 +59,13 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    ForEach(history[0].gyms, id: \.self) { gym in
+                    ForEach(appStorageManager.gyms, id: \.self) { gym in
                         Text(gym)
                     }
                     .onDelete(perform: { indexSet in
-                        history[0].gyms.remove(atOffsets: indexSet)
+                        appStorageManager.gyms.remove(atOffsets: indexSet)
                     })
-                    .deleteDisabled(history[0].gyms.count <= 1)
+                    .deleteDisabled(appStorageManager.gyms.count <= 1)
 
                     HStack {
                         TextField("Add a new gym", text: $newGym)
@@ -156,9 +158,9 @@ struct SettingsView: View {
     }
 
     private func addNewGym() {
-        if !history[0].gyms.isEmpty && !history[0].gyms.contains(newGym) {
+        if !appStorageManager.gyms.contains(newGym) {
             withAnimation {
-                history[0].gyms.append(newGym.capitalized)
+                appStorageManager.gyms.append(newGym.capitalized)
                 self.hideKeyboard()
             }
             newGym = ""
@@ -172,4 +174,5 @@ struct SettingsView: View {
 #Preview {
     SettingsView()
         .modelContainer(previewContainer)
+        .environmentObject(AppStorageManager())
 }

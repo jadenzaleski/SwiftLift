@@ -11,8 +11,6 @@ import SwiftData
 
 struct MainTabView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var history: [History]
-    @Query private var currentWorkout: [CurrentWorkout]
     @SceneStorage("selectedTab") private var selectedTab = 0
     // Adds custom font and background to TabView
     init() {
@@ -22,7 +20,6 @@ struct MainTabView: View {
     }
 
     var body: some View {
-
         TabView(selection: $selectedTab) {
             HomeView()
                 .tabItem {
@@ -61,9 +58,6 @@ struct MainTabView: View {
 //                .padding(.all, 5.0)
 //            }
 //        }
-        .onAppear(perform: {
-            history[0].makeTotalTimeAbsolute()
-        })
     }
 }
 
