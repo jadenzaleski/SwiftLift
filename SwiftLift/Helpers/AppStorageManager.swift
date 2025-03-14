@@ -37,8 +37,7 @@ class AppStorageManager: ObservableObject {
     /// Encodes `gyms` into JSON and saves it to `UserDefaults`.
     private func saveGyms() {
         if let data = try? JSONEncoder().encode(gyms) {
-            let jsonString = String(decoding: data, as: UTF8.self)
-            gymList = jsonString
+            gymList = String(data: data, encoding: .utf8)!
         }
     }
 

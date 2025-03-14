@@ -8,4 +8,8 @@
 
 echo "Hello World from ci_scripts/ci_post_clone.sh"
 
+# Install swiftlint so it can be used in a build phase
 brew install swiftlint
+
+# Make sure it installed correctly
+swiftlint --version
