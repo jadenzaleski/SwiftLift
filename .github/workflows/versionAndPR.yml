@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch all branches
-        run: git fetch --prune --unshallow
+        run: git fetch --prune
 
       - name: Validate version format
         run: |
