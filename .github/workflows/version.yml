@@ -39,6 +39,8 @@ jobs:
 
       - name: Commit changes
         run: |
+          new_version="${{ github.event.pull_request.title }}"
+          echo $new_version
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add SwiftLift/Info.plist
