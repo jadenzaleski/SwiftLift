@@ -1,4 +1,4 @@
-name: Update Version and Populate PR
+name: Update Version
 
 on:
   pull_request:
@@ -17,7 +17,9 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch all branches
-        run: git fetch --prune
+        run: |
+          git fetch --prune
+          git fetch origin develop:develop
 
       - name: Validate version format
         run: |
