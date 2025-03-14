@@ -21,7 +21,7 @@ struct SwiftLiftApp: App {
             Activity.self,
             SetData.self,
             Workout.self
-        ])  
+        ])
 
         do {
             // Create the container
