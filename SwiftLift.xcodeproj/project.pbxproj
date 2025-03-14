@@ -92,6 +92,7 @@
 		D7B90EA62AA8ECA100F9EC41 /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
 		D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageManager.swift; sourceTree = "<group>"; };
 		D7D6E3AF2D839EAE0038A4B1 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
+		D7D6E3B02D83A5B30038A4B1 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -253,6 +254,7 @@
 		D7D6E3AE2D8397DF0038A4B1 /* ci_scripts */ = {
 			isa = PBXGroup;
 			children = (
+				D7D6E3B02D83A5B30038A4B1 /* ci_post_clone.sh */,
 				D7D6E3AF2D839EAE0038A4B1 /* ci_post_xcodebuild.sh */,
 			);
 			path = ci_scripts;

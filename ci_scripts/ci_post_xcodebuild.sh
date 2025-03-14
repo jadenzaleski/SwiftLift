@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/zsh
 #
 #  ci_post_xcodebuild.sh
 #  SwiftLift
