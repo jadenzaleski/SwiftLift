@@ -36,10 +36,8 @@ class AppStorageManager: ObservableObject {
 
     /// Encodes `gyms` into JSON and saves it to `UserDefaults`.
     private func saveGyms() {
-        if let data = try? JSONEncoder().encode(gyms),
-           // swiftlint:disable:next non_optional_string_data_conversion
-           let jsonString = String(data: data, encoding: .utf8) {
-            gymList = jsonString
+        if let data = try? JSONEncoder().encode(gyms) {
+            gymList = String(data: data, encoding: .utf8)!
         }
     }
 

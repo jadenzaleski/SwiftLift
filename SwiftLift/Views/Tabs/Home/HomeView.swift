@@ -19,15 +19,16 @@ struct HomeView: View {
     @Query private var exercises: [Exercise]
     @Query private var workouts: [Workout]
 
+    @AppStorage("selectedGym") private var selectedGym = "Default"
+    /// Time since the workout has started.
+    @AppStorage("elapsedTime") private var elapsedTime: TimeInterval = 0
+
     @SceneStorage("workoutInProgress") private var workoutInProgress = false
-    @SceneStorage("selectedGym") private var selectedGym = "Default"
     @SceneStorage("newGym") private var newGym = ""
     @SceneStorage("showLifetime") private var showLifetime = true
 
     @State private var currentWorkout: Workout?
     @State private var showAlert = false
-    /// Time since the workout has started.
-    @AppStorage("elapsedTime") private var elapsedTime: TimeInterval = 0
     @State private var timer: Timer?
 
     private let gradient = LinearGradient(gradient: Gradient(colors: [

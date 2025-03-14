@@ -35,6 +35,9 @@ final class SetData {
     /// This must be optional in order to allow cascade deletion.
     var parentActivity: Activity?
 
+    /// The creation date of the set.
+    var created: Date
+
     /// Initializes a new ``SetData`` instance.
     /// 
     /// - Parameters:
@@ -44,11 +47,12 @@ final class SetData {
     ///   - isComplete: A boolean indicating whether the set is complete.
     ///   - parentActivity: The ``Activity`` this set is associated with (default is `nil`).
     init(type: SetType = .working, reps: Int = 0, weight: Double = 0.0,
-         isComplete: Bool = false, parentActivity: Activity? = nil) {
+         isComplete: Bool = false, parentActivity: Activity? = nil, created: Date = .now) {
         self.type = type
         self.reps = reps
         self.weight = weight
         self.isComplete = isComplete
         self.parentActivity = parentActivity
+        self.created = created
     }
 }
