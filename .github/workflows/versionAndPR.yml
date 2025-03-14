@@ -35,29 +35,10 @@ jobs:
           /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $new_version" "$plist_path" || \
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $new_version" "$plist_path"
 
-      - name: Generate changelog for PR
+      - name: Commit changes
         run: |
-          # Get all commits in the PR branch
-          pr_commits=$(git log origin/${{ github.event.pull_request.head.ref }} --oneline --pretty=format:"- %s")
-          
-          if [ -z "$pr_commits" ]; then
-            echo "No commits in this PR."
-            pr_commits="No commits in this PR."
-          fi
-          
-          echo "Changelog:\n$pr_commits"
-          echo "CHANGES=$pr_commits" >> $GITHUB_ENV
-
-      - name: Update PR description with version and changelog
-        run: |
-          pr_version="${{ github.event.pull_request.title }}"
-          pr_changelog="${{ env.CHANGES }}"
-          
-          pr_body="## Version: $pr_version\n\n### Changelog:\n$pr_changelog"
-          
-          curl -X PATCH \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -d "{\"body\": \"$pr_body\"}" \
-            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}"
-          
-          echo "PR body updated with version and changelog."
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add SwiftLift/Info.plist
+          git commit -m "Update CFBundleShortVersionString to $new_version [ci skip]"
+          git push origin ${{ github.event.pull_request.head.ref }}
