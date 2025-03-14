@@ -1,0 +1,62 @@
+name: Update Version and Populate PR
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  update_version:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Fetch all branches
+        run: git fetch --prune --unshallow
+
+      - name: Validate version format
+        run: |
+          version="${{ github.event.pull_request.title }}"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format. Version should be in the format X.Y.Z (e.g., 1.2.3)."
+            exit 1
+          fi
+          echo "Version format is valid: $version"
+
+      - name: Update version in Info.plist
+        run: |
+          plist_path="SwiftLift/Info.plist"
+          new_version="${{ github.event.pull_request.title }}"  # Assuming version is in PR title
+          /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $new_version" "$plist_path"
+
+      - name: Generate changelog for PR
+        run: |
+          # Get all commits in the PR branch
+          pr_commits=$(git log origin/${{ github.event.pull_request.head.ref }} --oneline --pretty=format:"- %s")
+          
+          if [ -z "$pr_commits" ]; then
+            echo "No commits in this PR."
+            pr_commits="No commits in this PR."
+          fi
+          
+          echo "Changelog:\n$pr_commits"
+          echo "CHANGES=$pr_commits" >> $GITHUB_ENV
+
+      - name: Update PR description with version and changelog
+        run: |
+          pr_version="${{ github.event.pull_request.title }}"
+          pr_changelog="${{ env.CHANGES }}"
+          
+          pr_body="## Version: $pr_version\n\n### Changelog:\n$pr_changelog"
+          
+          curl -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -d "{\"body\": \"$pr_body\"}" \
+            "https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}"
+          
+          echo "PR body updated with version and changelog."
