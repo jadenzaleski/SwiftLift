@@ -17,7 +17,7 @@ jobs:
           fetch-depth: 0
 
       - name: Fetch all branches
-        run: git fetch --prune --unshallow
+        run: git fetch --prune
 
       - name: Validate version format
         run: |
@@ -32,6 +32,7 @@ jobs:
         run: |
           plist_path="SwiftLift/Info.plist"
           new_version="${{ github.event.pull_request.title }}"  # Assuming version is in PR title
+          /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $new_version" "$plist_path" || \
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $new_version" "$plist_path"
 
       - name: Generate changelog for PR
