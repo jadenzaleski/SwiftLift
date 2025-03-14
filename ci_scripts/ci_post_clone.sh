@@ -10,5 +10,6 @@ echo "Hello World from ci_scripts/ci_post_clone.sh"
 
 brew install swiftlint
 
-swiftlint --strict $CI_WORKSPACE
+echo "Attempting swiftlint --strict $CI_WORKSPACE_PATH"
+swiftlint --strict $CI_WORKSPACE_PATH
 
