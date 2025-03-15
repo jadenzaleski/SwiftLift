@@ -30,6 +30,7 @@ struct HomeView: View {
     @State private var currentWorkout: Workout?
     @State private var showAlert = false
     @State private var timer: Timer?
+    @State private var animateGradient = false
 
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -43,25 +44,8 @@ struct HomeView: View {
                 Button {
                     startWorkout()
                 } label: {
-                    VStack {
-                        HStack {
-                            Image(systemName: "figure.strengthtraining.functional")
-                                .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-                                .font(.title)
-                            Image(systemName: "figure.strengthtraining.traditional")
-                                .font(.title)
-                            Image(systemName: "figure.highintensity.intervaltraining")
-                                .font(.title)
-                        }
-                        Text("Start a Workout")
-                            .font(.lato(type: .black, size: .medium))
-                    }
-                    .padding(25.0)
-                    .foregroundStyle(Color("mainSystemColor"))
-                    .background(gradient)
-                    .clipShape(Capsule())
+                    button()
                 }
-                .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray5) : .secondary, radius: 20)
                 Spacer()
                 footer()
                     .padding([.leading, .bottom, .trailing])
@@ -73,7 +57,10 @@ struct HomeView: View {
             }
         }
         .onAppear {
+            // Only restore the workout in non-preview environments
+#if !DEBUG
             restoreWorkout()
+#endif
         }
         .alert("Workout Restored", isPresented: $showAlert) {
             Button("OK", role: .cancel) {
@@ -97,11 +84,11 @@ struct HomeView: View {
                 Image(systemName: "gear")
             }
 
-            #if targetEnvironment(simulator)
+#if targetEnvironment(simulator)
             NavigationLink(destination: Tester()) {
                 Image(systemName: "hammer.fill")
             }
-            #endif
+#endif
         }
         .font(.lato(type: .regular, size: .heading))
     }
@@ -122,6 +109,65 @@ struct HomeView: View {
         .background(Color("offset"))
         .clipShape(RoundedRectangle(cornerRadius: 15))
         .font(.lato(type: .regular, size: .medium))
+    }
+
+    @ViewBuilder
+    private func button() -> some View {
+        VStack {
+            HStack {
+                Image(systemName: "figure.strengthtraining.functional")
+                    .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
+                    .font(.title)
+                Image(systemName: "figure.strengthtraining.traditional")
+                    .font(.title)
+                Image(systemName: "figure.highintensity.intervaltraining")
+                    .font(.title)
+            }
+            .foregroundStyle(
+                AngularGradient(
+                    gradient: Gradient(colors: [
+                        Color("customPurple"),
+                        Color("customGreen"),
+                        Color("customPurple")
+                    ]),
+                    center: .center,
+                    angle: .degrees(animateGradient ? 360 : 0)
+                )
+            )
+            Text("Start a Workout")
+                .font(.lato(type: .black, size: .medium))
+                .foregroundStyle(gradient)
+        }
+        .padding(.horizontal, 45.0)
+        .padding(.vertical, 20.0)
+
+        .background(
+            ZStack {
+                Color("mainSystemColor")
+                // Rotating gradient border
+                Capsule()
+                    .strokeBorder(
+                        AngularGradient(
+                            gradient: Gradient(colors: [
+                                Color("customPurple"),
+                                Color("customGreen"),
+                                Color("customPurple"),
+                                Color("customPurple")
+                            ]),
+                            center: .center,
+                            angle: .degrees(animateGradient ? 360 : 0)
+                        ),
+                        lineWidth: 8
+                    )
+            }
+                .onAppear {
+                    withAnimation(.linear(duration: 5).repeatForever(autoreverses: false)) {
+                        animateGradient.toggle()
+                    }
+                }
+        )
+        .clipShape(Capsule())
+        .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 10, x: 0, y: 10)
     }
 }
 

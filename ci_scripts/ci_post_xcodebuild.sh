@@ -12,7 +12,7 @@ if [[ -d "$CI_APP_STORE_SIGNED_APP_PATH" ]]; then
     echo "in the if loop"
     TESTFLIGHT_DIR_PATH=../TestFlight
     mkdir $TESTFLIGHT_DIR_PATH
-    git fetch --deepen 3 && git log -3 --pretty=format:"%s" | cat > $TESTFLIGHT_DIR_PATH/WhatToTest.en-US.txt
+     # Fetch the latest merge commit message and append it to the build notes
+    merge_commit_message=$(git log --merges -1 --pretty=format:"%s")
+    echo -e "$merge_commit_message" >> $TESTFLIGHT_DIR_PATH/WhatToTest.en-US.txt
 fi
-
-
