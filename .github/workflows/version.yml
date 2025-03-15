@@ -43,8 +43,6 @@ jobs:
 
       - name: Update MARKETING_VERSION in Xcode project
         run: |
-          ls -al
-          cd SwiftLift  # Navigate to the Xcode project directory
           xcrun agvtool new-marketing-version "${{ github.event.pull_request.title }}"
 
       - name: Commit changes
