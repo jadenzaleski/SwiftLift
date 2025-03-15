@@ -34,20 +34,25 @@ jobs:
           fi
           echo "Version format is valid: $version"
 
-      - name: Update version in Info.plist
+      - name: Update CFBundleShortVersionString in Info.plist
         run: |
           plist_path="SwiftLift/Info.plist"
-          new_version="${{ github.event.pull_request.title }}"  # Assuming version is in PR title
+          new_version="${{ github.event.pull_request.title }}"
           /usr/libexec/PlistBuddy -c "Add :CFBundleShortVersionString string $new_version" "$plist_path" || \
           /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $new_version" "$plist_path"
+
+      - name: Update MARKETING_VERSION in Xcode project
+        run: |
+          cd SwiftLift  # Navigate to the Xcode project directory
+          xcrun agvtool new-marketing-version "${{ github.event.pull_request.title }}"
 
       - name: Commit changes
         run: |
           new_version="${{ github.event.pull_request.title }}"
-          echo $new_version
+          echo "New Version: $new_version"
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add SwiftLift/Info.plist
-          git commit -m "Update CFBundleShortVersionString to $new_version [ci skip]"
+          git add SwiftLift.xcodeproj/project.pbxproj  # Ensure Xcode changes are committed
+          git commit -m "Update version to $new_version [ci skip]"
           git push origin ${{ github.event.pull_request.head.ref }}
-
