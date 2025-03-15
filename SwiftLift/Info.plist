@@ -3,11 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleShortVersionString</key>
-<<<<<<< HEAD
 	<string>0.0.3</string>
-=======
-	<string>0.0.1</string>
->>>>>>> 699dbdd0a870d744ef4fa1519b3f58a51bfe2e95
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>UIAppFonts</key>
