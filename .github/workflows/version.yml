@@ -44,12 +44,12 @@ jobs:
           
       - name: Manually update MARKETING_VERSION in project.pbxproj
         run: |
-          new_version="${{ github.event.pull_request.title }}"
+          new_version="0.0.3"
           pbxproj_file="SwiftLift.xcodeproj/project.pbxproj"
-      
-          # Replace the existing MARKETING_VERSION
+          
+          # Replace the existing MARKETING_VERSION with the new version
           sed -i '' "s/MARKETING_VERSION = [0-9]\+\.[0-9]\+\.[0-9]\+/MARKETING_VERSION = $new_version/g" "$pbxproj_file"
-      
+          
           # Verify the change
           grep "MARKETING_VERSION" "$pbxproj_file"
 
