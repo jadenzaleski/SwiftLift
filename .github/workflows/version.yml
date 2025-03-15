@@ -21,6 +21,10 @@ jobs:
           git fetch --prune
           git fetch origin develop:develop
 
+      - name: Checkout the correct branch
+        run: |
+          git checkout ${{ github.event.pull_request.head.ref }}
+
       - name: Validate version format
         run: |
           version="${{ github.event.pull_request.title }}"
@@ -46,3 +50,4 @@ jobs:
           git add SwiftLift/Info.plist
           git commit -m "Update CFBundleShortVersionString to $new_version [ci skip]"
           git push origin ${{ github.event.pull_request.head.ref }}
+
