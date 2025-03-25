@@ -40,8 +40,8 @@ struct LineChart: View {
 
         // Sort and filter workouts
         let orderedWorkouts = workouts
-            .compactMap { $0.completionDate != nil ? $0 : nil }
-            .sorted { $0.completionDate! < $1.completionDate! }
+            .compactMap { $0.endDate != nil ? $0 : nil }
+            .sorted { $0.endDate! < $1.endDate! }
         let selectedWorkouts = orderedWorkouts.suffix(num)
 
         // Convert workouts to plotting data
@@ -55,7 +55,7 @@ struct LineChart: View {
             default:
                 possibleY = Double(workout.totalReps)
             }
-            return PlottingData(xAxis: index, yAxis: possibleY, date: workout.completionDate ?? .now)
+            return PlottingData(xAxis: index, yAxis: possibleY, date: workout.endDate ?? .now)
         }
 
         let maxX = data.map(\.xAxis).max() ?? 0

@@ -13,8 +13,8 @@ struct ProfileView: View {
 
     @Query private var exercises: [Exercise]
     @Query(
-        filter: #Predicate<Workout> { $0.completionDate != nil },
-        sort: \Workout.completionDate,
+        filter: #Predicate<Workout> { $0.endDate != nil },
+        sort: \Workout.endDate,
         order: .reverse
     )
     private var workouts: [Workout]
@@ -49,7 +49,7 @@ struct ProfileView: View {
             }
             HStack {
                 Text("Joined:")
-                Text("\(workouts.first?.completionDate?.formatted(date: .abbreviated, time: .shortened) ?? "No workouts yet")")
+                Text("\(workouts.first?.endDate?.formatted(date: .abbreviated, time: .shortened) ?? "No workouts yet")")
 //                Text("\(history[0].joinDate.formatted(date: .long, time: .omitted))")
             }
             .padding(.vertical, 5)

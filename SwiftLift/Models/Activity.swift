@@ -72,6 +72,6 @@ extension Activity {
 
     /// The date at which the ``Activity`` was completed
     var completionDate: Date? {
-        parentWorkout?.completionDate
+        parentWorkout?.endDate
     }
 }
