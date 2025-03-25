@@ -18,7 +18,7 @@ struct HistoryRow: View {
             HStack {
                 Label(
                     title: {
-                        Text(workout.completionDate?.formatted(
+                        Text(workout.endDate?.formatted(
                             .dateTime.month().day().year().hour().minute()) ?? "In progress...")
                     },
                     icon: { Image(systemName: "calendar") }
@@ -48,8 +48,6 @@ struct HistoryRow: View {
 
 #Preview {
     HistoryRow(workout: Workout(
-        completionDate: Date(),
-        duration: 3600, // 1 hour
         gym: "Local Gym",
         activities: [
             Activity(

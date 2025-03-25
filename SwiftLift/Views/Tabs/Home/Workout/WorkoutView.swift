@@ -12,10 +12,10 @@ struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
 
     @Binding var workoutInProgress: Bool
-    var elapsedTime: TimeInterval
     /// This comes from ``HomeView`` `stopWorkout` and is the function used to stop the workout.
     /// Pass in a ``Bool`` that tells the function to save it to the database or not.
     var stopWorkout: (Bool) -> Void
+    let timerTick: Int
 
     @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
 
@@ -74,7 +74,7 @@ struct WorkoutView: View {
         VStack {
             HStack(alignment: .center) {
                 Image(systemName: "timer")
-                Text(timeString(from: elapsedTime)) // Format elapsed time
+                Text(timeString(from: currentWorkout.duration))
                     .monospacedDigit()
                 Spacer()
                 Text(currentWorkout.gym)
@@ -400,8 +400,8 @@ extension WorkoutView {
 
 #Preview {
     WorkoutView(
-        workoutInProgress: .constant(true), elapsedTime: 100,
-        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") },
+        workoutInProgress: .constant(true),
+        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }, timerTick: 0,
         currentWorkout: Workout(gym: "Preview Test")
     )
     .environment(\.font, .lato(type: .regular))

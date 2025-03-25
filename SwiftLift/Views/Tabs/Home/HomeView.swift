@@ -20,8 +20,6 @@ struct HomeView: View {
     @Query private var workouts: [Workout]
 
     @AppStorage("selectedGym") private var selectedGym = "Default"
-    /// Time since the workout has started.
-    @AppStorage("elapsedTime") private var elapsedTime: TimeInterval = 0
 
     @SceneStorage("workoutInProgress") private var workoutInProgress = false
     @SceneStorage("newGym") private var newGym = ""
@@ -30,6 +28,7 @@ struct HomeView: View {
     @State private var currentWorkout: Workout?
     @State private var showAlert = false
     @State private var timer: Timer?
+    @State private var timerTick = 0
     @State private var animateGradient = false
 
     private let gradient = LinearGradient(gradient: Gradient(colors: [
@@ -51,20 +50,22 @@ struct HomeView: View {
                     .padding([.leading, .bottom, .trailing])
             } else if let workout = currentWorkout {
                 WorkoutView(workoutInProgress: $workoutInProgress,
-                            elapsedTime: elapsedTime,
                             stopWorkout: stopWorkout,
+                            timerTick: timerTick,
                             currentWorkout: workout)
             }
         }
         .onAppear {
             // Only restore the workout in non-preview environments
-#if !DEBUG
-            restoreWorkout()
-#endif
+            if ProcessInfo.processInfo
+                .environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                restoreWorkout()
+            }
         }
         .alert("Workout Restored", isPresented: $showAlert) {
             Button("OK", role: .cancel) {
                 startTimer()
+                workoutInProgress = true
             }
         } message: {
             Text("Your previous workout has been restored.")
@@ -123,49 +124,13 @@ struct HomeView: View {
                 Image(systemName: "figure.highintensity.intervaltraining")
                     .font(.title)
             }
-            .foregroundStyle(
-                AngularGradient(
-                    gradient: Gradient(colors: [
-                        Color("customPurple"),
-                        Color("customGreen"),
-                        Color("customPurple")
-                    ]),
-                    center: .center,
-                    angle: .degrees(animateGradient ? 360 : 0)
-                )
-            )
             Text("Start a Workout")
                 .font(.lato(type: .black, size: .medium))
-                .foregroundStyle(gradient)
         }
+        .foregroundStyle(Color.mainSystem)
         .padding(.horizontal, 45.0)
         .padding(.vertical, 20.0)
-
-        .background(
-            ZStack {
-                Color("mainSystemColor")
-                // Rotating gradient border
-                Capsule()
-                    .strokeBorder(
-                        AngularGradient(
-                            gradient: Gradient(colors: [
-                                Color("customPurple"),
-                                Color("customGreen"),
-                                Color("customPurple"),
-                                Color("customPurple")
-                            ]),
-                            center: .center,
-                            angle: .degrees(animateGradient ? 360 : 0)
-                        ),
-                        lineWidth: 8
-                    )
-            }
-                .onAppear {
-                    withAnimation(.linear(duration: 5).repeatForever(autoreverses: false)) {
-                        animateGradient.toggle()
-                    }
-                }
-        )
+        .background(gradient)
         .clipShape(Capsule())
         .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 10, x: 0, y: 10)
     }
@@ -200,11 +165,12 @@ extension HomeView {
 
     /// Restores an ongoing workout if available
     private func restoreWorkout() {
-        if let ongoingWorkout = workouts.first(where: { $0.completionDate == nil }) {
+        print("restore workout has been called!")
+        if let ongoingWorkout = workouts.first(where: { $0.endDate == nil }) {
             print("Workout has been restored!")
             currentWorkout = ongoingWorkout
-            workoutInProgress = true
             showAlert = true  // Show alert when a workout is restored
+            // Handle the rest of the logic in the button
         } else {
             workoutInProgress = false
             currentWorkout = nil
@@ -215,9 +181,7 @@ extension HomeView {
     private func startTimer() {
         timer?.invalidate() // Ensure previous timer is stopped
         timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            elapsedTime += 1
-            currentWorkout?.duration = elapsedTime
-            print("duration: ", currentWorkout?.duration ?? "error")
+            timerTick += 1 // Trigger SwiftUI updates
         }
     }
 
@@ -256,7 +220,7 @@ extension HomeView {
                 }
 
                 print("Workout has been stopped and saved!")
-                workout.completionDate = .now
+                workout.endDate = .now
                 try? modelContext.save()  // Persist changes
             } else {
                 print("Workout has been stopped and deleted!")
@@ -266,7 +230,6 @@ extension HomeView {
         }
         workoutInProgress = false
         currentWorkout = nil
-        elapsedTime = 0
     }
 }
 

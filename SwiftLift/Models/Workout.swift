@@ -12,10 +12,10 @@ import SwiftData
 /// You can create an instance of `Workout` using the initializer ``init(startDate:duration:gym:activities:)``.
 @Model
 final class Workout {
-    /// The completion date of this ``Workout``.
-    var completionDate: Date?
-    /// The duration of this ``Workout``.
-    var duration: TimeInterval
+    /// The start date of this ``Workout``.
+    var startDate: Date?
+    /// The end date of this ``Workout``.
+    var endDate: Date?
     /// The gym at which this ``Workout`` takes place.
     var gym: String
 
@@ -26,13 +26,13 @@ final class Workout {
     /// Initializes a new ``Workout`` instance.
     ///
     /// - Parameters:
-    ///   - completionDate: The date when the workout ended.
-    ///   - duration: The total duration of the workout in seconds.
+    ///   - startDate: The date when the workout started.
+    ///   - endDate: The date when the workout ended.
     ///   - gym: The name of the gym where the workout took place.
     ///   - activities: A list of `Activity` objects associated with this workout. Defaults to an empty array.
-    init(completionDate: Date? = nil, duration: TimeInterval = 0, gym: String, activities: [Activity] = []) {
-        self.completionDate = completionDate
-        self.duration = duration
+    init(startDate: Date? = .now, endDate: Date? = nil, gym: String, activities: [Activity] = []) {
+        self.startDate = startDate
+        self.endDate = endDate
         self.gym = gym
         self.activities = activities
     }
@@ -61,5 +61,10 @@ extension Workout {
             total + activity.warmUpSets.reduce(0) { $0 + $1.weight }
             + activity.workingSets.reduce(0) { $0 + $1.weight }
         }
+    }
+
+    /// The duration of this ``Workout``.
+    var duration: TimeInterval {
+        abs(startDate?.timeIntervalSince(endDate ?? .now) ?? 0)
     }
 }
