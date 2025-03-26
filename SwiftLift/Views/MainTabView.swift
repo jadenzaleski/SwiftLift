@@ -45,6 +45,15 @@ struct MainTabView: View {
 
                 }
                 .tag(2)
+
+            SettingsView()
+                .tabItem {
+                    Image(systemName: "gear")
+                    Text("Settings")
+                        .font(.lato(type: .regular, size: .caption))
+
+                }
+                .tag(3)
         }
 
 //        .toolbar{

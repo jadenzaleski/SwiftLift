@@ -79,11 +79,7 @@ struct HomeView: View {
                 Image(systemName: "person.circle")
             }
 
-            Spacer() // Pushes right link to the edge
-
-            NavigationLink(destination: SettingsView()) {
-                Image(systemName: "gear")
-            }
+            Spacer()
 
 #if targetEnvironment(simulator)
             NavigationLink(destination: Tester()) {

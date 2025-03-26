@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D71311B12D9399750051A560 /* BackupRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D71311B02D9399750051A560 /* BackupRestoreView.swift */; };
 		D73604C12AB3B9050029C09E /* SwiftDataPreviewContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */; };
 		D7384D342AF9EE1500D48669 /* ComingSoon.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7384D332AF9EE1500D48669 /* ComingSoon.swift */; };
 		D742705C2AA90D910020503C /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D74270502AA90D900020503C /* MainTabView.swift */; };
@@ -66,6 +67,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		D71311B02D9399750051A560 /* BackupRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupRestoreView.swift; sourceTree = "<group>"; };
 		D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataPreviewContainer.swift; sourceTree = "<group>"; };
 		D7384D332AF9EE1500D48669 /* ComingSoon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComingSoon.swift; sourceTree = "<group>"; };
 		D74270502AA90D900020503C /* MainTabView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
@@ -144,9 +146,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D71311AF2D9399390051A560 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D74270532AA90D900020503C /* SettingsView.swift */,
+				D71311B02D9399750051A560 /* BackupRestoreView.swift */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
 		D76786E02D70B493001FFF69 /* Tabs */ = {
 			isa = PBXGroup;
 			children = (
+				D71311AF2D9399390051A560 /* Settings */,
 				D76786E32D70B4A8001FFF69 /* Stats */,
 				D76786E22D70B4A0001FFF69 /* History */,
 				D76786E12D70B49A001FFF69 /* Home */,
@@ -160,7 +172,6 @@
 				D76786E42D70F8EC001FFF69 /* Workout */,
 				D74270542AA90D900020503C /* HomeView.swift */,
 				D78474082AC7D73700725EB1 /* ProfileView.swift */,
-				D74270532AA90D900020503C /* SettingsView.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -518,6 +529,7 @@
 				D742705F2AA90D910020503C /* SettingsView.swift in Sources */,
 				D76A5F632C22755600813F51 /* LatoFont.swift in Sources */,
 				D7A2C00E2B364DF5000E3C58 /* HistoryDetail.swift in Sources */,
+				D71311B12D9399750051A560 /* BackupRestoreView.swift in Sources */,
 				D74270632AA90D910020503C /* HistoryView.swift in Sources */,
 				D742705C2AA90D910020503C /* MainTabView.swift in Sources */,
 				D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */,

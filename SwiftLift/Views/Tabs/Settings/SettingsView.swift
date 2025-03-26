@@ -29,9 +29,9 @@ struct SettingsView: View {
             List {
                 Section {
                     NavigationLink {
-                        ComingSoon()
+                        BackupRestoreView()
                     } label: {
-                        Text("Export/restore data")
+                        Text("Backup & Restore")
                     }
                     Toggle(isOn: $metric) {
                         Text("Metric")
@@ -111,7 +111,8 @@ struct SettingsView: View {
                 Section {
                     Text("Version: \(appVersion ?? "-")")
                     Text("Build: \(buildNumber ?? "-")")
-                    Link(destination: URL(string: "https://github.com")!) {
+                    Link(destination:
+                            URL(string: "https://github.com/jadenzaleski/SwiftLift")!) {
                         HStack {
                             Image("github")
                                 .resizable()
