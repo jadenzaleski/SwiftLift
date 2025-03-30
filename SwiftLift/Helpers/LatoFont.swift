@@ -18,10 +18,10 @@ enum LatoFontSize {
         switch self {
         case .caption:
             return 13
-        case .body:
-            return 16
         case .small:
             return 14
+        case .body:
+            return 16
         case .medium:
             return 18
         case .subtitle:
