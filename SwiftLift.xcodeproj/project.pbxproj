@@ -34,7 +34,6 @@
 		D76A5F602C212B9100813F51 /* Lato-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F562C212B9100813F51 /* Lato-Thin.ttf */; };
 		D76A5F612C212B9100813F51 /* Lato-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F572C212B9100813F51 /* Lato-Light.ttf */; };
 		D76A5F632C22755600813F51 /* LatoFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76A5F622C22755600813F51 /* LatoFont.swift */; };
-		D76A5F652C23DEF900813F51 /* CustomBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76A5F642C23DEF900813F51 /* CustomBackButton.swift */; };
 		D76A5F6E2C24B86E00813F51 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D76A5F6D2C24B86E00813F51 /* Preview Assets.xcassets */; };
 		D77FD0E62B54AA710095644A /* LineChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77FD0E52B54AA710095644A /* LineChart.swift */; };
 		D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D78474082AC7D73700725EB1 /* ProfileView.swift */; };
@@ -46,6 +45,7 @@
 		D7B90EA82AA8ECA100F9EC41 /* Workout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA32AA8ECA100F9EC41 /* Workout.swift */; };
 		D7B90EAA2AA8ECA100F9EC41 /* Exercise.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA52AA8ECA100F9EC41 /* Exercise.swift */; };
 		D7B90EAB2AA8ECA100F9EC41 /* Activity.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B90EA62AA8ECA100F9EC41 /* Activity.swift */; };
+		D7C379EC2D9C390100F47CC1 /* BackupManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7C379EB2D9C38FB00F47CC1 /* BackupManager.swift */; };
 		D7D6E3AD2D81F9790038A4B1 /* AppStorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -94,7 +94,6 @@
 		D76A5F562C212B9100813F51 /* Lato-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Thin.ttf"; sourceTree = "<group>"; };
 		D76A5F572C212B9100813F51 /* Lato-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Light.ttf"; sourceTree = "<group>"; };
 		D76A5F622C22755600813F51 /* LatoFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatoFont.swift; sourceTree = "<group>"; };
-		D76A5F642C23DEF900813F51 /* CustomBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomBackButton.swift; sourceTree = "<group>"; };
 		D76A5F6D2C24B86E00813F51 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		D77FD0E52B54AA710095644A /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
 		D78474082AC7D73700725EB1 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
@@ -109,6 +108,7 @@
 		D7B90EA32AA8ECA100F9EC41 /* Workout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Workout.swift; sourceTree = "<group>"; };
 		D7B90EA52AA8ECA100F9EC41 /* Exercise.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Exercise.swift; sourceTree = "<group>"; };
 		D7B90EA62AA8ECA100F9EC41 /* Activity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Activity.swift; sourceTree = "<group>"; };
+		D7C379EB2D9C38FB00F47CC1 /* BackupManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackupManager.swift; sourceTree = "<group>"; };
 		D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorageManager.swift; sourceTree = "<group>"; };
 		D7D6E3AF2D839EAE0038A4B1 /* ci_post_xcodebuild.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_xcodebuild.sh; sourceTree = "<group>"; };
 		D7D6E3B02D83A5B30038A4B1 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
@@ -207,12 +207,12 @@
 		D78D94702C00E99E00DBEF7C /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				D7C379EB2D9C38FB00F47CC1 /* BackupManager.swift */,
 				D7D6E3AC2D81F9790038A4B1 /* AppStorageManager.swift */,
 				D73604C02AB3B9050029C09E /* SwiftDataPreviewContainer.swift */,
 				D78D94712C00E9B900DBEF7C /* Debouncer.swift */,
 				D74270552AA90D900020503C /* NumbersOnlyViewModifier.swift */,
 				D76A5F622C22755600813F51 /* LatoFont.swift */,
-				D76A5F642C23DEF900813F51 /* CustomBackButton.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -535,12 +535,12 @@
 				D78474092AC7D73700725EB1 /* ProfileView.swift in Sources */,
 				D74270612AA90D910020503C /* NumbersOnlyViewModifier.swift in Sources */,
 				D7384D342AF9EE1500D48669 /* ComingSoon.swift in Sources */,
+				D7C379EC2D9C390100F47CC1 /* BackupManager.swift in Sources */,
 				D7B90EA82AA8ECA100F9EC41 /* Workout.swift in Sources */,
 				D76786E62D72B271001FFF69 /* WorkoutView.swift in Sources */,
 				D74270652AA90D910020503C /* ExerciseSearch.swift in Sources */,
 				D742705E2AA90D910020503C /* StatsView.swift in Sources */,
 				D78D94722C00E9B900DBEF7C /* Debouncer.swift in Sources */,
-				D76A5F652C23DEF900813F51 /* CustomBackButton.swift in Sources */,
 				D73604C12AB3B9050029C09E /* SwiftDataPreviewContainer.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -24,53 +24,7 @@ struct HistoryDetail: View {
     var body: some View {
         ScrollView {
             VStack {
-                VStack {
-                    HStack {
-                        Image(systemName: "mappin.and.ellipse")
-                        Text(workout.gym)
-                    }
-                    .padding(.bottom, 5.0)
-                    .font(.lato(type: .regular, size: .subtitle))
-                    VStack {
-                        HStack {
-                            // duration
-                            Image(systemName: "clock")
-                                .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-                            Text("\(formatTimeInterval(workout.duration))")
-                                .foregroundStyle(leftGradient)
-                                .padding(.trailing, 5.0)
-                            Spacer()
-                            // sets
-                            Text("\(workout.totalSets)")
-                                .foregroundStyle(rightGradient)
-                            Image(systemName: "checklist.checked")
-                                .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
-
-                        }
-
-                        HStack {
-                            // volume
-                            Image(systemName: "scalemass")
-                                .padding(.trailing, -5.0)
-                            Text("\(Int(workout.totalWeight))")
-                                .foregroundStyle(leftGradient)
-                            Spacer()
-                            // reps
-                            Text("\(workout.totalReps)")
-                                .foregroundStyle(rightGradient)
-                            Image(systemName: "repeat")
-                                .padding(.trailing, -5.0)
-                        }
-                        // sets
-
-                    }
-                    .font(.lato(type: .regular, size: .body))
-                }
-                .padding(.all)
-                .padding(.horizontal, 25.0)
-                .background(Color("offset"))
-                .clipShape(RoundedRectangle(cornerRadius: 15))
-                .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
+                header()
 
                 ForEach(workout.activities, id: \.id) { activity in
                     VStack {
@@ -148,10 +102,63 @@ struct HistoryDetail: View {
                     .font(.lato(type: .light, size: .subtitle))
             }
         }
-        .withCustomBackButton()
-
     }
 
+    @ViewBuilder
+    private func header() -> some View {
+        VStack {
+            HStack {
+                Image(systemName: "mappin.and.ellipse")
+                Text(workout.gym)
+            }
+            .padding(.bottom, 5.0)
+            .font(.lato(type: .regular, size: .subtitle))
+            VStack {
+                HStack {
+                    // duration
+                    Image(systemName: "clock")
+                        .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
+                    Text("\(formatTimeInterval(workout.duration))")
+                        .foregroundStyle(leftGradient)
+                        .padding(.trailing, 5.0)
+                    Spacer()
+                    // sets
+                    Text("\(workout.totalSets)")
+                        .foregroundStyle(rightGradient)
+                    Image(systemName: "checklist.checked")
+                        .padding(/*@START_MENU_TOKEN@*/.trailing, -5.0/*@END_MENU_TOKEN@*/)
+
+                }
+
+                HStack {
+                    // volume
+                    Image(systemName: "scalemass")
+                        .padding(.trailing, -5.0)
+                    Text("\(Int(workout.totalWeight))")
+                        .foregroundStyle(leftGradient)
+                    Spacer()
+                    // reps
+                    Text("\(workout.totalReps)")
+                        .foregroundStyle(rightGradient)
+                    Image(systemName: "repeat")
+                        .padding(.trailing, -5.0)
+                }
+                // sets
+
+            }
+            .font(.lato(type: .regular, size: .body))
+        }
+        .padding(.all)
+        .padding(.horizontal, 25.0)
+        .background(Color("offset"))
+        .clipShape(RoundedRectangle(cornerRadius: 15))
+        .shadow(color: colorScheme == .dark ? Color.clear : Color(UIColor.systemGray4), radius: 5)
+    }
+
+}
+
+// MARK: - Helpers
+extension HistoryDetail {
     func formatTimeInterval(_ timeInterval: TimeInterval) -> String {
         let durationFormatter = DateComponentsFormatter()
         durationFormatter.unitsStyle = .abbreviated

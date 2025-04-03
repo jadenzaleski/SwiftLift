@@ -38,6 +38,15 @@ struct BackupRestoreView: View {
                     .font(.lato(type: .regular, size: .caption))
             }
         }
+        .onAppear {
+            let backupManager = BackupManager()
+            backupManager.createBackup()
+
+            let backups = backupManager.getBackups()
+            for backup in backups {
+                print("Backup: \(backup.filename), Date: \(backup.date), Size: \(backup.size) bytes")
+            }
+        }
     }
 
     @ViewBuilder
