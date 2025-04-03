@@ -30,6 +30,8 @@ struct HomeView: View {
     @State private var timer: Timer?
     @State private var timerTick = 0
     @State private var animateGradient = false
+    @State private var hasRestoredWorkout = false
+
 
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
@@ -55,17 +57,17 @@ struct HomeView: View {
                             currentWorkout: workout)
             }
         }
-        .onAppear {
-            // Only restore the workout in non-preview environments
-            if ProcessInfo.processInfo
-                .environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
-                restoreWorkout()
+        .onChange(of: scenePhase) {
+            if scenePhase == .active, !hasRestoredWorkout {
+                if ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" {
+                    restoreWorkout()
+                    hasRestoredWorkout = true
+                }
             }
         }
         .alert("Workout Restored", isPresented: $showAlert) {
             Button("OK", role: .cancel) {
                 startTimer()
-                workoutInProgress = true
             }
         } message: {
             Text("Your previous workout has been restored.")
@@ -170,7 +172,8 @@ extension HomeView {
             print("Workout has been restored!")
             currentWorkout = ongoingWorkout
             showAlert = true  // Show alert when a workout is restored
-            // Handle the rest of the logic in the button
+            workoutInProgress = true
+            // Start the timer in the Button
         } else {
             workoutInProgress = false
             currentWorkout = nil
