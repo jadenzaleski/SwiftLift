@@ -98,7 +98,11 @@ struct WorkoutView: View {
     /// Displays a list of activities with navigation links.
     @ViewBuilder
     private func activityList() -> some View {
-        ForEach(currentWorkout.activities.indices, id: \.self) { index in
+        let sortedIndices = currentWorkout.activities.indices.sorted {
+            currentWorkout.activities[$0].index < currentWorkout.activities[$1].index
+        }
+
+        ForEach(sortedIndices, id: \.self) { index in
             // If you want to slide the whole item to the left:
             /*
              ZStack(alignment: .trailing) {
@@ -163,7 +167,7 @@ struct WorkoutView: View {
             .foregroundStyle(activityState == 1 ? .green :
                                 activityState == 0 ? Color.ld : .yellow)
             .font(.lato(type: .thin, size: .subtitle))
-            Text("\(activity.name)")
+            Text("\(activity.name) \(activity.index)") // TODO: remove before commit
                 .font(.lato(type: .bold, size: .subtitle))
                 .lineLimit(1)
             Spacer()
@@ -339,17 +343,18 @@ extension WorkoutView {
     /// Deletes an ``Activity`` at the given index.
     /// - Parameter index: The index of the activity to delete.
     private func deleteActivity(at index: Int) {
+        updateOffsets()
+        // set all offsets to zero
+        offsets = offsets.map { _ in CGSize.zero }
+
         withAnimation {
             let activityToDelete = currentWorkout.activities[index]
             // Remove from model context to actually delete the object
             modelContext.delete(activityToDelete)
             try? modelContext.save()
-            // Remove reference from the list
-//            currentWorkout.activities.remove(at: index)
-            updateOffsets()
-
         }
-        print("Deleted activity at index \(index)")
+
+        print("Deleted activity at array index \(index)")
     }
 
     /// This function ensures the ``offsets`` array matches the number of activities.

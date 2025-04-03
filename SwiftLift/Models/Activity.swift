@@ -27,6 +27,9 @@ final class Activity {
     /// This must be optional in order to allow cascade deletion.
     var parentWorkout: Workout?
 
+    /// The Index of the ``Activity``.
+    var index: Int
+
     /// Initializes a new ``Activity`` instance.
     ///
     /// - Parameters:
@@ -39,10 +42,12 @@ final class Activity {
     ///   - parentWorkout: An reference to the `Workout` this activity is part of.
     init(sets: [SetData] = [],
          parentExercise: Exercise,
-         parentWorkout: Workout) {
+         parentWorkout: Workout,
+         index: Int) {
         self.sets = sets
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
+        self.index = index
     }
 }
 
@@ -61,7 +66,7 @@ extension Activity {
     }
 
     /// Calculate wether or not this activity is complete.
-    /// Completion is determined by the wether or not all ``sets`` are complete
+    /// Completion is determined by the wether or not all ``sets`` are complete.
     var isComplete: Bool {
         sets.allSatisfy(\.isComplete)
     }
@@ -70,7 +75,7 @@ extension Activity {
         parentExercise?.name ?? ""
     }
 
-    /// The date at which the ``Activity`` was completed
+    /// The date at which the ``Activity`` was completed. This is pulled from the parent ``Workout`` ``endDate``.
     var completionDate: Date? {
         parentWorkout?.endDate
     }

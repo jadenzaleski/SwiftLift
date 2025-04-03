@@ -97,7 +97,7 @@ struct ActivityView: View {
             .focused($focusedField, equals: setID)
 
             Spacer()
-            Text("/")
+            Text("/ \(set.wrappedValue.index) /") // TODO: remove before commit
                 .padding(.horizontal)
             Spacer()
 
@@ -176,7 +176,7 @@ struct ActivityView: View {
 //        let filteredSets = sets.wrappedValue.indices.filter { sets.wrappedValue[$0].type == type }
         let filteredSets = sets.wrappedValue
             .filter { $0.type == type }
-            .sorted(by: { $0.created < $1.created })
+            .sorted(by: { $0.index < $1.index })
 
         HStack {
             let title = type == .warmUp ? "warm up" : "working"
@@ -204,8 +204,11 @@ struct ActivityView: View {
     private func addSetButton(type: SetData.SetType) -> some View {
         Button(action: {
             withAnimation(.easeInOut(duration: 0.2)) {
+                // find the max values of all the sets and add one to it
+                var index = activity.sets.max(by: { $0.index < $1.index })?.index ?? 0
+                index += 1
                 // For now, use the defualt values
-                let newSet = SetData(type: type, parentActivity: activity)
+                let newSet = SetData(type: type, parentActivity: activity, index: index)
                 activity.sets.append(newSet)
                 // Initialize local state for the new set
                 localRepsText[newSet.id] = "\(newSet.reps)"
@@ -308,14 +311,14 @@ struct ActivityView: View {
         activity: .constant(
             Activity(
                 sets: [
-                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true),
-                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false),
-                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false),
-                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false),
-                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false)
+                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
+                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false, index: 1),
+                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, index: 2),
+                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, index: 3),
+                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
                 ],
                 parentExercise: Exercise(name: "Bench Press"),
-                parentWorkout: Workout(gym: "tester")
+                parentWorkout: Workout(gym: "tester"), index: 0
             )
         ))
 }
