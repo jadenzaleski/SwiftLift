@@ -15,6 +15,7 @@ struct WorkoutView: View {
     /// This comes from ``HomeView`` `stopWorkout` and is the function used to stop the workout.
     /// Pass in a ``Bool`` that tells the function to save it to the database or not.
     var stopWorkout: (Bool) -> Void
+    /// This does not need to be used and is only here to trigger a UI update for this ``View``.
     let timerTick: Int
 
     @SceneStorage("isPresentingExerciseSearch") private var isPresentingExerciseSearch: Bool = false
@@ -23,47 +24,31 @@ struct WorkoutView: View {
     @State var showDeleteAlert: Bool = false
     /// The current ``Workout``, if any.
     @State var currentWorkout: Workout
-    /// Keeps track of the offsets for each activity in the ``ForEach`` loop in ``activityList``.
-    @State var offsets: [CGSize] = []
 
-    // Limits for the swipe gesture
-    private let swipeLeftLimit: CGFloat = -60
-    private let swipeRightLimit: CGFloat = 60
-    private let swipeLeftLimitToShow: CGFloat = -40
-    private let swipeRightLimitToHide: CGFloat = 40
+    private let lineRadius: CGFloat = 2
+    private let lineWidth: CGFloat = 2
+    private let horizontalInsets: CGFloat = 15
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            workoutHeader()
-                .padding(.horizontal)
-            activityList()
-                .padding(.horizontal)
-            // Add Exercise button
-            Button {
-                isPresentingExerciseSearch.toggle()
-                updateOffsets()
-            } label: {
-                HStack {
-                    Image(systemName: "plus")
-                    Text("Add Exercise")
-                }
-                .font(.lato(type: .regular, size: .subtitle))
+        List {
+            Section {
+                workoutHeader()
             }
-            .padding(.top)
+            .listSectionSeparator(.hidden)
+
+            Section {
+                activityList()
+            }
+            .listSectionSeparator(.hidden, edges: .bottom)
+
+        }
+        .scrollContentBackground(.hidden)
+        .listStyle(.plain)
+        .sheet(isPresented: $isPresentingExerciseSearch) {
+            ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
         }
         .toolbar {
             workoutToolbar()
-        }
-        .onChange(of: currentWorkout.activities) {
-            updateOffsets()
-            print("onChange updateOffsets")
-        }
-        .onAppear {
-            updateOffsets()
-            print("onAppear updateOffsets")
-        }
-        .sheet(isPresented: $isPresentingExerciseSearch) {
-            ExerciseSearch(currentWorkout: $currentWorkout, isPresentingExerciseSearch: $isPresentingExerciseSearch)
         }
     }
 
@@ -92,118 +77,113 @@ struct WorkoutView: View {
                 Spacer()
             }
         }
+        .listRowInsets(.init(top: 0, leading: horizontalInsets, bottom: 0, trailing: horizontalInsets))
     }
 
     // MARK: - Activity List
     /// Displays a list of activities with navigation links.
     @ViewBuilder
     private func activityList() -> some View {
-        let sortedIndices = currentWorkout.activities.indices.sorted {
-            currentWorkout.activities[$0].index < currentWorkout.activities[$1].index
+        let sortedActivities = currentWorkout.activities.sorted(by: { $0.index < $1.index })
+        ForEach(Array(sortedActivities.enumerated()), id: \.1.id) { index, activity in
+            rowItem(activity: $currentWorkout.activities[index], index: index)
         }
+        .onMove(perform: moveActivity)
 
-        ForEach(sortedIndices, id: \.self) { index in
-            // If you want to slide the whole item to the left:
-            /*
-             ZStack(alignment: .trailing) {
-             // DELETE BUTTON (Initially behind)
-             deleteButton(for: index)
-             .zIndex(offsets[index].width < 0 ? 1 : 0) // Move forward only on swipe
+        Button {
+            isPresentingExerciseSearch.toggle()
+        } label: {
+            HStack(alignment: .center, spacing: 10) {
+                Spacer()
+                Image(systemName: "plus")
+                    .foregroundStyle(Color.accentColor)
 
-             // NAVIGATION LINK (Above by default)
-             NavigationLink(value: index) {
-             item(index: index)
-             }
-             .offset(x: offsets[index].width)
-             .gesture(dragGesture(for: index))
-             .zIndex(2) // Always above deleteButton initially
-             }
-             .padding(.bottom, 8.0)
-             */
-            // If you only want to shrink the width of the item:
-            HStack {
-                NavigationLink(value: index) {
-                    // If there is a moment where the index and count are not in sync, don't display the item.
-                    if index < currentWorkout.activities.count {
-                        item(index: index)
-                    }
-                }
-                // If this is not a highPriorityGesture or simultaneousGesture, the NavigationLink will take precedent
-                .highPriorityGesture(dragGesture(for: index))
-                .animation(.spring(response: 0.25, dampingFraction: 0.5), value: safeOffset(for: index).width)
-                // Show delete button only when swiped left
-                if safeOffset(for: index).width < 0 {
-                    deleteButton(for: index)
-                }
+                Text("Add Exercise")
+                    .font(.lato(type: .regular, size: .subtitle))
+                    .foregroundStyle(Color.accentColor)
+                    .padding(.vertical, 25)
+                Spacer()
             }
-            .padding(.bottom, 8.0)
         }
-        .navigationDestination(for: Int.self) { index in
-            ActivityView(activity: activityBinding(for: index))
-        }
+        .listRowInsets(.init(top: 0, leading: horizontalInsets, bottom: 0, trailing: horizontalInsets))
     }
 
-    /// For each item in the ``activityList``, display this view.
+    /// The view for each list item in the list of activites.
+    /// - Parameters:
+    ///   - activity: The ``Activity`` Binding to be shown.
+    ///   - index: The index of the activity in the array.
+    /// - Returns: ``View`` of the activity for a list.
+    /// - Important: The ``index`` parameter is not the same as ``Activity.index``
     @ViewBuilder
-    private func item(index: Int) -> some View {
-        let activity = currentWorkout.activities[index]
+    private func rowItem(activity: Binding<Activity>, index: Int) -> some View {
+        let completedSets = activity.wrappedValue.sets.count(where: \.isComplete)
+        let totalSets = activity.wrappedValue.sets.count
         let activityState: Int = {
             // Sets are either empty, complete, or in progress
-            if (activity.warmUpSets + activity.workingSets).isEmpty {
-                return 0
-            } else if activity.isComplete {
-                return 1
+            if activity.wrappedValue.sets.isEmpty {
+                return 0 // Nothing in this activity
+            } else if activity.wrappedValue.isComplete {
+                return 1 // Completed
             } else {
-                return 2
+                return 2 // In progress
             }
         }()
 
-        HStack {
-            // Change the color and the type of image based on activity compeltion status
-            Image(systemName:
-                    activityState == 1 ? "checkmark.circle.fill" :
-                    activityState == 0 ? "circle" : "exclamationmark.circle"
-            )
-            .foregroundStyle(activityState == 1 ? .green :
-                                activityState == 0 ? Color.ld : .yellow)
-            .font(.lato(type: .thin, size: .subtitle))
-            Text("\(activity.name) \(activity.index)") // TODO: remove before commit
-                .font(.lato(type: .bold, size: .subtitle))
-                .lineLimit(1)
-            Spacer()
-            Image(systemName: "chevron.right")
-                .font(.lato(type: .thin, size: .subtitle))
+            NavigationLink(destination: ActivityView(activity: activity)) {
+                HStack(alignment: .center, spacing: horizontalInsets) {
+                    VStack {
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 0,
+                            bottomLeadingRadius: lineRadius,
+                            bottomTrailingRadius: lineRadius,
+                            topTrailingRadius: 0
+                        )
+                        .fill(index == 0 ? Color.clear : Color.gray)
+                        .frame(width: lineWidth)
 
+                        Image(systemName:
+                                activityState == 1 ? "checkmark.circle.fill" :
+                                activityState == 0 ? "circle" : "exclamationmark.circle"
+                        )
+                        .foregroundStyle(activityState == 1 ? .green :
+                                            activityState == 0 ? Color.ld : .yellow)
+                        .font(.lato(type: .regular, size: .subtitle))
+
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: lineRadius,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: lineRadius
+                        )
+                        .fill(index == currentWorkout.activities.count - 1 ? Color.clear : Color.gray)
+                        .frame(width: lineWidth)
+                    }
+                    Text(activity.wrappedValue.name)
+                        .font(.lato(type: .regular, size: .subtitle))
+                        .padding(.vertical, 20)
+
+                    Spacer()
+
+                    if activityState != 0 {
+                        Gauge(value: Double(completedSets), in: 0...Double(totalSets)) {
+                            Text("\(completedSets)/\(totalSets)")
+                                .font(.lato(type: .bold, size: .body))
+                        }
+                        .padding(.trailing, horizontalInsets)
+                        .gaugeStyle(.accessoryCircularCapacity)
+                        .tint(.accentColor)
+                        .scaleEffect(0.7)
+                    }
+                }
         }
-        .foregroundStyle(Color.ld)
-        .padding()
-        .background(Color("offset"))
-        .clipShape(Capsule())
-        .overlay {
-            if let borderColor = borderColor(for: activityState) {
-                Capsule(style: .continuous)
-                    .stroke(borderColor, lineWidth: 2)
-                    .padding(.horizontal, 1.0)
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                modelContext.delete(activity.wrappedValue)
+            } label: {
+                Label("Delete", systemImage: "trash")
             }
         }
-    }
-
-    /// Creates a delete button for an activity
-    @ViewBuilder
-    private func deleteButton(for index: Int) -> some View {
-        Button {
-            deleteActivity(at: index)
-        } label: {
-            Image(systemName: "trash")
-                .foregroundColor(.white)
-                .padding(12)
-                .background(Color.red)
-                .clipShape(Circle())
-                .opacity(offsets[index].width < swipeLeftLimitToShow ? 1 : 0)
-                .animation(.easeIn(duration: 0.2), value: offsets[index].width)
-        }
-        .padding(.trailing, 3.0)
-        .contentShape(Rectangle())
+        .listRowInsets(.init(top: 0, leading: horizontalInsets, bottom: 0, trailing: horizontalInsets))
     }
 
     // MARK: - Toolbar
@@ -241,159 +221,22 @@ struct WorkoutView: View {
 
 // MARK: - Helpers
 extension WorkoutView {
-    /// Returns a binding to an ``Activity`` within the `currentworkout.activities` array based on the provided index.
-    /// This allows for two-way data binding, enabling modifications to ``Activity`` instances directly in views.
-    ///
-    /// - Parameter id: The index of the ``Activity`` in the `currentworkout.activities` array.
-    /// - Returns: A `Binding<Activity>` that reflects changes to the corresponding `Activity` in the array.
-    private func activityBinding(for id: Array<Activity>.Index) -> Binding<Activity> {
-        Binding {
-            // Retrieves the activity at the specified index from the activities array.
-            currentWorkout.activities[id]
-        } set: { newValue in
-            // Updates the activity at the specified index when changes occur.
-            currentWorkout.activities[id] = newValue
+    /// Preforms the move when the user drags the activity from one spot to another in the list.
+    /// - Parameters:
+    ///   - source: Original ``IndexSet`` to be moved.
+    ///   - destination: The destionation of the moved item.
+    private func moveActivity(from source: IndexSet, to destination: Int) {
+        // First move the items in the array
+        currentWorkout.activities.move(fromOffsets: source, toOffset: destination)
+
+        // reorder the indices
+        var counter = 0
+        for activity in currentWorkout.activities {
+            activity.index = counter
+            counter += 1
         }
     }
 
-    // swiftlint:disable:next line_length
-    /// Code from: [Stackoverflow question](https://stackoverflow.com/questions/67238383/how-to-swipe-to-delete-in-swiftui-with-only-a-foreach-and-not-a-list)
-    /// Creates a drag gesture for handling swipe-to-delete functionality.
-    ///
-    /// This gesture allows users to swipe an ``item`` to the left to reveal a delete option. It prevents
-    /// swiping to the right beyond the original position and ensures a smooth swipe animation.
-    /// This is overkill if we only want to change the with of the ``item`` but it will work for either implementation.
-    /// - Parameter index: The index of the item being swiped.
-    /// - Returns: A `Gesture` that handles swipe interactions.
-    private func dragGesture(for index: Int) -> some Gesture {
-        DragGesture(minimumDistance: 15)
-            .onChanged { gesture in
-                // Ensure the gesture is more horizontal than vertical
-                guard abs(gesture.translation.width) > abs(gesture.translation.height) else {
-                    return
-                }
-
-                // Prevent swipe to the right in default position
-                if offsets[index].width == 0 && gesture.translation.width > 0 {
-                    return
-                }
-
-                // Prevent drag more than swipeLeftLimit points
-                if gesture.translation.width < swipeLeftLimit * 10 {
-                    return
-                }
-
-                // Prevent swipe againt to the left if it's already swiped
-                if offsets[index].width == swipeLeftLimit && gesture.translation.width < 0 {
-                    return
-                }
-
-                // If view already swiped to the left and we start dragging to the right
-                // Firstly will check if it's swiped left
-                if offsets[index].width >= swipeLeftLimit {
-                    // And here checking if swiped to the right more than swipeRightLimit points
-                    // If more - need to set the view to zero position
-                    if gesture.translation.width > swipeRightLimit {
-                        self.offsets[index] = .zero
-                        return
-                    }
-
-                    // Check if only swiping to the right - update distance by minus swipeLeftLimit points
-                    if offsets[index].width != 0 && gesture.translation.width > 0 {
-                        self.offsets[index] = .init(width: swipeLeftLimit + gesture.translation.width,
-                                                    height: gesture.translation.height)
-                        return
-                    }
-                }
-
-                self.offsets[index] = gesture.translation
-            }
-            .onEnded { gesture in
-                // Ensure the gesture is more horizontal than vertical
-                guard abs(gesture.translation.width) > abs(gesture.translation.height) else {
-                    return
-                }
-
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.75)) {
-                    // Left swipe handle:
-                    if self.offsets[index].width < swipeLeftLimitToShow {
-                        self.offsets[index].width = swipeLeftLimit
-                        return
-                    }
-                    if self.offsets[index].width < swipeLeftLimit {
-                        self.offsets[index].width = swipeLeftLimit
-                        return
-                    }
-
-                    // Right swipe handle:
-                    if gesture.translation.width > swipeRightLimitToHide {
-                        self.offsets[index] = .zero
-                        return
-                    }
-                    if gesture.translation.width < swipeRightLimitToHide {
-                        self.offsets[index].width = swipeLeftLimit
-                        return
-                    }
-
-                    self.offsets[index] = .zero
-                }
-            }
-    }
-
-    /// Deletes an ``Activity`` at the given index.
-    /// - Parameter index: The index of the activity to delete.
-    private func deleteActivity(at index: Int) {
-        updateOffsets()
-        // set all offsets to zero
-        offsets = offsets.map { _ in CGSize.zero }
-
-        withAnimation {
-            let activityToDelete = currentWorkout.activities[index]
-            // Remove from model context to actually delete the object
-            modelContext.delete(activityToDelete)
-            try? modelContext.save()
-        }
-
-        print("Deleted activity at array index \(index)")
-    }
-
-    /// This function ensures the ``offsets`` array matches the number of activities.
-    private func updateOffsets() {
-        // Ensure the offsets array matches the size of the activities array
-        if offsets.count < currentWorkout.activities.count {
-            // Append new zero-sized offsets for new activities
-            offsets.append(contentsOf: [CGSize](
-                repeating: .zero,
-                count: currentWorkout.activities.count - offsets.count
-            ))
-        } else if offsets.count > currentWorkout.activities.count {
-            // Trim excess offsets in case activities are removed
-            offsets = Array(offsets.prefix(currentWorkout.activities.count))
-        }
-    }
-
-    /// Function that returns 0 if the offset does not yet exist for the item.
-    /// - Parameter index: The index of the offset.
-    /// - Returns: The offset or zero if it does not exist.
-    private func safeOffset(for index: Int) -> CGSize {
-        if index < offsets.count {
-            return offsets[index]
-        } else {
-            return .zero // Prevent index out of bounds
-        }
-    }
-
-    /// Helps return the overlay color for the item border.
-    /// - Parameter state: Current state of the activity.
-    /// - Returns: A ``Color`` or ``nil``.
-    private func borderColor(for state: Int) -> Color? {
-        switch state {
-        case 1: return .green   // Completed
-        case 0: return .clear // No sets
-        case 2: return .yellow  // In progress
-        default: return nil     // No border
-        }
-    }
     /// Converts elapsed time into HH:MM:SS format
     private func timeString(from interval: TimeInterval) -> String {
         let hours = Int(interval) / 3600
@@ -404,10 +247,52 @@ extension WorkoutView {
 }
 
 #Preview {
-    WorkoutView(
-        workoutInProgress: .constant(true),
-        stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }, timerTick: 0,
-        currentWorkout: Workout(gym: "Preview Test")
-    )
-    .environment(\.font, .lato(type: .regular))
+    NavigationView {
+        WorkoutView(
+            workoutInProgress: .constant(true),
+            stopWorkout: { saveIt in print("Stop workout called with saveIt: \(saveIt)") }, timerTick: 0,
+            currentWorkout: Workout(gym: "Preview Test",
+                                    activities: [
+                                        Activity(
+                                            sets: [
+                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, index: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: true, index: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: true, index: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, index: 4)
+                                            ],
+                                            parentExercise: Exercise(name: "Bench Press"),
+                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                        ),
+                                        Activity(
+                                            sets: [
+                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false, index: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, index: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, index: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
+                                            ],
+                                            parentExercise: Exercise(name: "Cable Tricep Press"),
+                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                        ),
+                                        Activity(
+                                            sets: [
+                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, index: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, index: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, index: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
+                                            ],
+                                            parentExercise: Exercise(name: "Dumbbell Press"),
+                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                        ),
+                                        Activity(
+                                            sets: [],
+                                            parentExercise: Exercise(name: "One Arm Tricep Extension"),
+                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                        )
+                                    ])
+        )
+        .environment(\.font, .lato(type: .regular))
+    }
 }

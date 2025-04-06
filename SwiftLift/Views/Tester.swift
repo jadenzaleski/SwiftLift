@@ -11,39 +11,10 @@ import UIKit
 struct Tester: View {
     @State var index = 0
     @State var num = 0.0
-
     @FocusState private var focusedField: UUID?
 
     var body: some View {
         ScrollView {
-            Text("Hello World")
-                .font(Font.custom("OpenSans-Regular", size: 16))
-                .fontWeight(.light)
-            Text("Hello World")
-                .font(Font.custom("OpenSans-Regular", size: 16))
-                .fontWeight(.thin)
-            Text("Hello World")
-                .font(Font.custom("OpenSans-Regular", size: 16))
-                .fontWeight(.regular)
-            Text("Hello World")
-                .font(Font.custom("OpenSans-Regular", size: 16))
-                .fontWeight(.medium)
-            Text("Hello World")
-                .font(Font.custom("OpenSans-Regular", size: 16))
-                .fontWeight(.semibold)
-            Text("Hello World")
-                .font(Font.custom("OpenSans-Regular", size: 16))
-                .fontWeight(.bold)
-            Text("Hello World")
-                .font(Font.custom("OpenSansRoman-CondensedBold", size: 16))
-            Text("Hello World")
-                .font(Font.custom("OpenSansRoman-ExtraBold", size: 16))
-
-            Text("Hello World")
-                .font(Font.custom("OpenSansRoman-Light", size: 16))
-
-            Text("Hello World")
-                .font(.system(size: 16))
             Button("Tap") {
                 index += 1
                 print("[+] Running Tester: \(index)")
