@@ -59,7 +59,7 @@ struct HistoryRow: View {
                     SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
                 ],
                 parentExercise: Exercise(name: "Bench Press"),
-                parentWorkout: Workout(gym: "tester"), index: 0
+                parentWorkout: Workout(gym: "tester"), sortIndex: 0
             )]
     ))
 }

@@ -28,7 +28,7 @@ final class Activity {
     var parentWorkout: Workout?
 
     /// The Index of the ``Activity``.
-    var index: Int
+    var sortIndex: Int
 
     /// Initializes a new ``Activity`` instance.
     ///
@@ -43,11 +43,11 @@ final class Activity {
     init(sets: [SetData] = [],
          parentExercise: Exercise,
          parentWorkout: Workout,
-         index: Int) {
+         sortIndex: Int) {
         self.sets = sets
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
-        self.index = index
+        self.sortIndex = sortIndex
     }
 }
 

@@ -25,7 +25,7 @@ struct WorkoutView: View {
     /// The current ``Workout``, if any.
     @State var currentWorkout: Workout
 
-    private let lineRadius: CGFloat = 2
+    private let lineCornerRadius: CGFloat = 2
     private let lineWidth: CGFloat = 2
     private let horizontalInsets: CGFloat = 15
 
@@ -84,9 +84,8 @@ struct WorkoutView: View {
     /// Displays a list of activities with navigation links.
     @ViewBuilder
     private func activityList() -> some View {
-        let sortedActivities = currentWorkout.activities.sorted(by: { $0.index < $1.index })
-        ForEach(Array(sortedActivities.enumerated()), id: \.1.id) { index, activity in
-            rowItem(activity: $currentWorkout.activities[index], index: index)
+        ForEach(Array(currentWorkout.sortedActivities.enumerated()), id: \.1.id) { index, activity in
+            rowItem(activity: activity, index: index)
         }
         .onMove(perform: moveActivity)
 
@@ -113,52 +112,76 @@ struct WorkoutView: View {
     ///   - activity: The ``Activity`` Binding to be shown.
     ///   - index: The index of the activity in the array.
     /// - Returns: ``View`` of the activity for a list.
-    /// - Important: The ``index`` parameter is not the same as ``Activity.index``
+    /// - Important: The ``index`` parameter is not always the same as ``Activity.sortIndex``
     @ViewBuilder
-    private func rowItem(activity: Binding<Activity>, index: Int) -> some View {
-        let completedSets = activity.wrappedValue.sets.count(where: \.isComplete)
-        let totalSets = activity.wrappedValue.sets.count
+    private func rowItem(activity: Activity, index: Int) -> some View {
+        // Get the actual index in the unsorted array for binding
+        let activityIndex = currentWorkout.activities.firstIndex(where: { $0.id == activity.id })!
+        let activityBinding = $currentWorkout.activities[activityIndex]
+
+        let completedSets = activity.sets.count(where: \.isComplete)
+        let totalSets = activity.sets.count
         let activityState: Int = {
             // Sets are either empty, complete, or in progress
-            if activity.wrappedValue.sets.isEmpty {
+            if activity.sets.isEmpty {
                 return 0 // Nothing in this activity
-            } else if activity.wrappedValue.isComplete {
+            } else if activity.isComplete {
                 return 1 // Completed
             } else {
                 return 2 // In progress
             }
         }()
 
-            NavigationLink(destination: ActivityView(activity: activity)) {
+        let topLineFillColor: Color = {
+            if index == 0 {
+                return .clear
+            }
+            let previousActivity = currentWorkout.activities[index - 1]
+            return activity.isComplete
+            && previousActivity.isComplete
+            && previousActivity.sets.isEmpty ? .green : .gray
+        }()
+
+        let bottomLineFillColor: Color = {
+            if index == currentWorkout.activities.count - 1 {
+                return .clear
+            }
+            let nextActivity = currentWorkout.activities[index + 1]
+            return activity.isComplete
+            && nextActivity.isComplete
+            && nextActivity.sets.isEmpty ? .green : .gray
+        }()
+
+            NavigationLink(destination: ActivityView(activity: activityBinding)) {
                 HStack(alignment: .center, spacing: horizontalInsets) {
                     VStack {
                         UnevenRoundedRectangle(
                             topLeadingRadius: 0,
-                            bottomLeadingRadius: lineRadius,
-                            bottomTrailingRadius: lineRadius,
+                            bottomLeadingRadius: lineCornerRadius,
+                            bottomTrailingRadius: lineCornerRadius,
                             topTrailingRadius: 0
                         )
-                        .fill(index == 0 ? Color.clear : Color.gray)
+                        .fill(topLineFillColor)
                         .frame(width: lineWidth)
 
                         Image(systemName:
                                 activityState == 1 ? "checkmark.circle.fill" :
-                                activityState == 0 ? "circle" : "exclamationmark.circle"
+                                activityState == 0 ? "circle.dotted" : "circle"
                         )
-                        .foregroundStyle(activityState == 1 ? .green :
-                                            activityState == 0 ? Color.ld : .yellow)
+                        .foregroundStyle(activityState == 1 ? .green : .gray)
                         .font(.lato(type: .regular, size: .subtitle))
 
                         UnevenRoundedRectangle(
-                            topLeadingRadius: lineRadius,
+                            topLeadingRadius: lineCornerRadius,
                             bottomLeadingRadius: 0,
                             bottomTrailingRadius: 0,
-                            topTrailingRadius: lineRadius
+                            topTrailingRadius: lineCornerRadius
                         )
-                        .fill(index == currentWorkout.activities.count - 1 ? Color.clear : Color.gray)
+                        .fill(bottomLineFillColor)
                         .frame(width: lineWidth)
                     }
-                    Text(activity.wrappedValue.name)
+                    Text(activity.name + " ai: \(activity.sortIndex) i: \(index)")
+                        .lineLimit(1)
                         .font(.lato(type: .regular, size: .subtitle))
                         .padding(.vertical, 20)
 
@@ -169,7 +192,6 @@ struct WorkoutView: View {
                             Text("\(completedSets)/\(totalSets)")
                                 .font(.lato(type: .bold, size: .body))
                         }
-                        .padding(.trailing, horizontalInsets)
                         .gaugeStyle(.accessoryCircularCapacity)
                         .tint(.accentColor)
                         .scaleEffect(0.7)
@@ -178,7 +200,7 @@ struct WorkoutView: View {
         }
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
-                modelContext.delete(activity.wrappedValue)
+                modelContext.delete(activity)
             } label: {
                 Label("Delete", systemImage: "trash")
             }
@@ -221,20 +243,32 @@ struct WorkoutView: View {
 
 // MARK: - Helpers
 extension WorkoutView {
-    /// Preforms the move when the user drags the activity from one spot to another in the list.
+    /// Performs the move operation when the user drags an activity from one position to another in the list.
+    /// This function maintains the proper sort order of activities by updating all sortIndex values.
+    /// Had a hard time understand this so Claude helped.
     /// - Parameters:
-    ///   - source: Original ``IndexSet`` to be moved.
-    ///   - destination: The destionation of the moved item.
+    ///   - source: The original `IndexSet` containing the indices of items to be moved.
+    ///   - destination: The destination index where the items should be moved to.
     private func moveActivity(from source: IndexSet, to destination: Int) {
-        // First move the items in the array
-        currentWorkout.activities.move(fromOffsets: source, toOffset: destination)
+        // Create a mutable copy of the already sorted activities array
+        // Even though this creates a new array, it contains references to the same SwiftData-managed
+        // Activity objects, so modifying them here will update the actual objects in the database
+        var activities = currentWorkout.sortedActivities
 
-        // reorder the indices
-        var counter = 0
-        for activity in currentWorkout.activities {
-            activity.index = counter
-            counter += 1
+        // Rearrange the items in our temporary array according to the drag operation
+        activities.move(fromOffsets: source, toOffset: destination)
+
+        // Update ALL sortIndex values to match the new order
+        // Since Activity objects are reference types and tracked by SwiftData,
+        // changing properties here directly updates the objects in the SwiftData store,
+        // regardless of how we accessed them (through sortedActivities or directly)
+        for (index, activity) in activities.enumerated() {
+            activity.sortIndex = index
         }
+
+        // Save changes to ensure the updates are persisted
+        try? modelContext.save()
+        print("Move saved!")
     }
 
     /// Converts elapsed time into HH:MM:SS format
@@ -262,18 +296,18 @@ extension WorkoutView {
                                                 SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, index: 4)
                                             ],
                                             parentExercise: Exercise(name: "Bench Press"),
-                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                            parentWorkout: Workout(gym: "tester"), sortIndex: 0
                                         ),
                                         Activity(
                                             sets: [
                                                 SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
-                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false, index: 1),
-                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, index: 2),
-                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, index: 3),
-                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, index: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: true, index: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: true, index: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, index: 4)
                                             ],
                                             parentExercise: Exercise(name: "Cable Tricep Press"),
-                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                            parentWorkout: Workout(gym: "tester"), sortIndex: 0
                                         ),
                                         Activity(
                                             sets: [
@@ -284,12 +318,12 @@ extension WorkoutView {
                                                 SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
                                             ],
                                             parentExercise: Exercise(name: "Dumbbell Press"),
-                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                            parentWorkout: Workout(gym: "tester"), sortIndex: 0
                                         ),
                                         Activity(
                                             sets: [],
                                             parentExercise: Exercise(name: "One Arm Tricep Extension"),
-                                            parentWorkout: Workout(gym: "tester"), index: 0
+                                            parentWorkout: Workout(gym: "tester"), sortIndex: 0
                                         )
                                     ])
         )

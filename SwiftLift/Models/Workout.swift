@@ -67,4 +67,8 @@ extension Workout {
     var duration: TimeInterval {
         abs(startDate?.timeIntervalSince(endDate ?? .now) ?? 0)
     }
+
+    var sortedActivities: [Activity] {
+        activities.sorted(by: { $0.sortIndex < $1.sortIndex })
+    }
 }
