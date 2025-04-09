@@ -279,33 +279,33 @@ extension WorkoutView {
                                     activities: [
                                         Activity(
                                             sets: [
-                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
-                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, index: 1),
-                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: true, index: 2),
-                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: true, index: 3),
-                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, index: 4)
+                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, sortIndex: 0),
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, sortIndex: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: true, sortIndex: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: true, sortIndex: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, sortIndex: 4)
                                             ],
                                             parentExercise: Exercise(name: "Bench Press"),
                                             parentWorkout: Workout(gym: "tester"), sortIndex: 0
                                         ),
                                         Activity(
                                             sets: [
-                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
-                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, index: 1),
-                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: true, index: 2),
-                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: true, index: 3),
-                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, index: 4)
+                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, sortIndex: 0),
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, sortIndex: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: true, sortIndex: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: true, sortIndex: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: true, sortIndex: 4)
                                             ],
                                             parentExercise: Exercise(name: "Cable Tricep Press"),
                                             parentWorkout: Workout(gym: "tester"), sortIndex: 0
                                         ),
                                         Activity(
                                             sets: [
-                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
-                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, index: 1),
-                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, index: 2),
-                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, index: 3),
-                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
+                                                SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, sortIndex: 0),
+                                                SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: true, sortIndex: 1),
+                                                SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, sortIndex: 2),
+                                                SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, sortIndex: 3),
+                                                SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, sortIndex: 4)
                                             ],
                                             parentExercise: Exercise(name: "Dumbbell Press"),
                                             parentWorkout: Workout(gym: "tester"), sortIndex: 0

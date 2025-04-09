@@ -35,8 +35,8 @@ final class SetData {
     /// This must be optional in order to allow cascade deletion.
     var parentActivity: Activity?
 
-    /// The index of the set.
-    var index: Int
+    /// The index of the ``SetData``.
+    var sortIndex: Int
 
     /// Initializes a new ``SetData`` instance.
     /// 
@@ -46,13 +46,14 @@ final class SetData {
     ///   - weight: The weight lifted for each rep in the set.
     ///   - isComplete: A boolean indicating whether the set is complete.
     ///   - parentActivity: The ``Activity`` this set is associated with (default is `nil`).
+    ///   - sortIndex: The index of the current set in the array of sets.
     init(type: SetType = .working, reps: Int = 0, weight: Double = 0.0,
-         isComplete: Bool = false, parentActivity: Activity? = nil, index: Int) {
+         isComplete: Bool = false, parentActivity: Activity? = nil, sortIndex: Int) {
         self.type = type
         self.reps = reps
         self.weight = weight
         self.isComplete = isComplete
         self.parentActivity = parentActivity
-        self.index = index
+        self.sortIndex = sortIndex
     }
 }

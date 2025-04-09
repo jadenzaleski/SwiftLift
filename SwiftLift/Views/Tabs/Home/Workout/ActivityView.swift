@@ -78,7 +78,6 @@ struct ActivityView: View {
             Button(action: { set.wrappedValue.isComplete.toggle() }) {
                 Image(systemName: set.wrappedValue.isComplete ? "checkmark.circle.fill" : "circle")
                     .foregroundColor(set.wrappedValue.isComplete ? .green : .gray)
-                    .font(.lato(type: .regular, size: .medium))
             }
 
             // Reps TextField using string input
@@ -97,39 +96,44 @@ struct ActivityView: View {
             .focused($focusedField, equals: setID)
 
             Spacer()
-            Text("/ \(set.wrappedValue.index) /") // TODO: remove before commit
+            Text("/ \(set.wrappedValue.sortIndex) /") // TODO: remove before commit
                 .padding(.horizontal)
             Spacer()
 
             // Weight TextField using string input
-            TextField("Weight", text: Binding(
-                get: { localWeightText[setID] ?? "" },
-                set: {
-                    var filtered = $0.filter { "0123456789.".contains($0) }
-                    // Ensure at most one decimal point
-                    if filtered.filter({ $0 == "." }).count > 1 {
-                        return
-                    }
-                    // Remove leading zeros (but allow "0." case)
-                    if filtered.hasPrefix("0") && !filtered.hasPrefix("0.") {
-                        filtered = String(filtered.drop(while: { $0 == "0" }))
-                    }
-                    // Remove trailing zeros after a decimal (e.g., "12.3400" -> "12.34")
-                    if filtered.contains(".") {
-                        filtered = filtered
+            HStack {
+                TextField("Weight", text: Binding(
+                    get: { localWeightText[setID] ?? "" },
+                    set: {
+                        var filtered = $0.filter { "0123456789.".contains($0) }
+                        // Ensure at most one decimal point
+                        if filtered.filter({ $0 == "." }).count > 1 {
+                            return
+                        }
+                        // Remove leading zeros (but allow "0." case)
+                        if filtered.hasPrefix("0") && !filtered.hasPrefix("0.") {
+                            filtered = String(filtered.drop(while: { $0 == "0" }))
+                        }
+                        // Remove trailing zeros after a decimal (e.g., "12.3400" -> "12.34")
+                        if filtered.contains(".") {
+                            filtered = filtered
                             // Remove leading zeros
-                            .replacingOccurrences(of: #"^0+"#, with: "", options: .regularExpression)
+                                .replacingOccurrences(of: #"^0+"#, with: "", options: .regularExpression)
                             // Remove trailing zeros
-                            .replacingOccurrences(of: #"(\.\d*?[1-9])0+$"#, with: "$1", options: .regularExpression)
+                                .replacingOccurrences(of: #"(\.\d*?[1-9])0+$"#, with: "$1", options: .regularExpression)
                             // Remove unnecessary ".0"
-                            .replacingOccurrences(of: #"(\.0+)$"#, with: "", options: .regularExpression)
+                                .replacingOccurrences(of: #"(\.0+)$"#, with: "", options: .regularExpression)
+                        }
+                        localWeightText[setID] = filtered.isEmpty ? "0" : filtered
                     }
-                    localWeightText[setID] = filtered.isEmpty ? "0" : filtered
-                }
-            ))
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.decimalPad)
-            .focused($focusedField, equals: setID)
+
+                ))
+                .keyboardType(.decimalPad)
+                .focused($focusedField, equals: setID)
+            }
+            .padding(5)
+            .background(.gray.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 5))
 
             if isSwiped {
                 Button(action: {
@@ -176,7 +180,7 @@ struct ActivityView: View {
 //        let filteredSets = sets.wrappedValue.indices.filter { sets.wrappedValue[$0].type == type }
         let filteredSets = sets.wrappedValue
             .filter { $0.type == type }
-            .sorted(by: { $0.index < $1.index })
+            .sorted(by: { $0.sortIndex < $1.sortIndex })
 
         HStack {
             let title = type == .warmUp ? "warm up" : "working"
@@ -205,10 +209,10 @@ struct ActivityView: View {
         Button(action: {
             withAnimation(.easeInOut(duration: 0.2)) {
                 // find the max values of all the sets and add one to it
-                var index = activity.sets.max(by: { $0.index < $1.index })?.index ?? 0
+                var index = activity.sets.max(by: { $0.sortIndex < $1.sortIndex })?.sortIndex ?? 0
                 index += 1
                 // For now, use the defualt values
-                let newSet = SetData(type: type, parentActivity: activity, index: index)
+                let newSet = SetData(type: type, parentActivity: activity, sortIndex: index)
                 activity.sets.append(newSet)
                 // Initialize local state for the new set
                 localRepsText[newSet.id] = "\(newSet.reps)"
@@ -311,11 +315,11 @@ struct ActivityView: View {
         activity: .constant(
             Activity(
                 sets: [
-                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, index: 0),
-                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false, index: 1),
-                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, index: 2),
-                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, index: 3),
-                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, index: 4)
+                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, sortIndex: 0),
+                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false, sortIndex: 1),
+                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, sortIndex: 2),
+                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, sortIndex: 3),
+                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, sortIndex: 4)
                 ],
                 parentExercise: Exercise(name: "Bench Press"),
                 parentWorkout: Workout(gym: "tester"), sortIndex: 0
