@@ -32,7 +32,6 @@ struct HomeView: View {
     @State private var animateGradient = false
     @State private var hasRestoredWorkout = false
 
-
     private let gradient = LinearGradient(gradient: Gradient(colors: [
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 

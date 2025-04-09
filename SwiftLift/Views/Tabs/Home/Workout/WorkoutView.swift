@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 struct WorkoutView: View {
     @Environment(\.modelContext) private var modelContext
@@ -118,85 +117,76 @@ struct WorkoutView: View {
         // Get the actual index in the unsorted array for binding
         let activityIndex = currentWorkout.activities.firstIndex(where: { $0.id == activity.id })!
         let activityBinding = $currentWorkout.activities[activityIndex]
-
         let completedSets = activity.sets.count(where: \.isComplete)
         let totalSets = activity.sets.count
-        let activityState: Int = {
-            // Sets are either empty, complete, or in progress
-            if activity.sets.isEmpty {
-                return 0 // Nothing in this activity
-            } else if activity.isComplete {
-                return 1 // Completed
-            } else {
-                return 2 // In progress
-            }
-        }()
+        // Is this activity empty, in progress, or complete?
+        let activityState: Int = activity.sets.isEmpty ? 0 : (activity.isComplete ? 1 : 2)
 
         let topLineFillColor: Color = {
             if index == 0 {
-                return .clear
+                return .clear // No line for the first activity
             }
-            let previousActivity = currentWorkout.activities[index - 1]
-            return activity.isComplete
-            && previousActivity.isComplete
-            && previousActivity.sets.isEmpty ? .green : .gray
+            let previousActivity = currentWorkout.sortedActivities[index - 1]
+            // Only show green line if both activities are complete AND have sets
+            return activity.isComplete && !activity.sets.isEmpty &&
+            previousActivity.isComplete && !previousActivity.sets.isEmpty ? .green : .gray
         }()
 
         let bottomLineFillColor: Color = {
             if index == currentWorkout.activities.count - 1 {
-                return .clear
+                return .clear // No line for the last activity
             }
-            let nextActivity = currentWorkout.activities[index + 1]
-            return activity.isComplete
-            && nextActivity.isComplete
-            && nextActivity.sets.isEmpty ? .green : .gray
+            let nextActivity = currentWorkout.sortedActivities[index + 1]
+            // Only show green line if both activities are complete AND have sets
+            return activity.isComplete && !activity.sets.isEmpty &&
+            nextActivity.isComplete && !nextActivity.sets.isEmpty ? .green : .gray
         }()
 
-            NavigationLink(destination: ActivityView(activity: activityBinding)) {
-                HStack(alignment: .center, spacing: horizontalInsets) {
-                    VStack {
-                        UnevenRoundedRectangle(
-                            topLeadingRadius: 0,
-                            bottomLeadingRadius: lineCornerRadius,
-                            bottomTrailingRadius: lineCornerRadius,
-                            topTrailingRadius: 0
-                        )
-                        .fill(topLineFillColor)
-                        .frame(width: lineWidth)
+        NavigationLink(destination: ActivityView(activity: activityBinding)) {
+            HStack(alignment: .center, spacing: horizontalInsets) {
+                VStack {
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 0,
+                        bottomLeadingRadius: lineCornerRadius,
+                        bottomTrailingRadius: lineCornerRadius,
+                        topTrailingRadius: 0
+                    )
+                    .fill(topLineFillColor)
+                    .frame(width: lineWidth)
 
-                        Image(systemName:
-                                activityState == 1 ? "checkmark.circle.fill" :
-                                activityState == 0 ? "circle.dotted" : "circle"
-                        )
-                        .foregroundStyle(activityState == 1 ? .green : .gray)
-                        .font(.lato(type: .regular, size: .subtitle))
+                    Image(systemName:
+                            activityState == 1 ? "checkmark.circle.fill" :
+                            activityState == 0 ? "circle.dotted" : "circle"
+                    )
+                    .foregroundStyle(activityState == 1 ? .green : .gray)
+                    .font(.lato(type: .regular, size: .subtitle))
 
-                        UnevenRoundedRectangle(
-                            topLeadingRadius: lineCornerRadius,
-                            bottomLeadingRadius: 0,
-                            bottomTrailingRadius: 0,
-                            topTrailingRadius: lineCornerRadius
-                        )
-                        .fill(bottomLineFillColor)
-                        .frame(width: lineWidth)
-                    }
-                    Text(activity.name + " ai: \(activity.sortIndex) i: \(index)")
-                        .lineLimit(1)
-                        .font(.lato(type: .regular, size: .subtitle))
-                        .padding(.vertical, 20)
-
-                    Spacer()
-
-                    if activityState != 0 {
-                        Gauge(value: Double(completedSets), in: 0...Double(totalSets)) {
-                            Text("\(completedSets)/\(totalSets)")
-                                .font(.lato(type: .bold, size: .body))
-                        }
-                        .gaugeStyle(.accessoryCircularCapacity)
-                        .tint(.accentColor)
-                        .scaleEffect(0.7)
-                    }
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: lineCornerRadius,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 0,
+                        topTrailingRadius: lineCornerRadius
+                    )
+                    .fill(bottomLineFillColor)
+                    .frame(width: lineWidth)
                 }
+                Text(activity.name)
+                    .lineLimit(1)
+                    .font(.lato(type: .regular, size: .subtitle))
+                    .padding(.vertical, 20)
+
+                Spacer()
+
+                if activityState != 0 {
+                    Gauge(value: Double(completedSets), in: 0...Double(totalSets)) {
+                        Text("\(completedSets)/\(totalSets)")
+                            .font(.lato(type: .bold, size: .body))
+                    }
+                    .gaugeStyle(.accessoryCircularCapacity)
+                    .tint(activityState == 1 ? .green : .accentColor)
+                    .scaleEffect(0.7)
+                }
+            }
         }
         .swipeActions(edge: .trailing) {
             Button(role: .destructive) {
