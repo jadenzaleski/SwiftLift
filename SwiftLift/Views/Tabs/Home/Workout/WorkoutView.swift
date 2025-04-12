@@ -84,7 +84,7 @@ struct WorkoutView: View {
     @ViewBuilder
     private func activityList() -> some View {
         ForEach(Array(currentWorkout.sortedActivities.enumerated()), id: \.1.id) { index, activity in
-            rowItem(activity: activity, index: index)
+            listItem(activity: activity, index: index)
         }
         .onMove(perform: moveActivity)
 
@@ -113,7 +113,7 @@ struct WorkoutView: View {
     /// - Returns: ``View`` of the activity for a list.
     /// - Important: The ``index`` parameter is not always the same as ``Activity.sortIndex``
     @ViewBuilder
-    private func rowItem(activity: Activity, index: Int) -> some View {
+    private func listItem(activity: Activity, index: Int) -> some View {
         // Get the actual index in the unsorted array for binding
         let activityIndex = currentWorkout.activities.firstIndex(where: { $0.id == activity.id })!
         let activityBinding = $currentWorkout.activities[activityIndex]

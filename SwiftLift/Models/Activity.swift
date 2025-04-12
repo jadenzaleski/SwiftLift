@@ -53,16 +53,21 @@ final class Activity {
 
 // MARK: - Computed Properties
 extension Activity {
-    /// All the warm up sets in this ``Activity``
-    @Transient
+    /// All the warm up sets in this ``Activity``, sorted by sortIndex
     var warmUpSets: [SetData] {
         sets.filter { $0.type == .warmUp }
+            .sorted { $0.sortIndex < $1.sortIndex }
     }
 
-    /// All the working sets in this ``Activity``
-    @Transient
+    /// All the working sets in this ``Activity``, sorted by sortIndex
     var workingSets: [SetData] {
         sets.filter { $0.type == .working }
+            .sorted { $0.sortIndex < $1.sortIndex }
+    }
+
+    /// all the ``sets`` sorted by ``SetData.sortIndex``.
+    var sortedSets: [SetData] {
+        sets.sorted(by: { $0.sortIndex < $1.sortIndex })
     }
 
     /// Calculate wether or not this activity is complete.
