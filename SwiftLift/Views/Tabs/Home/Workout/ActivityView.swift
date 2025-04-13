@@ -17,6 +17,8 @@ struct ActivityView: View {
     @State var test3 = SetData(sortIndex: 2)
 
     private let horizontalSpacing: CGFloat = 15
+    private let lineCornerRadius: CGFloat = 2
+    private let lineWidth: CGFloat = 2
 
     var body: some View {
         List {
@@ -46,11 +48,18 @@ struct ActivityView: View {
             .listRowSeparator(.hidden)
 
         ForEach(Array(activity.warmUpSets.enumerated()), id: \.1.id) { index, set in
-                listItem(set: set, index: index)
-                    .listRowBackground(Color.clear)
-                    .padding(.vertical, 2)
+            listItem(set: set, index: index)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        modelContext.delete(set)
+                        updateSortIndices()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .listRowBackground(Color.clear)
         }
-        .onMove(perform: moveSet)
+        .onMove(perform: moveWarmUpSet)
 
         Button {
             withAnimation(.easeInOut) {
@@ -75,12 +84,12 @@ struct ActivityView: View {
                 Spacer()
                 Image(systemName: "plus")
                     .foregroundStyle(Color.accentColor)
-
                 Text("Add set")
                     .font(.lato(type: .regular, size: .subtitle))
                     .foregroundStyle(Color.accentColor)
                 Spacer()
             }
+            .padding(.vertical, 20)
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
@@ -94,29 +103,37 @@ struct ActivityView: View {
             .listRowSeparator(.hidden)
 
         ForEach(Array(activity.workingSets.enumerated()), id: \.1.id) { index, set in
-                listItem(set: set, index: index)
-                    .listRowBackground(Color.clear)
-                    .padding(.vertical, 2)
+            listItem(set: set, index: index)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        modelContext.delete(set)
+                        updateSortIndices()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .listRowBackground(Color.clear)
         }
-        .onMove(perform: moveSet)
+        .onMove(perform: moveWorkingSet)
 
         Button {
             withAnimation(.easeInOut) {
                 let newSet = SetData(type: .working, parentActivity: activity, sortIndex: activity.sets.count + 1)
                 // Just add to end of list since we display working last
                 activity.sets.append(newSet)
+                updateSortIndices()
             }
         } label: {
             HStack(alignment: .center, spacing: 10) {
                 Spacer()
                 Image(systemName: "plus")
                     .foregroundStyle(Color.accentColor)
-
                 Text("Add set")
                     .font(.lato(type: .regular, size: .subtitle))
                     .foregroundStyle(Color.accentColor)
                 Spacer()
             }
+            .padding(.vertical, 20)
         }
         .listRowBackground(Color.clear)
         .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
@@ -126,14 +143,72 @@ struct ActivityView: View {
     private func listItem(set: SetData, index: Int) -> some View {
         let setIndex = activity.sets.firstIndex(where: { $0.id == set.id })!
         let setBinding = $activity.sets[setIndex]
+        // Determine if this is the last set of its type or the last set overall
+        let isLastInSection: Bool = {
+            if setIndex == activity.sortedSets.count - 1 {
+                return true // Last set overall
+            }
+
+            let nextSet = activity.sortedSets[setIndex + 1]
+            return set.type != nextSet.type // Different types = last in section
+        }()
+
+        // Determine if this is the first set of its type
+        let isFirstInSection: Bool = {
+            if setIndex == 0 {
+                return true // First set overall
+            }
+
+            let previousSet = activity.sortedSets[setIndex - 1]
+            return set.type != previousSet.type // Different types = first in section
+        }()
+
+        let topLineFillColor: Color = {
+            if isFirstInSection {
+                return .clear // No line for the first set in a section
+            }
+            let previousSet = activity.sortedSets[setIndex - 1]
+            // Show green line if both sets are complete
+            return set.isComplete && previousSet.isComplete ? .green : .gray
+        }()
+
+        let bottomLineFillColor: Color = {
+            if isLastInSection {
+                return .clear // No line for the last set in a section
+            }
+
+            let nextSet = activity.sortedSets[setIndex + 1]
+            // Show green line if both sets are complete
+            return set.isComplete && nextSet.isComplete ? .green : .gray
+        }()
 
         HStack(alignment: .center, spacing: 0) {
             Button {
                 setBinding.wrappedValue.isComplete.toggle()
             } label: {
-                Image(systemName: set.isComplete ? "checkmark.circle.fill" : "circle")
+                VStack {
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 0,
+                        bottomLeadingRadius: lineCornerRadius,
+                        bottomTrailingRadius: lineCornerRadius,
+                        topTrailingRadius: 0
+                    )
+                    .fill(topLineFillColor)
+                    .frame(width: lineWidth)
+
+                    Image(systemName: set.isComplete ? "checkmark.circle.fill" : "circle")
                     .foregroundStyle(set.isComplete ? .green : .gray)
-                    .font(.lato(size: .subtitle))
+                    .font(.lato(type: .regular, size: .subtitle))
+
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: lineCornerRadius,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 0,
+                        topTrailingRadius: lineCornerRadius
+                    )
+                    .fill(bottomLineFillColor)
+                    .frame(width: lineWidth)
+                }
             }
             .buttonStyle(.plain)
             .padding(.trailing, horizontalSpacing)
@@ -147,8 +222,10 @@ struct ActivityView: View {
             .background(.gray.opacity(0.1))
             .clipShape(RoundedRectangle(cornerRadius: 5))
             // Divider
-            Text("/si: \(set.sortIndex)")
+            Text("/")
                 .padding(.horizontal, horizontalSpacing * 2)
+                .padding(.vertical, 20)
+
             HStack {
                 TextField("weight", value: setBinding.weight, formatter: NumberFormatter())
             }
@@ -157,19 +234,21 @@ struct ActivityView: View {
             .clipShape(RoundedRectangle(cornerRadius: 5))
         }
         .font(.lato(type: .bold))
-    }
+        .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
 
+    }
 }
 
 // MARK: - Helpers
 extension ActivityView {
     /// Performs the move operation when the user drags an activity from one position to another in the list.
     /// This function maintains the proper sort order of sets by updating all sortIndex values.
+    /// This works only for the warm up sets.
     /// Had a hard time understand this so Claude helped.
     /// - Parameters:
     ///   - source: The original `IndexSet` containing the indices of items to be moved.
     ///   - destination: The destination index where the items should be moved to.
-    private func moveSet(from source: IndexSet, to destination: Int) {
+    private func moveWarmUpSet(from source: IndexSet, to destination: Int) {
         // Create a mutable copy of the already sorted sets array
         // Even though this creates a new array, it contains references to the same SwiftData-managed
         // SetData objects, so modifying them here will update the actual objects in the database
@@ -187,6 +266,37 @@ extension ActivityView {
         }
 
         // Save changes to ensure the updates are persisted
+        try? modelContext.save()
+        print("Move saved!")
+    }
+
+    /// Performs the move operation when the user drags an activity from one position to another in the list.
+    /// This function maintains the proper sort order of sets by updating all sortIndex values.
+    /// This works only for the working sets.
+    /// Had a hard time understand this so Claude helped.
+    /// - Parameters:
+    ///   - source: The original `IndexSet` containing the indices of items to be moved.
+    ///   - destination: The destination index where the items should be moved to.
+    private func moveWorkingSet(from source: IndexSet, to destination: Int) {
+        // Get all sets sorted by sortIndex
+        var sets = activity.sortedSets
+
+        // Calculate the offset (number of warm-up sets)
+        let warmUpCount = activity.warmUpSets.count
+
+        // Adjust the source indices and destination by adding the offset
+        let adjustedSource = IndexSet(source.map { $0 + warmUpCount })
+        let adjustedDestination = destination + warmUpCount
+
+        // Perform the move on the full collection
+        sets.move(fromOffsets: adjustedSource, toOffset: adjustedDestination)
+
+        // Update ALL sortIndex values to match the new order
+        for (index, set) in sets.enumerated() {
+            set.sortIndex = index
+        }
+
+        // Save changes
         try? modelContext.save()
         print("Move saved!")
     }
