@@ -3,7 +3,9 @@ import SwiftData
 
 struct ActivityView: View {
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.scenePhase) private var scenePhase  // Add scene phase environment
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) var colorScheme
+
     @Binding var activity: Activity
     @FocusState private var focusedField: FieldFocus?
 
@@ -17,7 +19,7 @@ struct ActivityView: View {
     private let lineWidth: CGFloat = 2
     private let decimalSeparator = Locale.current.decimalSeparator ?? "."
 
-    // Focus state enum to track which field is focused
+    /// Focus state enum to track which field is focused.
     enum FieldFocus: Hashable {
         case reps(PersistentIdentifier)
         case weight(PersistentIdentifier)
@@ -50,6 +52,7 @@ struct ActivityView: View {
             // Save current edits when focus changes
             if oldValue != nil {
                 saveCurrentEdits()
+                print("saved changes due to focus change")
             }
 
             withAnimation {
@@ -63,46 +66,77 @@ struct ActivityView: View {
                 }
             }
         }
-        // Add scene phase change handler
-        .onChange(of: scenePhase) { oldPhase, newPhase in
+        .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .inactive || newPhase == .background {
                 // Save any pending edits when app moves to background
                 saveCurrentEdits()
-                try? modelContext.save()
                 print("[\(Date.now)] Changes saved due to scene phase change to \(newPhase)")
             }
         }
     }
 
-    // Custom toolbar view that sits above keyboard with transparent background
+    /// The toolbar above the the keypad.
     private var toolbarView: some View {
-        HStack {
-            Button("Duplicate") {
+        HStack(alignment: .center, spacing: 5) {
+            Button {
                 if let set = currentlyEditingSet {
+                    saveCurrentEdits()
                     duplicateSet(set: set)
+                    print("Set duplicated")
                 }
+            } label: {
+                Label("Duplicate", systemImage: "plus.square.fill.on.square.fill")
+                    .font(.lato())
+                    .labelStyle(.iconOnly)
+                    .padding(10)
+                    .background(Circle().fill(Color.accentColor))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 0)
             }
-            .foregroundColor(.accentColor)
+            .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 2.5)
 
             Spacer()
 
-            Button("Save") {
-                saveCurrentEdits()
+            Button {
+                if let set = currentlyEditingSet {
+                    set.isComplete = true
+                }
+                // We don't need to save changes because that already
+                // happens when we change the focusedField.
+                moveToNextSet() // Changes focusedField
+            } label: {
+                Label("Done", systemImage: "checkmark")
+                    .font(.lato(type: .bold))
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 15)
+                    .background(Capsule().fill(Color.green))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 0)
             }
-            .foregroundColor(.accentColor)
+            .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 2.5)
 
-            Button("Done") {
-                saveCurrentEdits()
+            Spacer()
+
+            Button {
                 focusedField = nil
+            } label: {
+                Label("Close", systemImage: "keyboard.chevron.compact.down")
+                    .font(.lato())
+                    .labelStyle(.iconOnly)
+                    .padding(10)
+                    .background(Circle().fill(Color.gray))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 0)
             }
-            .padding(.leading, 16)
-            .foregroundColor(.accentColor)
+            .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 2.5)
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
+        .padding(horizontalSpacing)
         .background(.clear)
     }
 
+    // MARK: - Sections
+    /// The warm up secion of the list.
+    /// - Returns: The warm up section view.
     @ViewBuilder
     private func warmUpSection() -> some View {
         Text("\(activity.warmUpSets.count) warm up set\(activity.warmUpSets.count == 1 ? ":" : "s:")")
@@ -110,8 +144,8 @@ struct ActivityView: View {
             .foregroundStyle(.ld)
             .listRowSeparator(.hidden)
 
-        ForEach(Array(activity.warmUpSets.enumerated()), id: \.1.persistentModelID) { index, set in
-            listItem(set: set, index: index)
+        ForEach(Array(activity.warmUpSets.enumerated()), id: \.1.persistentModelID) { _, set in
+            listItem(set: set)
                 .swipeActions(edge: .trailing) {
                     Button(role: .destructive) {
                         modelContext.delete(set)
@@ -124,6 +158,13 @@ struct ActivityView: View {
         }
         .onMove(perform: moveWarmUpSet)
 
+        addWarmupSetButton()
+    }
+
+    /// The button view that includes the vertical line and button, for the warm up sets.
+    /// - Returns: The view of the button.
+    @ViewBuilder
+    private func addWarmupSetButton() -> some View {
         Button {
             withAnimation(.easeInOut) {
                 // Create new set with appropriate type
@@ -158,6 +199,8 @@ struct ActivityView: View {
         .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
     }
 
+    /// The working section of the list.
+    /// - Returns: The working section view.
     @ViewBuilder
     private func workingSection() -> some View {
         Text("\(activity.workingSets.count) working set\(activity.workingSets.count == 1 ? ":" : "s:")")
@@ -165,8 +208,8 @@ struct ActivityView: View {
             .foregroundStyle(.ld)
             .listRowSeparator(.hidden)
 
-        ForEach(Array(activity.workingSets.enumerated()), id: \.1.persistentModelID) { index, set in
-            listItem(set: set, index: index)
+        ForEach(Array(activity.workingSets.enumerated()), id: \.1.persistentModelID) { _, set in
+            listItem(set: set)
                 .swipeActions(edge: .trailing) {
                     Button(role: .destructive) {
                         modelContext.delete(set)
@@ -179,6 +222,13 @@ struct ActivityView: View {
         }
         .onMove(perform: moveWorkingSet)
 
+        addWorkingSetButton()
+    }
+
+    /// The button view that includes the vertical line and button, for the working sets.
+    /// - Returns: The working section view.
+    @ViewBuilder
+    private func addWorkingSetButton() -> some View {
         Button {
             withAnimation(.easeInOut) {
                 let newSet = SetData(type: .working, parentActivity: activity, sortIndex: activity.sets.count + 1)
@@ -202,10 +252,49 @@ struct ActivityView: View {
         .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
     }
 
+    // MARK: - List Item
+    /// The row in the List of sets.
+    /// - Parameters:
+    ///   - set: The set that will be in a row.
+    /// - Returns: The list item view.
     @ViewBuilder
-    private func listItem(set: SetData, index: Int) -> some View {
-        let setId = set.persistentModelID
+    private func listItem(set: SetData) -> some View {
+        HStack(alignment: .center, spacing: 0) {
+            Button {
+                set.isComplete.toggle()
+                try? modelContext.save()
+            } label: {
+                listItemButtonView(set: set)
+            }
+            .buttonStyle(.plain)
+            .padding(.trailing, horizontalSpacing)
 
+            // This blank text needs to be here so the list divider goes all the way to
+            // the button, and doesn't stop at inbetween the textfields.
+            Text("").frame(maxWidth: 0)
+
+            // Reps field
+            listItemRepsField(set: set)
+
+            // Divider
+            Text("/")
+                .font(.lato())
+                .foregroundStyle(.gray)
+                .padding(.horizontal, horizontalSpacing * 2)
+                .padding(.vertical, 20)
+
+            // Weight field
+            listItemWeightField(set: set)
+        }
+        .font(.lato(type: .bold))
+        .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
+    }
+
+    /// The button view of each list item.
+    /// - Parameter set: The set that determines how the button and its line looks.
+    /// - Returns: Returns the complete view of the button.
+    @ViewBuilder
+    private func listItemButtonView(set: SetData) -> some View {
         let topLineFillColor: Color = {
             if set.sortIndex == 0 || activity.sortedSets.first(where: { $0.type == .working }) == set {
                 return .clear // No line for the first set in a section
@@ -225,114 +314,106 @@ struct ActivityView: View {
             return set.isComplete && nextSet.isComplete ? .green : .gray
         }()
 
-        HStack(alignment: .center, spacing: 0) {
-            Button {
-                set.isComplete.toggle()
-                try? modelContext.save()
-            } label: {
-                VStack {
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 0,
-                        bottomLeadingRadius: lineCornerRadius,
-                        bottomTrailingRadius: lineCornerRadius,
-                        topTrailingRadius: 0
-                    )
-                    .fill(topLineFillColor)
-                    .frame(width: lineWidth)
+        VStack {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: lineCornerRadius,
+                bottomTrailingRadius: lineCornerRadius,
+                topTrailingRadius: 0
+            )
+            .fill(topLineFillColor)
+            .frame(width: lineWidth)
 
-                    Image(systemName: set.isComplete ? "checkmark.circle.fill" : "circle")
-                        .foregroundStyle(set.isComplete ? .green : .gray)
-                        .font(.lato(type: .regular, size: .subtitle))
+            Image(systemName: set.isComplete ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(set.isComplete ? .green : .gray)
+                .font(.lato(type: .regular, size: .subtitle))
 
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: lineCornerRadius,
-                        bottomLeadingRadius: 0,
-                        bottomTrailingRadius: 0,
-                        topTrailingRadius: lineCornerRadius
-                    )
-                    .fill(bottomLineFillColor)
-                    .frame(width: lineWidth)
-                }
-            }
-            .buttonStyle(.plain)
-            .padding(.trailing, horizontalSpacing)
-
-            // This blank text needs to be here so the list divider goes all the way to
-            // the button, and doesn't stop at inbetween the textfields.
-            Text("").frame(maxWidth: 0)
-
-            // Reps field
-            HStack {
-                TextField(
-                    "reps",
-                    text: Binding(
-                        get: {
-                            // Use the temporary value if we're editing, otherwise convert from model
-                            return editingReps[setId] ?? "\(set.reps)"
-                        },
-                        set: { newValue in
-                            // Store in temporary state only
-                            editingReps[setId] = newValue.filter { $0.isNumber }
-                        }
-                    )
-                )
-                .keyboardType(.numberPad)
-                .focused($focusedField, equals: .reps(setId))
-                .onChange(of: focusedField) { _, newFocus in
-                    if newFocus == .reps(setId) && editingReps[setId] == nil {
-                        // Initialize editing value when field gets focus
-                        editingReps[setId] = "\(set.reps)"
-                    }
-                }
-                // Listen for tap outside to save
-                .onSubmit {
-                    saveCurrentEdits()
-                }
-            }
-            .padding(5)
-            .background(.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 5))
-
-            // Divider
-            Text("/")
-                .padding(.horizontal, horizontalSpacing * 2)
-                .padding(.vertical, 20)
-
-            // Weight field
-            HStack {
-                TextField(
-                    "weight",
-                    text: Binding(
-                        get: {
-                            // Use the temporary value if we're editing, otherwise convert from model
-                            return editingWeight[setId] ?? formatWeight(set.weight)
-                        },
-                        set: { newValue in
-                            // Only allow numbers and decimal separator
-                            let filtered = newValue.filter { $0.isNumber || String($0) == decimalSeparator }
-                            editingWeight[setId] = filtered
-                        }
-                    )
-                )
-                .keyboardType(.decimalPad)
-                .focused($focusedField, equals: .weight(setId))
-                .onChange(of: focusedField) { _, newFocus in
-                    if newFocus == .weight(setId) && editingWeight[setId] == nil {
-                        // Initialize editing value when field gets focus
-                        editingWeight[setId] = formatWeight(set.weight)
-                    }
-                }
-                // Listen for submit action to save
-                .onSubmit {
-                    saveCurrentEdits()
-                }
-            }
-            .padding(5)
-            .background(.gray.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: 5))
+            UnevenRoundedRectangle(
+                topLeadingRadius: lineCornerRadius,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: lineCornerRadius
+            )
+            .fill(bottomLineFillColor)
+            .frame(width: lineWidth)
         }
-        .font(.lato(type: .bold))
-        .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
+    }
+
+    @ViewBuilder
+    private func listItemRepsField(set: SetData) -> some View {
+        let setId = set.persistentModelID
+
+        HStack {
+            TextField(
+                "reps",
+                text: Binding(
+                    get: {
+                        // Use the temporary value if we're editing, otherwise convert from model
+                        return editingReps[setId] ?? "\(set.reps)"
+                    },
+                    set: { newValue in
+                        // Store in temporary state only
+                        editingReps[setId] = newValue.filter { $0.isNumber }
+                    }
+                )
+            )
+            .keyboardType(.numberPad)
+            .focused($focusedField, equals: .reps(setId))
+            .onChange(of: focusedField) { _, newFocus in
+                if newFocus == .reps(setId) && editingReps[setId] == nil {
+                    // Initialize editing value when field gets focus
+                    editingReps[setId] = "\(set.reps)"
+                }
+            }
+            // Listen for submit action to save
+            // Not exactly sure when this is fired
+            .onSubmit {
+                print("Submit action fired")
+                saveCurrentEdits()
+            }
+        }
+        .padding(5)
+        .background(.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 5))
+    }
+
+    @ViewBuilder
+    private func listItemWeightField(set: SetData) -> some View {
+        let setId = set.persistentModelID
+
+        HStack {
+            TextField(
+                "weight",
+                text: Binding(
+                    get: {
+                        // Use the temporary value if we're editing, otherwise convert from model
+                        return editingWeight[setId] ?? formatWeight(set.weight)
+                    },
+                    set: { newValue in
+                        // Only allow numbers and decimal separator
+                        let filtered = newValue.filter { $0.isNumber || String($0) == decimalSeparator }
+                        editingWeight[setId] = filtered
+                    }
+                )
+            )
+            .keyboardType(.decimalPad)
+            .focused($focusedField, equals: .weight(setId))
+            .onChange(of: focusedField) { _, newFocus in
+                if newFocus == .weight(setId) && editingWeight[setId] == nil {
+                    // Initialize editing value when field gets focus
+                    editingWeight[setId] = formatWeight(set.weight)
+                }
+            }
+            // Listen for submit action to save
+            // Not exactly sure when this is fired
+            .onSubmit {
+                print("Submit action fired")
+                saveCurrentEdits()
+            }
+        }
+        .padding(5)
+        .background(.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 5))
     }
 }
 
@@ -398,7 +479,7 @@ extension ActivityView {
         print("Move saved!")
     }
 
-    // Add this helper function to update all sort indices
+    /// Rearrange the ``Activity`` indices.
     private func updateSortIndices() {
         // First, separate sets by type
         let warmUpSets = activity.warmUpSets
@@ -455,7 +536,7 @@ extension ActivityView {
         return weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(weight))" : "\(weight)"
     }
 
-    /// save the edits from the ``TextField``s.
+    /// Save the edits from the ``TextField``s to persistant storage.
     private func saveCurrentEdits() {
         guard let set = currentlyEditingSet else { return }
         let setId = set.persistentModelID
@@ -478,7 +559,35 @@ extension ActivityView {
 
         // Save changes to SwiftData
         try? modelContext.save()
-        print("[\(Date.now)] Changes saved for set: \(setId)")
+        print("[\(Date.now)] Changes saved for set: \(setId.id)")
+    }
+
+    /// Moves the focus to the next set, respecting the selection of either reps or weight focus.
+    /// If there is no next set, it will clear the focus.
+    private func moveToNextSet() {
+        guard let currentSet = currentlyEditingSet else { return }
+
+        let currentIndex = activity.sortedSets.firstIndex { $0.persistentModelID == currentSet.persistentModelID } ?? -1
+        if currentIndex == -1 || currentIndex >= activity.sortedSets.count - 1 {
+            // If we're at the last set or can't determine current position, just clear focus
+            focusedField = nil
+            return
+        }
+
+        // Get the next set
+        let nextSet = activity.sortedSets[currentIndex + 1]
+
+        // Determine what field type we're currently on and focus the same field type in the next set
+        if let focus = focusedField {
+            switch focus {
+            case .reps:
+                // Currently on a reps field, focus next set's reps
+                focusedField = .reps(nextSet.persistentModelID)
+            case .weight:
+                // Currently on a weight field, focus next set's weight
+                focusedField = .weight(nextSet.persistentModelID)
+            }
+        }
     }
 }
 
