@@ -73,7 +73,7 @@ struct LatoFont {
 }
 
 extension Font {
-    static func lato(type: LatoFontType, isItalic: Bool = false, size: LatoFontSize = .medium) -> Font {
+    static func lato(type: LatoFontType = .regular, isItalic: Bool = false, size: LatoFontSize = .medium) -> Font {
         return LatoFont(type: type, isItalic: isItalic, size: size).font()
     }
 }

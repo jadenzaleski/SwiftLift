@@ -1,305 +1,593 @@
-//
-//  AV.swift
-//  SwiftLift
-//
-//  Created by Jaden Zaleski on 2/28/25.
-//
-
 import SwiftUI
 import SwiftData
 
 struct ActivityView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
+    @Environment(\.colorScheme) var colorScheme
 
     @Binding var activity: Activity
+    @FocusState private var focusedField: FieldFocus?
 
-    @FocusState private var focusedField: PersistentIdentifier?
+    // Temporary state for editing fields
+    @State private var editingReps: [PersistentIdentifier: String] = [:]
+    @State private var editingWeight: [PersistentIdentifier: String] = [:]
+    @State private var currentlyEditingSet: SetData?
 
-    @State private var swipedSetID: PersistentIdentifier?
-    // Dictionary to store local state as strings
-    @State private var localRepsText: [PersistentIdentifier: String] = [:]
-    @State private var localWeightText: [PersistentIdentifier: String] = [:]
+    private let horizontalSpacing: CGFloat = 15
+    private let lineCornerRadius: CGFloat = 2
+    private let lineWidth: CGFloat = 2
+    private let decimalSeparator = Locale.current.decimalSeparator ?? "."
+
+    /// Focus state enum to track which field is focused.
+    enum FieldFocus: Hashable {
+        case reps(PersistentIdentifier)
+        case weight(PersistentIdentifier)
+    }
 
     var body: some View {
-        ScrollView(showsIndicators: false) {
-            sets(type: .warmUp, sets: $activity.sets)
-                .padding(.horizontal)
-
-            sets(type: .working, sets: $activity.sets)
-                .padding(.horizontal)
-        }
-        .navigationTitle(Text(activity.name))
-        .onTapGesture {
-            // Clears focus to dismiss the keyboard and save changes
-            saveCurrentFieldValue()
-            focusedField = nil
-            withAnimation(.snappy) {
-                swipedSetID = nil
+        List {
+            Section {
+                warmUpSection()
             }
+            .listSectionSeparator(.hidden)
+
+            Section {
+                workingSection()
+            } header: {
+
+            }
+            .listSectionSeparator(.hidden)
         }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            withAnimation(.snappy) {
-                swipedSetID = nil // Dismiss swipe when keyboard appears
+        .navigationTitle(activity.name)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
+        .safeAreaInset(edge: .bottom) {
+            if currentlyEditingSet != nil {
+                toolbarView
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
         .onChange(of: focusedField) { oldValue, newValue in
-            if oldValue != nil && oldValue != newValue {
-                // Save when focus changes from one field to another
-                saveCurrentFieldValue(id: oldValue)
-            }
-        }
-        .onDisappear {
-            // Save all field values when view disappears
-            saveAllFieldValues()
-        }
-        .onAppear {
-            // Initialize local state for all sets when view appears
-            initializeLocalState()
-        }
-    }
-
-    // Initialize all local state from the activity sets
-    private func initializeLocalState() {
-        for set in activity.sets {
-            localRepsText[set.id] = "\(set.reps)"
-            localWeightText[set.id] = "\(set.weight)"
-        }
-    }
-
-    /// This makes up each item in the warmp and working sets list.
-    /// - Parameter set: The set to be edited by the TextFields
-    /// - Returns: Return the item view for a singluar ``SetData``
-    @ViewBuilder
-    private func item(set: Binding<SetData>) -> some View {
-        let isSwiped = swipedSetID == set.wrappedValue.id
-        let setID = set.wrappedValue.id
-
-        HStack {
-            Button(action: { set.wrappedValue.isComplete.toggle() }) {
-                Image(systemName: set.wrappedValue.isComplete ? "checkmark.circle.fill" : "circle")
-                    .foregroundColor(set.wrappedValue.isComplete ? .green : .gray)
-                    .font(.lato(type: .regular, size: .medium))
+            // Save current edits when focus changes
+            if oldValue != nil {
+                saveCurrentEdits()
+                print("saved changes due to focus change")
             }
 
-            // Reps TextField using string input
-            TextField("Reps", text: Binding(
-                get: { localRepsText[setID] ?? "" },
-                set: {
-                    var filtered = $0.filter { "0123456789".contains($0) } // Only allow digits
-                    // Remove leading zeros but allow "0" when the field is empty
-                    filtered = String(filtered.drop(while: { $0 == "0" }))
-                    // If filtered is empty, default to "0" to avoid blank input
-                    localRepsText[setID] = filtered.isEmpty ? "0" : filtered
+            withAnimation {
+                if let focus = newValue {
+                    switch focus {
+                    case .reps(let id), .weight(let id):
+                        currentlyEditingSet = activity.sets.first(where: { $0.persistentModelID == id })
+                    }
+                } else {
+                    currentlyEditingSet = nil
                 }
-            ))
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.numberPad)
-            .focused($focusedField, equals: setID)
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .inactive || newPhase == .background {
+                // Save any pending edits when app moves to background
+                saveCurrentEdits()
+                print("[\(Date.now)] Changes saved due to scene phase change to \(newPhase)")
+            }
+        }
+    }
+
+    /// The toolbar above the the keypad.
+    private var toolbarView: some View {
+        HStack(alignment: .center, spacing: 5) {
+            Button {
+                if let set = currentlyEditingSet {
+                    saveCurrentEdits()
+                    duplicateSet(set: set)
+                    print("Set duplicated")
+                }
+            } label: {
+                Label("Duplicate", systemImage: "plus.square.fill.on.square.fill")
+                    .font(.lato())
+                    .labelStyle(.iconOnly)
+                    .padding(10)
+                    .background(Circle().fill(Color.accentColor))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 0)
+            }
+            .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 2.5)
 
             Spacer()
-            Text("/")
-                .padding(.horizontal)
+
+            Button {
+                if let set = currentlyEditingSet {
+                    set.isComplete = true
+                }
+                // We don't need to save changes because that already
+                // happens when we change the focusedField.
+                moveToNextSet() // Changes focusedField
+            } label: {
+                Label("Done", systemImage: "checkmark")
+                    .font(.lato(type: .bold))
+                    .padding(.vertical, 10)
+                    .padding(.horizontal, 15)
+                    .background(Capsule().fill(Color.green))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 0)
+            }
+            .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 2.5)
+
             Spacer()
 
-            // Weight TextField using string input
-            TextField("Weight", text: Binding(
-                get: { localWeightText[setID] ?? "" },
-                set: {
-                    var filtered = $0.filter { "0123456789.".contains($0) }
-                    // Ensure at most one decimal point
-                    if filtered.filter({ $0 == "." }).count > 1 {
-                        return
-                    }
-                    // Remove leading zeros (but allow "0." case)
-                    if filtered.hasPrefix("0") && !filtered.hasPrefix("0.") {
-                        filtered = String(filtered.drop(while: { $0 == "0" }))
-                    }
-                    // Remove trailing zeros after a decimal (e.g., "12.3400" -> "12.34")
-                    if filtered.contains(".") {
-                        filtered = filtered
-                            // Remove leading zeros
-                            .replacingOccurrences(of: #"^0+"#, with: "", options: .regularExpression)
-                            // Remove trailing zeros
-                            .replacingOccurrences(of: #"(\.\d*?[1-9])0+$"#, with: "$1", options: .regularExpression)
-                            // Remove unnecessary ".0"
-                            .replacingOccurrences(of: #"(\.0+)$"#, with: "", options: .regularExpression)
-                    }
-                    localWeightText[setID] = filtered.isEmpty ? "0" : filtered
-                }
-            ))
-            .textFieldStyle(RoundedBorderTextFieldStyle())
-            .keyboardType(.decimalPad)
-            .focused($focusedField, equals: setID)
-
-            if isSwiped {
-                Button(action: {
-                    withAnimation(.snappy) {
-                        if let index = activity.sets.firstIndex(where: { $0.id == set.wrappedValue.id }) {
-                            deleteSet(at: index)
-                        }
-                        swipedSetID = nil
-                    }
-                }) {
-                    Image(systemName: "trash")
-                        .foregroundColor(.white)
-                        .frame(width: 30, height: 30)
-                        .background(Color.red)
-                        .clipShape(Circle())
-                }
+            Button {
+                focusedField = nil
+            } label: {
+                Label("Close", systemImage: "keyboard.chevron.compact.down")
+                    .font(.lato())
+                    .labelStyle(.iconOnly)
+                    .padding(10)
+                    .background(Circle().fill(Color.gray))
+                    .foregroundStyle(.white)
+                    .shadow(radius: 0)
             }
+            .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 2.5)
         }
-        .padding(.vertical, 5.0)
-        .contentShape(Rectangle()) // Makes the whole row draggable
-        .gesture(
-            DragGesture()
-                .onChanged { value in
-                    if value.translation.width < -50 {
-                        withAnimation {
-                            swipedSetID = set.wrappedValue.id
-                        }
-                    }
-                }
-        )
-        .onAppear {
-            // Ensure local state exists for this set
-            ensureLocalStateExists(for: setID, set: set.wrappedValue)
-        }
+        .padding(horizontalSpacing)
+        .background(.clear)
     }
 
-    /// This view shows a list of sets for the provided input.
-    /// - Parameters:
-    ///   - type: The type of the sets.
-    ///   - sets: an array of ``SetData`` objects.
-    /// - Returns: A ``View`` displaying the count of sets, a title, list of set items, and the add activity button.
+    // MARK: - Sections
+    /// The warm up secion of the list.
+    /// - Returns: The warm up section view.
     @ViewBuilder
-    private func sets(type: SetData.SetType, sets: Binding<[SetData]>) -> some View {
-//        let filteredSets = sets.wrappedValue.indices.filter { sets.wrappedValue[$0].type == type }
-        let filteredSets = sets.wrappedValue
-            .filter { $0.type == type }
-            .sorted(by: { $0.created < $1.created })
+    private func warmUpSection() -> some View {
+        Text("\(activity.warmUpSets.count) warm up set\(activity.warmUpSets.count == 1 ? ":" : "s:")")
+            .font(.lato(type: .light, size: .subtitle))
+            .foregroundStyle(.ld)
+            .listRowSeparator(.hidden)
 
-        HStack {
-            let title = type == .warmUp ? "warm up" : "working"
-            Text("\(filteredSets.count) \(title) set\(filteredSets.count == 1 ? ":" : "s:")")
-                .font(.lato(type: .light, size: .subtitle))
-            Spacer()
+        ForEach(Array(activity.warmUpSets.enumerated()), id: \.1.persistentModelID) { _, set in
+            listItem(set: set)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        modelContext.delete(set)
+                        updateSortIndices()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .listRowBackground(Color.clear)
         }
+        .onMove(perform: moveWarmUpSet)
 
-//        ForEach(filteredSets, id: \.self) { index in
-//            item(set: sets[index]) // Use direct binding to modify set
-//        }
-        ForEach(filteredSets, id: \.id) { set in
-            if let binding = sets.first(where: { $0.id == set.id }) {
-                item(set: binding)
-            }
-        }
-
-        addSetButton(type: type)
+        addWarmupSetButton()
     }
 
-    /// The add set button for the list of sets.
-    /// - Parameter type: The type of set. Can be any ``SetData.SetType``.
-    /// - Returns: A ``View`` of the add set button.
+    /// The button view that includes the vertical line and button, for the warm up sets.
+    /// - Returns: The view of the button.
     @ViewBuilder
-    private func addSetButton(type: SetData.SetType) -> some View {
-        Button(action: {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                // For now, use the defualt values
-                let newSet = SetData(type: type, parentActivity: activity)
-                activity.sets.append(newSet)
-                // Initialize local state for the new set
-                localRepsText[newSet.id] = "\(newSet.reps)"
-                localWeightText[newSet.id] = "\(newSet.weight)"
+    private func addWarmupSetButton() -> some View {
+        Button {
+            withAnimation(.easeInOut) {
+                // Create new set with appropriate type
+                let newSet = SetData(type: .warmUp, parentActivity: activity, sortIndex: activity.sets.count)
+
+                // Find position to insert - right after the last warm-up set
+                if let lastWarmUpIndex = activity.sets.lastIndex(where: { $0.type == .warmUp }) {
+                    activity.sets.insert(newSet, at: lastWarmUpIndex + 1)
+                } else if let firstWorkingIndex = activity.sets.firstIndex(where: { $0.type == .working }) {
+                    // If no warm-up sets yet, insert before first working set
+                    activity.sets.insert(newSet, at: firstWorkingIndex)
+                } else {
+                    // If no sets at all, just append
+                    activity.sets.append(newSet)
+                }
+
+                updateSortIndices()
             }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-        }) {
-            HStack {
+        } label: {
+            HStack(alignment: .center, spacing: 10) {
+                Spacer()
                 Image(systemName: "plus")
-                    .font(.title3)
-                let title = type == .warmUp ? "warm up" : "working"
-                Text("Add \(title) set")
+                    .foregroundStyle(Color.accentColor)
+                Text("Add set")
                     .font(.lato(type: .regular, size: .subtitle))
+                    .foregroundStyle(Color.accentColor)
+                Spacer()
             }
+            .padding(.vertical, 20)
         }
-        .padding(.vertical, 5.0)
+        .listRowBackground(Color.clear)
+        .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
     }
 
-    // MARK: - Helpers
+    /// The working section of the list.
+    /// - Returns: The working section view.
+    @ViewBuilder
+    private func workingSection() -> some View {
+        Text("\(activity.workingSets.count) working set\(activity.workingSets.count == 1 ? ":" : "s:")")
+            .font(.lato(type: .light, size: .subtitle))
+            .foregroundStyle(.ld)
+            .listRowSeparator(.hidden)
 
-    /// Helper function to ensure local state exists for a set
+        ForEach(Array(activity.workingSets.enumerated()), id: \.1.persistentModelID) { _, set in
+            listItem(set: set)
+                .swipeActions(edge: .trailing) {
+                    Button(role: .destructive) {
+                        modelContext.delete(set)
+                        updateSortIndices()
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
+                .listRowBackground(Color.clear)
+        }
+        .onMove(perform: moveWorkingSet)
+
+        addWorkingSetButton()
+    }
+
+    /// The button view that includes the vertical line and button, for the working sets.
+    /// - Returns: The working section view.
+    @ViewBuilder
+    private func addWorkingSetButton() -> some View {
+        Button {
+            withAnimation(.easeInOut) {
+                let newSet = SetData(type: .working, parentActivity: activity, sortIndex: activity.sets.count + 1)
+                // Just add to end of list since we display working last
+                activity.sets.append(newSet)
+                updateSortIndices()
+            }
+        } label: {
+            HStack(alignment: .center, spacing: 10) {
+                Spacer()
+                Image(systemName: "plus")
+                    .foregroundStyle(Color.accentColor)
+                Text("Add set")
+                    .font(.lato(type: .regular, size: .subtitle))
+                    .foregroundStyle(Color.accentColor)
+                Spacer()
+            }
+            .padding(.vertical, 20)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
+    }
+
+    // MARK: - List Item
+    /// The row in the List of sets.
     /// - Parameters:
-    ///   - id: ID of the set.
-    ///   - set: The ``SetData`` to draw from.
-    private func ensureLocalStateExists(for id: PersistentIdentifier, set: SetData) {
-        if localRepsText[id] == nil {
-            localRepsText[id] = "\(set.reps)"
-        }
+    ///   - set: The set that will be in a row.
+    /// - Returns: The list item view.
+    @ViewBuilder
+    private func listItem(set: SetData) -> some View {
+        HStack(alignment: .center, spacing: 0) {
+            Button {
+                set.isComplete.toggle()
+                try? modelContext.save()
+            } label: {
+                listItemButtonView(set: set)
+            }
+            .buttonStyle(.plain)
+            .padding(.trailing, horizontalSpacing)
 
-        if localWeightText[id] == nil {
-            localWeightText[id] = "\(set.weight)"
+            // This blank text needs to be here so the list divider goes all the way to
+            // the button, and doesn't stop at inbetween the textfields.
+            Text("").frame(maxWidth: 0)
+
+            // Reps field
+            listItemRepsField(set: set)
+
+            // Divider
+            Text("/")
+                .font(.lato())
+                .foregroundStyle(.gray)
+                .padding(.horizontal, horizontalSpacing * 2)
+                .padding(.vertical, 20)
+
+            // Weight field
+            listItemWeightField(set: set)
+        }
+        .font(.lato(type: .bold))
+        .listRowInsets(.init(top: 0, leading: horizontalSpacing, bottom: 0, trailing: horizontalSpacing))
+    }
+
+    /// The button view of each list item.
+    /// - Parameter set: The set that determines how the button and its line looks.
+    /// - Returns: Returns the complete view of the button.
+    @ViewBuilder
+    private func listItemButtonView(set: SetData) -> some View {
+        let topLineFillColor: Color = {
+            if set.sortIndex == 0 || activity.sortedSets.first(where: { $0.type == .working }) == set {
+                return .clear // No line for the first set in a section
+            }
+            let previousSet = activity.sortedSets[set.sortIndex - 1]
+            // Show green line if both sets are complete
+            return set.isComplete && previousSet.isComplete ? .green : .gray
+        }()
+
+        let bottomLineFillColor: Color = {
+            if activity.sortedSets.last == set || activity.sortedSets.last(where: { $0.type == .warmUp }) == set {
+                return .clear // No line for the last set in a section
+            }
+
+            let nextSet = activity.sortedSets[set.sortIndex + 1]
+            // Show green line if both sets are complete
+            return set.isComplete && nextSet.isComplete ? .green : .gray
+        }()
+
+        VStack {
+            UnevenRoundedRectangle(
+                topLeadingRadius: 0,
+                bottomLeadingRadius: lineCornerRadius,
+                bottomTrailingRadius: lineCornerRadius,
+                topTrailingRadius: 0
+            )
+            .fill(topLineFillColor)
+            .frame(width: lineWidth)
+
+            Image(systemName: set.isComplete ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(set.isComplete ? .green : .gray)
+                .font(.lato(type: .regular, size: .subtitle))
+
+            UnevenRoundedRectangle(
+                topLeadingRadius: lineCornerRadius,
+                bottomLeadingRadius: 0,
+                bottomTrailingRadius: 0,
+                topTrailingRadius: lineCornerRadius
+            )
+            .fill(bottomLineFillColor)
+            .frame(width: lineWidth)
         }
     }
 
-    /// Saves the current field value to the model if focus is leaving a field
-    private func saveCurrentFieldValue(id: PersistentIdentifier? = nil) {
-        let idToSave = id ?? focusedField
+    @ViewBuilder
+    private func listItemRepsField(set: SetData) -> some View {
+        let setId = set.persistentModelID
 
-        guard let setID = idToSave else { return }
-
-        // Find the set in the activity and update it
-        if let index = activity.sets.firstIndex(where: { $0.id == setID }) {
-            // Convert string to Int for reps
-            if let repsText = localRepsText[setID], let reps = Int(repsText) {
-                activity.sets[index].reps = reps
+        HStack {
+            TextField(
+                "reps",
+                text: Binding(
+                    get: {
+                        // Use the temporary value if we're editing, otherwise convert from model
+                        return editingReps[setId] ?? "\(set.reps)"
+                    },
+                    set: { newValue in
+                        // Store in temporary state only
+                        editingReps[setId] = newValue.filter { $0.isNumber }
+                    }
+                )
+            )
+            .keyboardType(.numberPad)
+            .focused($focusedField, equals: .reps(setId))
+            .onChange(of: focusedField) { _, newFocus in
+                if newFocus == .reps(setId) && editingReps[setId] == nil {
+                    // Initialize editing value when field gets focus
+                    editingReps[setId] = "\(set.reps)"
+                }
             }
-
-            // Convert string to Double for weight
-            if let weightText = localWeightText[setID], let weight = Double(weightText) {
-                activity.sets[index].weight = weight
+            // Listen for submit action to save
+            // Not exactly sure when this is fired
+            .onSubmit {
+                print("Submit action fired")
+                saveCurrentEdits()
             }
-
-            // Try to save to model context
-            try? modelContext.save()
         }
+        .padding(5)
+        .background(.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 5))
     }
 
-    /// Saves all local field values to the model
-    private func saveAllFieldValues() {
-        // Save current focused field first
-        saveCurrentFieldValue()
+    @ViewBuilder
+    private func listItemWeightField(set: SetData) -> some View {
+        let setId = set.persistentModelID
 
-        // Then save all other fields that have local state
-        for (setID, repsText) in localRepsText {
-            if let index = activity.sets.firstIndex(where: { $0.id == setID }), let reps = Int(repsText) {
-                activity.sets[index].reps = reps
+        HStack {
+            TextField(
+                "weight",
+                text: Binding(
+                    get: {
+                        // Use the temporary value if we're editing, otherwise convert from model
+                        return editingWeight[setId] ?? formatWeight(set.weight)
+                    },
+                    set: { newValue in
+                        // Only allow numbers and decimal separator
+                        let filtered = newValue.filter { $0.isNumber || String($0) == decimalSeparator }
+                        editingWeight[setId] = filtered
+                    }
+                )
+            )
+            .keyboardType(.decimalPad)
+            .focused($focusedField, equals: .weight(setId))
+            .onChange(of: focusedField) { _, newFocus in
+                if newFocus == .weight(setId) && editingWeight[setId] == nil {
+                    // Initialize editing value when field gets focus
+                    editingWeight[setId] = formatWeight(set.weight)
+                }
+            }
+            // Listen for submit action to save
+            // Not exactly sure when this is fired
+            .onSubmit {
+                print("Submit action fired")
+                saveCurrentEdits()
             }
         }
+        .padding(5)
+        .background(.gray.opacity(0.1))
+        .clipShape(RoundedRectangle(cornerRadius: 5))
+    }
+}
 
-        for (setID, weightText) in localWeightText {
-            if let index = activity.sets.firstIndex(where: { $0.id == setID }), let weight = Double(weightText) {
-                activity.sets[index].weight = weight
-            }
+// MARK: - Helpers
+extension ActivityView {
+    /// Performs the move operation when the user drags an activity from one position to another in the list.
+    /// This function maintains the proper sort order of sets by updating all sortIndex values.
+    /// This works only for the warm up sets.
+    /// Had a hard time understand this so Claude helped.
+    /// - Parameters:
+    ///   - source: The original `IndexSet` containing the indices of items to be moved.
+    ///   - destination: The destination index where the items should be moved to.
+    private func moveWarmUpSet(from source: IndexSet, to destination: Int) {
+        // Create a mutable copy of the already sorted sets array
+        // Even though this creates a new array, it contains references to the same SwiftData-managed
+        // SetData objects, so modifying them here will update the actual objects in the database
+        var sets = activity.sortedSets
+
+        // Rearrange the items in our temporary array according to the drag operation
+        sets.move(fromOffsets: source, toOffset: destination)
+
+        // Update ALL sortIndex values to match the new order
+        // Since SetData objects are reference types and tracked by SwiftData,
+        // changing properties here directly updates the objects in the SwiftData store,
+        // regardless of how we accessed them (through sortedSets or directly)
+        for (index, set) in sets.enumerated() {
+            set.sortIndex = index
         }
 
-        // Try to save to model context
+        // Save changes to ensure the updates are persisted
+        try? modelContext.save()
+        print("Move saved!")
+    }
+
+    /// Performs the move operation when the user drags an activity from one position to another in the list.
+    /// This function maintains the proper sort order of sets by updating all sortIndex values.
+    /// This works only for the working sets.
+    /// Had a hard time understand this so Claude helped.
+    /// - Parameters:
+    ///   - source: The original `IndexSet` containing the indices of items to be moved.
+    ///   - destination: The destination index where the items should be moved to.
+    private func moveWorkingSet(from source: IndexSet, to destination: Int) {
+        // Get all sets sorted by sortIndex
+        var sets = activity.sortedSets
+
+        // Calculate the offset (number of warm-up sets)
+        let warmUpCount = activity.warmUpSets.count
+
+        // Adjust the source indices and destination by adding the offset
+        let adjustedSource = IndexSet(source.map { $0 + warmUpCount })
+        let adjustedDestination = destination + warmUpCount
+
+        // Perform the move on the full collection
+        sets.move(fromOffsets: adjustedSource, toOffset: adjustedDestination)
+
+        // Update ALL sortIndex values to match the new order
+        for (index, set) in sets.enumerated() {
+            set.sortIndex = index
+        }
+
+        // Save changes
+        try? modelContext.save()
+        print("Move saved!")
+    }
+
+    /// Rearrange the ``Activity`` indices.
+    private func updateSortIndices() {
+        // First, separate sets by type
+        let warmUpSets = activity.warmUpSets
+        let workingSets = activity.workingSets
+
+        // Then update sort indices for all sets
+        var index = 0
+
+        // Update warm-up sets first
+        for set in warmUpSets {
+            set.sortIndex = index
+            index += 1
+        }
+
+        // Then update working sets
+        for set in workingSets {
+            set.sortIndex = index
+            index += 1
+        }
+
+        // Force a refresh of the activity sets by reassigning
+        let updatedSets = activity.sets
+        activity.sets = updatedSets
+
         try? modelContext.save()
     }
 
-    /// Deletes an ``SetData`` at the given index.
-    /// - Parameter index: The index of the set to delete.
-    private func deleteSet(at index: Int) {
-        withAnimation {
-            let setToDelete = activity.sets[index]
-            // Remove from dictionaries to clean up
-            localRepsText.removeValue(forKey: setToDelete.id)
-            localWeightText.removeValue(forKey: setToDelete.id)
-            // Remove from model context to actually delete the object
-            modelContext.delete(setToDelete)
+    /// Duplicate the set. Adds the new set right after the orginal one.
+    /// - Parameter set: ``SetData`` object to be duplicated.
+    private func duplicateSet(set: SetData) {
+        let newSet = SetData(
+            type: set.type,
+            reps: set.reps,
+            weight: set.weight,
+            isComplete: false,
+            parentActivity: activity,
+            sortIndex: set.sortIndex + 1
+        )
+
+        // Insert the new set right after the current one
+        if let index = activity.sets.firstIndex(where: { $0.persistentModelID == set.persistentModelID }) {
+            activity.sets.insert(newSet, at: index + 1)
+            updateSortIndices()
             try? modelContext.save()
-            // Remove reference from the list
-//            activity.sets.remove(at: index)
         }
-        print("sets count: \(activity.sets.count)")
+    }
+
+    // Helper function to format weight for display
+    /// Format the weight to a String representation
+    /// - Parameter weight: A double that represents the weight.
+    /// - Returns: The ``String`` representation of the weight.
+    private func formatWeight(_ weight: Double) -> String {
+        // Don't show decimal places if it's a whole number
+        return weight.truncatingRemainder(dividingBy: 1) == 0 ? "\(Int(weight))" : "\(weight)"
+    }
+
+    /// Save the edits from the ``TextField``s to persistant storage.
+    private func saveCurrentEdits() {
+        guard let set = currentlyEditingSet else { return }
+        let setId = set.persistentModelID
+
+        // Save reps if we were editing them
+        if let repsText = editingReps[setId], let reps = Int(repsText) {
+            set.reps = reps
+            editingReps.removeValue(forKey: setId)
+        }
+
+        // Save weight if we were editing it
+        if let weightText = editingWeight[setId] {
+            // Replace the decimal separator with a period for Double parsing
+            let normalizedText = weightText.replacingOccurrences(of: decimalSeparator, with: ".")
+            if let weight = Double(normalizedText) {
+                set.weight = weight
+            }
+            editingWeight.removeValue(forKey: setId)
+        }
+
+        // Save changes to SwiftData
+        try? modelContext.save()
+        print("[\(Date.now)] Changes saved for set: \(setId.id)")
+    }
+
+    /// Moves the focus to the next set, respecting the selection of either reps or weight focus.
+    /// If there is no next set, it will clear the focus.
+    private func moveToNextSet() {
+        guard let currentSet = currentlyEditingSet else { return }
+
+        let currentIndex = activity.sortedSets.firstIndex { $0.persistentModelID == currentSet.persistentModelID } ?? -1
+        if currentIndex == -1 || currentIndex >= activity.sortedSets.count - 1 {
+            // If we're at the last set or can't determine current position, just clear focus
+            focusedField = nil
+            return
+        }
+
+        // Get the next set
+        let nextSet = activity.sortedSets[currentIndex + 1]
+
+        // Determine what field type we're currently on and focus the same field type in the next set
+        if let focus = focusedField {
+            switch focus {
+            case .reps:
+                // Currently on a reps field, focus next set's reps
+                focusedField = .reps(nextSet.persistentModelID)
+            case .weight:
+                // Currently on a weight field, focus next set's weight
+                focusedField = .weight(nextSet.persistentModelID)
+            }
+        }
     }
 }
 
@@ -308,14 +596,15 @@ struct ActivityView: View {
         activity: .constant(
             Activity(
                 sets: [
-                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true),
-                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false),
-                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false),
-                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false),
-                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false)
+                    SetData(type: .warmUp, reps: 10, weight: 20.0, isComplete: true, sortIndex: 0),
+                    SetData(type: .warmUp, reps: 15, weight: 30.0, isComplete: false, sortIndex: 1),
+                    SetData(type: .working, reps: 8, weight: 50.5, isComplete: false, sortIndex: 2),
+                    SetData(type: .working, reps: 8, weight: 50.0, isComplete: false, sortIndex: 3),
+                    SetData(type: .working, reps: 12, weight: 30.0, isComplete: false, sortIndex: 4)
                 ],
                 parentExercise: Exercise(name: "Bench Press"),
-                parentWorkout: Workout(gym: "tester")
+                parentWorkout: Workout(gym: "tester"), sortIndex: 0
             )
         ))
+    .environment(\.font, .lato(type: .regular))
 }

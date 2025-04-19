@@ -132,8 +132,11 @@ struct ExerciseSearch: View {
         for name in selectedExercises {
             // Fetch the exercise object by matching the name
             if let exercise = exercises.first(where: { $0.name == name }) {
+                // Find the max sortIndex value of the current activites list
+                var index = currentWorkout.activities.max(by: { $0.sortIndex < $1.sortIndex })?.sortIndex ?? 0
+                index += 1
                 // Create a new activity for each selected exercise
-                let newActivity = Activity(parentExercise: exercise, parentWorkout: currentWorkout)
+                let newActivity = Activity(parentExercise: exercise, parentWorkout: currentWorkout, sortIndex: index)
 
                 // Append the new activity to the current workout's activities
                 currentWorkout.activities.append(newActivity)
