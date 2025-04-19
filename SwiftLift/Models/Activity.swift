@@ -27,6 +27,9 @@ final class Activity {
     /// This must be optional in order to allow cascade deletion.
     var parentWorkout: Workout?
 
+    /// The Index of the ``Activity``.
+    var sortIndex: Int
+
     /// Initializes a new ``Activity`` instance.
     ///
     /// - Parameters:
@@ -39,29 +42,36 @@ final class Activity {
     ///   - parentWorkout: An reference to the `Workout` this activity is part of.
     init(sets: [SetData] = [],
          parentExercise: Exercise,
-         parentWorkout: Workout) {
+         parentWorkout: Workout,
+         sortIndex: Int) {
         self.sets = sets
         self.parentExercise = parentExercise
         self.parentWorkout = parentWorkout
+        self.sortIndex = sortIndex
     }
 }
 
 // MARK: - Computed Properties
 extension Activity {
-    /// All the warm up sets in this ``Activity``
-    @Transient
+    /// All the warm up sets in this ``Activity``, sorted by sortIndex
     var warmUpSets: [SetData] {
         sets.filter { $0.type == .warmUp }
+            .sorted { $0.sortIndex < $1.sortIndex }
     }
 
-    /// All the working sets in this ``Activity``
-    @Transient
+    /// All the working sets in this ``Activity``, sorted by sortIndex
     var workingSets: [SetData] {
         sets.filter { $0.type == .working }
+            .sorted { $0.sortIndex < $1.sortIndex }
+    }
+
+    /// all the ``sets`` sorted by ``SetData.sortIndex``.
+    var sortedSets: [SetData] {
+        sets.sorted(by: { $0.sortIndex < $1.sortIndex })
     }
 
     /// Calculate wether or not this activity is complete.
-    /// Completion is determined by the wether or not all ``sets`` are complete
+    /// Completion is determined by the wether or not all ``sets`` are complete.
     var isComplete: Bool {
         sets.allSatisfy(\.isComplete)
     }
@@ -70,7 +80,7 @@ extension Activity {
         parentExercise?.name ?? ""
     }
 
-    /// The date at which the ``Activity`` was completed
+    /// The date at which the ``Activity`` was completed. This is pulled from the parent ``Workout`` ``endDate``.
     var completionDate: Date? {
         parentWorkout?.endDate
     }

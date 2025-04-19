@@ -17,3 +17,7 @@ function_body_length:
 cyclomatic_complexity:
   warning: 15
   error: 20
+
+type_body_length:
+  warning: 350
+  error: 500
