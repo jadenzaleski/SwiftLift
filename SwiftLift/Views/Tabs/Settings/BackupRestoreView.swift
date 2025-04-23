@@ -9,9 +9,9 @@ import SwiftUI
 
 struct BackupRestoreView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("doBackup") var doBackup: Bool = true
     @AppStorage("backupLength") var backupLength: Double = 7.0
-
 
     var body: some View {
         List {
@@ -39,7 +39,7 @@ struct BackupRestoreView: View {
             }
         }
         .onAppear {
-            let backupManager = BackupManager()
+            let backupManager = BackupManager(context: modelContext)
             backupManager.createBackup()
 
             let backups = backupManager.getBackups()
@@ -108,22 +108,26 @@ struct BackupRestoreView: View {
             Button {
                 print("export")
             } label: {
-                Image(systemName: "square.and.arrow.down")
+                Label("Export", systemImage: "square.and.arrow.down")
+                    .labelStyle(.iconOnly)
+
             }
             .buttonStyle(.plain)
+            .foregroundStyle(Color.accentColor)
+
 
             Button {
                 print("restore")
             } label: {
-                Image(systemName: "arrow.trianglehead.2.counterclockwise.rotate.90")
+                Label("Restore", systemImage: "arrow.trianglehead.2.counterclockwise.rotate.90")
+                    .labelStyle(.iconOnly)
             }
             .buttonStyle(.plain)
-            .foregroundStyle(Color.accentColor)
+            .foregroundStyle(Color.gray)
         }
         .font(.lato(type: .regular, size: .body))
     }
 }
-
 
 // MARK: - Helpers
 extension BackupRestoreView {
