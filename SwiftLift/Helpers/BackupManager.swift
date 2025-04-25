@@ -104,6 +104,10 @@ class BackupManager {
         }
     }
 
+    func deleteBackup(filename: String) {
+        try? FileManager.default.removeItem(at: backupDirectory.appendingPathComponent(filename))
+    }
+
     /// Retrieves all backups with date and size
     func getBackups() -> [BackupMetadata] {
         do {

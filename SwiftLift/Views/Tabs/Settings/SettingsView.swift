@@ -29,7 +29,7 @@ struct SettingsView: View {
             List {
                 Section {
                     NavigationLink {
-                        BackupRestoreView()
+                        BackupRestoreView(context: modelContext)
                     } label: {
                         Text("Backup & Restore")
                     }

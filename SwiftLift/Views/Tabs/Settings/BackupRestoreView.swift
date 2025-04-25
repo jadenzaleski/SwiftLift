@@ -6,12 +6,42 @@
 //
 
 import SwiftUI
+import SwiftData
+
+class BackupRestoreViewModel: ObservableObject {
+    @Published var backups: [BackupMetadata] = []
+    private(set) var backupManager: BackupManager
+
+    init(context: ModelContext) {
+        self.backupManager = BackupManager(context: context)
+        loadBackups()
+    }
+
+    func loadBackups() {
+        backups = backupManager.getBackups()
+    }
+
+    func createBackup() {
+        backupManager.createBackup()
+        loadBackups()
+    }
+
+    func deleteBackup(_ backup: BackupMetadata) {
+        backupManager.deleteBackup(filename: backup.filename)
+        loadBackups()
+    }
+}
 
 struct BackupRestoreView: View {
     @Environment(\.colorScheme) var colorScheme
-    @Environment(\.modelContext) private var modelContext
     @AppStorage("doBackup") var doBackup: Bool = true
     @AppStorage("backupLength") var backupLength: Double = 7.0
+
+    @StateObject private var viewModel: BackupRestoreViewModel
+
+    init(context: ModelContext) {
+        _viewModel = StateObject(wrappedValue: BackupRestoreViewModel(context: context))
+    }
 
     var body: some View {
         List {
@@ -27,25 +57,26 @@ struct BackupRestoreView: View {
             }
 
             Section {
-                backupItem()
-                backupItem()
+                if !viewModel.backups.isEmpty {
+                    ForEach(viewModel.backups, id: \.filename) { backup in
+                        backupItem(for: backup)
+                    }
+                    .onDelete(perform: deleteBackup)
+                } else {
+                    Text("No backups yet.")
+                        .font(.lato(type: .regular, size: .body))
+                }
             } header: {
                 Text("Backups")
                     .font(.lato(type: .regular, size: .small))
             } footer: {
                 Text("You may either download or restore your data from a" +
                      " previous backup. Swipe left on a backup to delete it.")
-                    .font(.lato(type: .regular, size: .caption))
+                .font(.lato(type: .regular, size: .caption))
             }
         }
-        .onAppear {
-            let backupManager = BackupManager(context: modelContext)
-            backupManager.createBackup()
-
-            let backups = backupManager.getBackups()
-            for backup in backups {
-                print("Backup: \(backup.filename), Date: \(backup.date), Size: \(backup.size) bytes")
-            }
+        .task {
+            viewModel.createBackup()
         }
     }
 
@@ -91,33 +122,34 @@ struct BackupRestoreView: View {
 
         Button {
             print("backing up...")
+            DispatchQueue.main.async {
+                viewModel.createBackup()
+            }
         } label: {
             Text("Back Up Now")
         }
         .font(.lato(type: .regular, size: .body))
     }
 
-    @ViewBuilder
-    private func backupItem() -> some View {
+    private func backupItem(for backup: BackupMetadata) -> some View {
         HStack(spacing: 15) {
-            Text(Date.now, format: .dateTime.day().month(.wide))
-            Text("27.5MB")
+            Text(backup.date, format: .dateTime.day().month(.wide).hour().minute())
+            Text("\(ByteCountFormatter.string(fromByteCount: backup.size, countStyle: .file))")
                 .font(.lato(type: .light, size: .caption))
+                .foregroundStyle(.gray)
 
             Spacer()
             Button {
-                print("export")
+                print("export \(backup.filename)")
             } label: {
                 Label("Export", systemImage: "square.and.arrow.down")
                     .labelStyle(.iconOnly)
-
             }
             .buttonStyle(.plain)
             .foregroundStyle(Color.accentColor)
 
-
             Button {
-                print("restore")
+                print("restore \(backup.filename)")
             } label: {
                 Label("Restore", systemImage: "arrow.trianglehead.2.counterclockwise.rotate.90")
                     .labelStyle(.iconOnly)
@@ -132,8 +164,14 @@ struct BackupRestoreView: View {
 // MARK: - Helpers
 extension BackupRestoreView {
 
+    private func deleteBackup(at offsets: IndexSet) {
+        for index in offsets {
+            let backup = viewModel.backups[index]
+            viewModel.deleteBackup(backup)
+        }
+    }
 }
 
 #Preview {
-    BackupRestoreView()
+    BackupRestoreView(context: ModelContext(previewContainer))
 }
