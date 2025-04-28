@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import UniformTypeIdentifiers
+import Foundation
 
 /// A view model that manages the creation, retrieval, and deletion of backup files.
 ///
@@ -86,6 +87,16 @@ struct BackupExportDocument: FileDocument {
     }
 }
 
+struct IdentifiableURL: Identifiable {
+    let id: String
+    let url: URL
+
+    init(_ url: URL) {
+        self.url = url
+        self.id = url.absoluteString
+    }
+}
+
 struct BackupRestoreView: View {
     @Environment(\.colorScheme) var colorScheme
     @AppStorage("doBackup") var doBackup: Bool = true
@@ -98,6 +109,10 @@ struct BackupRestoreView: View {
     @State private var isExporting: Bool = false
     /// The boolean to indicate wether or not we show the delete alert.
     @State private var showDeleteAlert: Bool = false
+    /// Boolean to indicate wether or not we show the import sheet.
+    @State private var showImporter: Bool = false
+    /// The file that will be used to restore from.
+    @State private var importedFile: IdentifiableURL?
     /// The maximum amount of backups the user can have.
     private let maxBackupLength: Double = 30.0
 
@@ -119,6 +134,34 @@ struct BackupRestoreView: View {
             }
 
             Section {
+                Button {
+                    showImporter.toggle()
+                } label: {
+                    Text("Import")
+                }
+                .fileImporter(
+                    isPresented: $showImporter,
+                    allowedContentTypes: [.commaSeparatedText, .data],
+                    allowsMultipleSelection: false
+                ) { result in
+                    switch result {
+                    case .success(let urls):
+                        if let selectedURL = urls.first {
+                            importedFile = IdentifiableURL(selectedURL)                        }
+                    case .failure(let error):
+                        print("Failed to import file: \(error)")
+                    }
+                }
+            } footer: {
+                (Text("You may import your data from a backup file," +
+                      " or restore it from a previous backup by tapping the restore (") +
+                 Text(Image(systemName: "arrow.trianglehead.2.counterclockwise.rotate.90")) +
+                 Text(") icon.")
+                )
+                .font(.lato(type: .regular, size: .caption))
+            }
+
+            Section {
                 if !viewModel.backups.isEmpty {
                     ForEach(viewModel.backups, id: \.filename) { backup in
                         backupItem(for: backup)
@@ -126,7 +169,6 @@ struct BackupRestoreView: View {
                     .onDelete(perform: deleteBackup)
                 } else {
                     Text("No backups yet.")
-                        .font(.lato(type: .regular, size: .body))
                 }
             } header: {
                 Text("Backups")
@@ -149,6 +191,10 @@ struct BackupRestoreView: View {
             case .failure(let error):
                 print("Export failed: \(error.localizedDescription)")
             }
+        }
+        .sheet(item: $importedFile) { identifiable in
+            ImportRestoreView(importedFile: identifiable.url)
+                .presentationDragIndicator(.visible)
         }
     }
 
@@ -177,7 +223,6 @@ struct BackupRestoreView: View {
         HStack {
             Toggle(isOn: $doBackup) {
                 Text("Backup Workouts")
-                    .font(.lato(type: .regular, size: .body))
             }
         }
     }
@@ -233,7 +278,6 @@ struct BackupRestoreView: View {
         } label: {
             Text("Back Up Now")
         }
-        .font(.lato(type: .regular, size: .body))
     }
 
     /// The view for each of the backup items in the list
@@ -260,7 +304,9 @@ struct BackupRestoreView: View {
             .foregroundStyle(Color.accentColor)
             // Restore button
             Button {
-                // TODO: finish restore
+                let urlToRestore = viewModel.backupURL(for: backup.filename)
+                // Now set the importedFile with the pre-fetched URL
+                importedFile = IdentifiableURL(urlToRestore)
                 print("restore \(backup.filename)")
             } label: {
                 Label("Restore", systemImage: "arrow.trianglehead.2.counterclockwise.rotate.90")

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D7B682E12DBEB9F7008CC9B0 /* ImportRestoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7B682E02DBEB9F2008CC9B0 /* ImportRestoreView.swift */; };
 		D7CEC87E2DB87EF4008A013D /* Lato-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7CEC84A2DB87EF4008A013D /* Lato-Black.ttf */; };
 		D7CEC87F2DB87EF4008A013D /* Lato-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7CEC84B2DB87EF4008A013D /* Lato-BlackItalic.ttf */; };
 		D7CEC8802DB87EF4008A013D /* Lato-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D7CEC84C2DB87EF4008A013D /* Lato-Bold.ttf */; };
@@ -68,6 +69,7 @@
 
 /* Begin PBXFileReference section */
 		D742706E2AA924250020503C /* README.md */ = {isa = PBXFileReference; explicitFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		D7B682E02DBEB9F2008CC9B0 /* ImportRestoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportRestoreView.swift; sourceTree = "<group>"; };
 		D7B90E6D2AA8309500F9EC41 /* SwiftLift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SwiftLift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D7CEC8482DB87EF4008A013D /* LineChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineChart.swift; sourceTree = "<group>"; };
 		D7CEC84A2DB87EF4008A013D /* Lato-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lato-Black.ttf"; sourceTree = "<group>"; };
@@ -259,6 +261,7 @@
 		D7CEC8712DB87EF4008A013D /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				D7B682E02DBEB9F2008CC9B0 /* ImportRestoreView.swift */,
 				D7CEC86F2DB87EF4008A013D /* BackupRestoreView.swift */,
 				D7CEC8702DB87EF4008A013D /* SettingsView.swift */,
 			);
@@ -518,6 +521,7 @@
 			files = (
 				D7CEC88D2DB87EF4008A013D /* LineChart.swift in Sources */,
 				D7CEC88E2DB87EF4008A013D /* AppStorageManager.swift in Sources */,
+				D7B682E12DBEB9F7008CC9B0 /* ImportRestoreView.swift in Sources */,
 				D7CEC88F2DB87EF4008A013D /* BackupManager.swift in Sources */,
 				D7CEC8902DB87EF4008A013D /* Debouncer.swift in Sources */,
 				D7CEC8912DB87EF4008A013D /* LatoFont.swift in Sources */,
