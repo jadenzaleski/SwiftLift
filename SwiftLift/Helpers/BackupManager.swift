@@ -78,6 +78,12 @@ struct BackupMetadata {
 class BackupManager {
     let backupDirectory: URL
     private let modelContext: ModelContext
+    private var parsedData: [Row] = []
+    @Published var parsingProgress: Double = 0.0
+    @Published var parsedExerciseCount: Int = 0
+    @Published var parsedWorkoutCount: Int = 0
+    @Published var parsedActivityCount: Int = 0
+    @Published var parsedSetCount: Int = 0
 
     public final let header: [String] = ["Name", "WorkoutStartDate", "WorkoutEndDate",
                                          "Gym", "ActivitySortIndex", "Type", "Reps",
@@ -224,6 +230,86 @@ class BackupManager {
                 deleteBackup(filename: backup.filename)
                 print("Deleted backup: \(backup.filename)")
             }
+        }
+    }
+
+    func parseCSV(fileURL: URL) {
+        parsedData = []
+
+        Task {
+            guard let fileHandle = try? FileHandle(forReadingFrom: fileURL) else {
+                print("❌ Failed to open file")
+                return
+            }
+
+            defer { try? fileHandle.close() }
+
+            let totalSize = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? NSNumber)?.doubleValue ?? 0
+            var totalRead: Double = 0
+            var buffer = Data()
+
+            while let chunk = try? fileHandle.read(upToCount: 4096), !chunk.isEmpty {
+                buffer.append(chunk)
+                totalRead += Double(chunk.count)
+                let progress = min(totalRead / totalSize, 1.0)
+//                print("🟨 Read \(totalRead) / \(totalSize) bytes (\(Int(progress * 100))%)")
+
+                // Update progress on the main thread
+                await MainActor.run {
+                    self.parsingProgress = progress
+//                    print("📊 Progress: \(Int(progress * 100))%")
+                }
+
+                // Process the buffer line by line
+
+                while let range = buffer.range(of: Data([0x0A])) { // Newline character "\n"
+                    let lineData = buffer.subdata(in: 0..<range.lowerBound)
+                    buffer.removeSubrange(0...range.lowerBound)
+
+                    if let line = String(data: lineData, encoding: .utf8) {
+//                        print("🔹 Parsed line: \(line.prefix(50))...")
+                        let columns = line.components(separatedBy: ",")
+                        guard columns.count >= 14 else { continue }
+
+                        let row = Row(
+                            name: columns[0].isEmpty ? nil : columns[0],
+                            workoutStartDate: columns[1].isEmpty ? nil : columns[1],
+                            workoutEndDate: columns[2].isEmpty ? nil : columns[2],
+                            gym: columns[3].isEmpty ? nil : columns[3],
+                            activitySortIndex: Int(columns[4]),
+                            type: columns[5].isEmpty ? nil : columns[5],
+                            reps: Int(columns[6]),
+                            weight: Double(columns[7]),
+                            setSortIndex: Int(columns[8]),
+                            exerciseNotes: columns[9].isEmpty ? nil : columns[9],
+                            setID: columns[10].isEmpty ? nil : columns[10],
+                            activityID: columns[11].isEmpty ? nil : columns[11],
+                            workoutID: columns[12].isEmpty ? nil : columns[12],
+                            exerciseID: columns[13].isEmpty ? nil : columns[13]
+                        )
+
+                        parsedData.append(row)
+                        // Only update the UI every so often to improve preformance
+                        if Int.random(in: 0...1000) == 0 {
+                            parsedWorkoutCount = Set(parsedData.compactMap { $0.workoutID }).count
+                            parsedActivityCount = Set(parsedData.compactMap { $0.activityID }).count
+                            parsedExerciseCount = Set(parsedData.compactMap { $0.exerciseID }).count
+                            parsedSetCount = Set(parsedData.compactMap { $0.setID }).count
+                        }
+                    }
+                }
+            }
+
+            await MainActor.run {
+                self.parsingProgress = 1.0
+                self.parsedWorkoutCount = Set(parsedData.compactMap { $0.workoutID }).count
+                self.parsedActivityCount = Set(parsedData.compactMap { $0.activityID }).count
+                self.parsedExerciseCount = Set(parsedData.compactMap { $0.exerciseID }).count
+                self.parsedSetCount = Set(parsedData.compactMap { $0.setID }).count
+                print("PARSING COMPLETE 100%")
+            }
+
+            print("✅ Finished parsing CSV. Total rows: \(parsedData.count)")
         }
     }
 }

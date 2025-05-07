@@ -99,6 +99,7 @@ struct IdentifiableURL: Identifiable {
 
 struct BackupRestoreView: View {
     @Environment(\.colorScheme) var colorScheme
+    @Environment(\.modelContext) private var modelContext
     @AppStorage("doBackup") var doBackup: Bool = true
     @AppStorage("backupLength") var backupLength: Double = 7.0
 
@@ -193,7 +194,7 @@ struct BackupRestoreView: View {
             }
         }
         .sheet(item: $importedFile) { identifiable in
-            ImportRestoreView(importedFile: identifiable.url)
+            ImportRestoreView(importedFile: identifiable.url, context: modelContext)
                 .presentationDragIndicator(.visible)
         }
     }
