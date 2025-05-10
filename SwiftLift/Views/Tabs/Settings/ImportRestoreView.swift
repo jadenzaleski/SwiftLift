@@ -9,13 +9,16 @@ import SwiftUI
 import SwiftData
 
 class ImportRestoreViewModel: ObservableObject {
-    private let backupManager: BackupManager
+    private var backupManager: BackupManager?
+    private var tasks: [Task<Void, Never>] = []
+    private var parseTask: Task<Void, Never>?
 
-    @Published var parsingProgress: Double = 0.0
+    @Published var progressBarValue: Double = 0.0
     @Published var parsedExerciseCount: Int = 0
     @Published var parsedWorkoutCount: Int = 0
     @Published var parsedActivityCount: Int = 0
     @Published var parsedSetCount: Int = 0
+    @Published var isParsingCancelled: Bool = false
 
     init(context: ModelContext) {
         self.backupManager = BackupManager(context: context)
@@ -25,69 +28,137 @@ class ImportRestoreViewModel: ObservableObject {
     }
 
     private func setupObservers() {
-        // Observe progress
-        Task {
-            for await progress in backupManager.$parsingProgress.values {
-                await MainActor.run {
-                    self.parsingProgress = progress
-                }
-            }
-        }
-
-        // Observe exercise count
-        Task {
-            for await count in backupManager.$parsedExerciseCount.values {
-                await MainActor.run {
-                    withAnimation {
-                        self.parsedExerciseCount = count
+        tasks.append(Task {
+            for await progress in backupManager!.$progressBarValue.values {
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        withAnimation {
+                            self.progressBarValue = progress
+                        }
                     }
                 }
             }
-        }
+        })
 
-        // Observe workout count
-        Task {
-            for await count in backupManager.$parsedWorkoutCount.values {
-                await MainActor.run {
-                    withAnimation {
-                        self.parsedWorkoutCount = count
+        tasks.append(Task {
+            for await count in backupManager!.$parsedExerciseCount.values {
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        withAnimation {
+                            self.parsedExerciseCount = count
+                        }
                     }
                 }
             }
-        }
+        })
 
-        // Observe activity count
-        Task {
-            for await count in backupManager.$parsedActivityCount.values {
-                await MainActor.run {
-                    withAnimation {
-                        self.parsedActivityCount = count
+        tasks.append(Task {
+            for await count in backupManager!.$parsedWorkoutCount.values {
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        withAnimation {
+                            self.parsedWorkoutCount = count
+                        }
                     }
                 }
             }
-        }
+        })
 
-        // Observe set count
-        Task {
-            for await count in backupManager.$parsedSetCount.values {
-                await MainActor.run {
-                    withAnimation {
-                        self.parsedSetCount = count
+        tasks.append(Task {
+            for await count in backupManager!.$parsedActivityCount.values {
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        withAnimation {
+                            self.parsedActivityCount = count
+                        }
                     }
                 }
             }
-        }
+        })
+
+        tasks.append(Task {
+            for await count in backupManager!.$parsedSetCount.values {
+                if !Task.isCancelled {
+                    await MainActor.run {
+                        withAnimation {
+                            self.parsedSetCount = count
+                        }
+                    }
+                }
+            }
+        })
     }
 
     func parseCSV(from file: URL) {
         print("Parsing CSV file...")
-        backupManager.parseCSV(fileURL: file)
+
+        // Cancel any existing parse task
+        parseTask?.cancel()
+
+        // Create a new parse task
+        parseTask = Task {
+            // Check if the task is cancelled before starting
+            guard !Task.isCancelled else {
+                print("Task cancelled before starting")
+                return
+            }
+
+            // Start the parsing operation
+            await backupManager?.parseCSV(fileURL: file)
+
+            // Check if we were cancelled during parsing
+            if Task.isCancelled {
+                print("CSV parsing was cancelled")
+                await MainActor.run {
+                    self.isParsingCancelled = true
+                }
+            } else {
+                print("CSV parsing completed normally")
+            }
+        }
+
+        // Add the task to our task list
+        if let parseTask = parseTask {
+            tasks.append(parseTask)
+        }
+    }
+
+    func cleanup() {
+        print("Cleaning up ImportRestoreViewModel")
+
+        // Cancel each task individually
+        tasks.forEach { task in
+            task.cancel()
+            print("Cancelled a task")
+        }
+
+        // Also cancel the parse task specifically
+        parseTask?.cancel()
+
+        // Clear the arrays
+        tasks.removeAll()
+        parseTask = nil
+
+        // Release the backup manager
+        backupManager = nil
+
+        print("Cleanup complete")
+    }
+
+    var status: String {
+        backupManager?.status ?? ""
     }
 }
 
 struct ImportRestoreView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.modelContext) var modelContext
+    @Environment(\.colorScheme) var colorScheme
+
+    @Query private var exercises: [Exercise]
+    @Query private var workouts: [Workout]
+    @Query private var activities: [Activity]
+    @Query private var sets: [SetData]
 
     @StateObject private var viewModel: ImportRestoreViewModel
 
@@ -102,9 +173,11 @@ struct ImportRestoreView: View {
         Color("customGreen"), Color("customPurple")]), startPoint: .topLeading, endPoint: .bottomTrailing)
 
     var body: some View {
-        VStack {
+        VStack(spacing: 5) {
             HStack {
                 Text("Name")
+                    .font(.lato(type: .bold))
+
                 Spacer()
                 Text(importedFile.lastPathComponent)
                     .foregroundStyle(.gray)
@@ -112,6 +185,8 @@ struct ImportRestoreView: View {
 
             HStack {
                 Text("Date")
+                    .font(.lato(type: .bold))
+
                 Spacer()
                 Text(formattedFileDate)
                     .foregroundStyle(.gray)
@@ -119,77 +194,127 @@ struct ImportRestoreView: View {
 
             HStack {
                 Text("Size")
+                    .font(.lato(type: .bold))
+
                 Spacer()
                 Text(formattedFileSize)
                     .foregroundStyle(.gray)
             }
         }
+        .padding()
         .lineLimit(1)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color("offset"))
+                .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : Color(uiColor: .lightGray).opacity(0.5), radius: 5, x: 0, y: 5)
+        )
+        .padding()
 
         VStack {
-            Text("Data Preview")
-
-            HStack {
-                Text("Exercises:")
-                Spacer()
-                Text("\(viewModel.parsedExerciseCount)")
-                    .foregroundStyle(gradient)
-                    .contentTransition(.numericText())
-
+            Grid(horizontalSpacing: 30) {
+                GridRow {
+                    Text("")
+                        .gridColumnAlignment(.leading)
+                    Text("Imported")
+                        .font(.lato(type: .bold))
+                    Text("Current")
+                        .foregroundStyle(.gray)
+                }
+                Divider()
+                GridRow {
+                    Text("Exercises")
+                        .font(.lato(type: .bold))
+                    Text("\(viewModel.parsedExerciseCount)")
+                        .font(.lato(type: .bold))
+                        .foregroundStyle(gradient)
+                        .contentTransition(.numericText())
+                    Text("\(exercises.count)")
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                }
+                Divider()
+                GridRow {
+                    Text("Workouts")
+                        .font(.lato(type: .bold))
+                    Text("\(viewModel.parsedWorkoutCount)")
+                        .font(.lato(type: .bold))
+                        .foregroundStyle(gradient)
+                        .contentTransition(.numericText())
+                    Text("\(workouts.count)")
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                }
+                Divider()
+                GridRow {
+                    Text("Activities")
+                        .font(.lato(type: .bold))
+                    Text("\(viewModel.parsedActivityCount)")
+                        .font(.lato(type: .bold))
+                        .foregroundStyle(gradient)
+                        .contentTransition(.numericText())
+                    Text("\(activities.count)")
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                }
+                Divider()
+                GridRow {
+                    Text("Sets")
+                        .font(.lato(type: .bold))
+                    Text("\(viewModel.parsedSetCount)")
+                        .font(.lato(type: .bold))
+                        .foregroundStyle(gradient)
+                        .contentTransition(.numericText())
+                    Text("\(sets.count)")
+                        .foregroundStyle(.gray)
+                        .contentTransition(.numericText())
+                }
             }
-            .font(.lato(type: .bold))
+            .padding()
 
-            HStack {
-                Text("Workouts:")
-                Spacer()
-                Text("\(viewModel.parsedWorkoutCount)")
-                    .foregroundStyle(gradient)
-                    .contentTransition(.numericText())
-                Spacer()
+            ProgressView(value: viewModel.progressBarValue) {
+                Text(viewModel.status)
+                    .font(.lato(size: .caption))
+                    .foregroundStyle(.gray)
             }
-            .font(.lato(type: .bold))
-
-            HStack {
-                Text("Activites:")
-                Spacer()
-                Text("\(viewModel.parsedActivityCount)")
-                    .foregroundStyle(gradient)
-                    .contentTransition(.numericText())
-                Spacer()
-            }
-            .font(.lato(type: .bold))
-
-            HStack {
-                Text("Sets:")
-                Spacer()
-                Text("\(viewModel.parsedSetCount)")
-                    .foregroundStyle(gradient)
-                    .contentTransition(.numericText())
-                Spacer()
-            }
-            .font(.lato(type: .bold))
+            .padding([.leading, .bottom, .trailing])
+            .tint(viewModel.progressBarValue == 1.0 ? .green : .accentColor)
         }
-        .padding(.horizontal, 15)
-
-        ProgressView(value: viewModel.parsingProgress) {
-            Text("\(Int(viewModel.parsingProgress * 100))%")
-        }
-        .padding(.horizontal, 15)
+        .background(
+            RoundedRectangle(cornerRadius: 15)
+                .fill(Color("offset"))
+                .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : Color(uiColor: .lightGray).opacity(0.5), radius: 5, x: 0, y: 5)
+        )
+        .padding(.horizontal)
 
         VStack {
             Button {
                 print("Restoring...")
-                viewModel.parseCSV(from: importedFile)
+                //                viewModel.parseCSV(from: importedFile)
             } label: {
                 Label("Restore", systemImage: "arrow.trianglehead.2.counterclockwise.rotate.90")
                     .labelStyle(.titleAndIcon)
                     .frame(maxWidth: .infinity)
-                    .padding(10)
+                    .padding(15)
+                    .foregroundStyle(.mainSystem)
             }
-            .buttonStyle(.borderedProminent)
+            //            .disabled(viewModel.parsingProgress != 1.0)
             .font(.lato(type: .bold))
+            .background(RoundedRectangle(cornerRadius: 10)
+                .fill(Color.accentColor)
+                .shadow(color: colorScheme == .dark ? Color(uiColor: .systemGray6) : .secondary, radius: 5, x: 0, y: 5)
+            )
         }
-        .padding(.horizontal, 15)
+        .padding()
+        .onAppear {
+            print("View has appeared - parsing csv")
+            viewModel.parseCSV(from: importedFile)
+        }
+        .onDisappear {
+            print("View is disappearing - cleaning up resources")
+            viewModel.cleanup()
+        }
+
+        Spacer()
     }
 }
 
@@ -218,4 +343,6 @@ extension ImportRestoreView {
 
 #Preview {
     ImportRestoreView(importedFile: URL(filePath: "/path/to/file.swift"), context: ModelContext(previewContainer))
+        .environment(\.font, .lato())
+
 }

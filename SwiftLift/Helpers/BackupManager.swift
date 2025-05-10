@@ -79,11 +79,12 @@ class BackupManager {
     let backupDirectory: URL
     private let modelContext: ModelContext
     private var parsedData: [Row] = []
-    @Published var parsingProgress: Double = 0.0
+    @Published var progressBarValue: Double = 0.0
     @Published var parsedExerciseCount: Int = 0
     @Published var parsedWorkoutCount: Int = 0
     @Published var parsedActivityCount: Int = 0
     @Published var parsedSetCount: Int = 0
+    @Published var status: String = ""
 
     public final let header: [String] = ["Name", "WorkoutStartDate", "WorkoutEndDate",
                                          "Gym", "ActivitySortIndex", "Type", "Reps",
@@ -194,6 +195,9 @@ class BackupManager {
                 let parentWorkout = parentActivity?.parentWorkout
                 let parentExercise = parentActivity?.parentExercise
 
+                // we don't want to include workouts that are not done yet.
+                if parentWorkout?.endDate == nil { continue }
+
                 let row = Row(name: set.parentActivity?.name,
                               workoutStartDate: parentWorkout?.startDate?.ISO8601Format(),
                               workoutEndDate: parentWorkout?.startDate?.ISO8601Format(),
@@ -233,10 +237,118 @@ class BackupManager {
         }
     }
 
-    func parseCSV(fileURL: URL) {
-        parsedData = []
+    /// Validate each line in the CSV file, making sure all the proper things are there and the correct type.
+    /// This function is long but it is the simpliest way to write and understand it later.
+    /// - Parameter line: The line to be validated
+    /// - Returns: Returns a tuple of a ``Bool`` that indicates wether or not it is valid,
+    /// and a ``String`` that will be the error message, if any.
+    func validateCSVLine(_ line: String) -> (valid: Bool, error: String?) { // swiftlint:disable:this cyclomatic_complexity
+        let columns = line.components(separatedBy: ",")
+        // Make sure we have the correct number of columns
+        if columns.count != header.count {
+            return (false, "Invalid number of columns in line. Expected \(header.count), got \(columns.count).")
+        }
+        // Name
+        if columns[0].isEmpty {
+            return (false, "Name column is empty.")
+        }
+        // WorkoutStartDate
+        if columns[1].isEmpty {
+            return (false, "WorkoutStartDate column is empty.")
+        } else {
+            // If it's not empty, is it a valid date format
+            if ISO8601DateFormatter().date(from: columns[1]) == nil {
+                return (false, "WorkoutStartDate is not a valid ISO8601 date.")
+            }
+        }
+        // WorkoutEndDate
+        if columns[2].isEmpty {
+            return (false, "WorkoutEndDate column is empty.")
+        } else {
+            // If it's not empty, is it a valid date formate
+            if ISO8601DateFormatter().date(from: columns[2]) == nil {
+                return (false, "WorkoutEndDate is not a valid ISO8601 date.")
+            }
+        }
+        // Gym
+        if columns[3].isEmpty {
+            return (false, "Gym column is empty.")
+        }
+        // ActivitySortIndex
+        if columns[4].isEmpty {
+            return (false, "ActivitySortIndex column is empty.")
+        } else {
+            // Is it an Int
+            if Int(columns[4]) == nil {
+                return (false, "ActivitySortIndex is not a valid Int.")
+            }
+        }
+        // Type
+        if columns[5].isEmpty {
+            return (false, "Type column is empty.")
+        } else {
+            // Is it a a string of "warmUp" or "working", case insensitive
+            let lowercasedType = columns[5].lowercased()
+            if lowercasedType != "warmup" && lowercasedType != "working" {
+                return (false, "Type must be either 'warmUp' or 'working'.")
+            }
+        }
+        // Reps
+        if columns[6].isEmpty {
+            return (false, "Reps column is empty.")
+        } else {
+            // Is it an Int
+            if Int(columns[6]) == nil {
+                return (false, "Reps is not a valid Int.")
+            }
+        }
+        // Weight
+        if columns[7].isEmpty {
+            return (false, "Weight column is empty.")
+        } else {
+            // Is it a Double
+            if Double(columns[7]) == nil {
+                return (false, "Weight is not a valid Double.")
+            }
+        }
+        // SetSortIndex
+        if columns[8].isEmpty {
+            return (false, "SetSortIndex column is empty.")
+        } else {
+            // Is it an Int
+            if Int(columns[8]) == nil {
+                return (false, "SetSortIndex is not a valid Int.")
+            }
+        }
+        // ExerciseNotes, currently columns[9], can be empty.
+        // SetID
+        if columns[10].isEmpty {
+            return (false, "SetID column is empty.")
+        }
+        // ActivityID
+        if columns[11].isEmpty {
+            return (false, "ActivityID column is empty.")
+        }
+        // WorkoutID
+        if columns[12].isEmpty {
+            return (false, "WorkoutID column is empty.")
+        }
+        // ExerciseID
+        if columns[13].isEmpty {
+            return (false, "ExerciseID column is empty.")
+        }
 
-        Task {
+        // All good, return true!
+        return (true, nil)
+    }
+
+    func parseCSV(fileURL: URL) async {
+        parsedData = []
+        status = "Parsing CSV..."
+        var didHeader = false
+
+
+        do {
             guard let fileHandle = try? FileHandle(forReadingFrom: fileURL) else {
                 print("❌ Failed to open file")
                 return
@@ -244,32 +356,54 @@ class BackupManager {
 
             defer { try? fileHandle.close() }
 
-            let totalSize = (try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? NSNumber)?.doubleValue ?? 0
+            let totalSize = (
+                try? FileManager.default.attributesOfItem(atPath: fileURL.path)[.size] as? NSNumber
+            )?.doubleValue ?? 0
             var totalRead: Double = 0
             var buffer = Data()
 
             while let chunk = try? fileHandle.read(upToCount: 4096), !chunk.isEmpty {
+                // Check for task cancellation frequently
+                if Task.isCancelled {
+                    print("CSV parsing task was cancelled")
+                    return
+                }
+
                 buffer.append(chunk)
                 totalRead += Double(chunk.count)
                 let progress = min(totalRead / totalSize, 1.0)
-//                print("🟨 Read \(totalRead) / \(totalSize) bytes (\(Int(progress * 100))%)")
 
-                // Update progress on the main thread
-                await MainActor.run {
-                    self.parsingProgress = progress
-//                    print("📊 Progress: \(Int(progress * 100))%")
-                }
+                // Update progress
+                self.progressBarValue = progress
 
                 // Process the buffer line by line
-
                 while let range = buffer.range(of: Data([0x0A])) { // Newline character "\n"
+                    // Check for cancellation during line processing too
+                    if Task.isCancelled {
+                        print("CSV parsing task was cancelled during line processing")
+                        return
+                    }
+
                     let lineData = buffer.subdata(in: 0..<range.lowerBound)
                     buffer.removeSubrange(0...range.lowerBound)
 
                     if let line = String(data: lineData, encoding: .utf8) {
-//                        print("🔹 Parsed line: \(line.prefix(50))...")
+                        // Skip header line
+                        if !didHeader {
+                            if line != header.joined(separator: ",") {
+                                print("Invaild header.\nExpected: \(header.joined(separator: ","))\nFound: \(line)")
+                                return
+                            }
+                            didHeader = true
+                            continue
+                        }
+                        let validationResult = validateCSVLine(line)
+                        if !validationResult.valid {
+                            print("❌ Validation error: \(validationResult.error ?? "Unknown error")")
+                            status = "Error: \(validationResult.error ?? "Unknown error")"
+                            return
+                        }
                         let columns = line.components(separatedBy: ",")
-                        guard columns.count >= 14 else { continue }
 
                         let row = Row(
                             name: columns[0].isEmpty ? nil : columns[0],
@@ -289,8 +423,9 @@ class BackupManager {
                         )
 
                         parsedData.append(row)
-                        // Only update the UI every so often to improve preformance
-                        if Int.random(in: 0...1000) == 0 {
+
+                        // Only update the UI every so often to improve performance
+                        if Int.random(in: 0...500) == 0 {
                             parsedWorkoutCount = Set(parsedData.compactMap { $0.workoutID }).count
                             parsedActivityCount = Set(parsedData.compactMap { $0.activityID }).count
                             parsedExerciseCount = Set(parsedData.compactMap { $0.exerciseID }).count
@@ -300,13 +435,21 @@ class BackupManager {
                 }
             }
 
+            // Final check for cancellation before updating the UI
+            if Task.isCancelled {
+                print("CSV parsing task was cancelled before final UI update")
+                return
+            }
+
+            // Final UI update
             await MainActor.run {
-                self.parsingProgress = 1.0
+                self.progressBarValue = 1.0
                 self.parsedWorkoutCount = Set(parsedData.compactMap { $0.workoutID }).count
                 self.parsedActivityCount = Set(parsedData.compactMap { $0.activityID }).count
                 self.parsedExerciseCount = Set(parsedData.compactMap { $0.exerciseID }).count
                 self.parsedSetCount = Set(parsedData.compactMap { $0.setID }).count
-                print("PARSING COMPLETE 100%")
+                status = "Parsing complete!"
+                print("PARSING COMPLETE")
             }
 
             print("✅ Finished parsing CSV. Total rows: \(parsedData.count)")

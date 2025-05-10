@@ -334,4 +334,5 @@ extension BackupRestoreView {
 
 #Preview {
     BackupRestoreView(context: ModelContext(previewContainer))
+        .environment(\.font, .lato())
 }
