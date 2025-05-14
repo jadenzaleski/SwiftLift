@@ -82,8 +82,7 @@ struct SettingsView: View {
                         .font(.lato(type: .regular, size: .caption))
                 } footer: {
                     Text("Swipe left on a gym to delete it. There must be at least one gym in the list at all times.")
-                        .font(.lato(type: .light, size: .caption))
-
+                        .font(.lato(type: .regular, size: .caption))
                 }
 
                 Section {
@@ -134,8 +133,7 @@ struct SettingsView: View {
                     // swift to recognize markdown.
                     // swiftlint:disable:next line_length
                     Text("Main icon by [SolarIcons](https://www.figma.com/community/file/1166831539721848736?ref=svgrepo.com) in CC Attribution License via [SVG Repo](https://www.svgrepo.com/).")
-                    .font(.lato(type: .light, size: .caption))
-
+                        .font(.lato(type: .regular, size: .caption))
                 }
             }
             .font(.lato(type: .regular, size: .body))

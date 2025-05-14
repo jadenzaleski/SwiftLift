@@ -221,6 +221,7 @@ struct BackupRestoreView: View {
             .font(.lato(type: .light, size: .small))
 
         }
+        .frame(maxWidth: .infinity)
         HStack {
             Toggle(isOn: $doBackup) {
                 Text("Backup Workouts")
