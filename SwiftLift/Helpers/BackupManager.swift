@@ -70,21 +70,17 @@ struct BackupMetadata {
 /// `BackupManager` writes backup data into CSV files, stored under the app's Documents/Backups directory by default.
 /// It handles formatting, file creation, directory management, and cleanup of old backups.
 ///
-/// Usage:
-/// - Call ``createBackup()`` to create a new backup.
-/// - Use ``getBackups()`` to retrieve available backups.
-/// - Use ``deleteBackup(filename:)`` to delete specific backups.
-/// - Use ``pruneBackups(keepingAtLeast:)`` to limit the number of stored backups.
+/// - Warning: The restoration needs to be improved so it can run in the background and not freeze the UI.
+/// The current implementation works, it just is not efficent at all. I need to learn more about concurrancy before I feel comfortable tackling this again.
 class BackupManager {
     let backupDirectory: URL
     private let modelContext: ModelContext
-    private var parsedData: [Row] = []
     @Published var progressBarValue: Double = 0.0
     @Published var parsedExerciseCount: Int = 0
     @Published var parsedWorkoutCount: Int = 0
     @Published var parsedActivityCount: Int = 0
     @Published var parsedSetCount: Int = 0
-    @Published var status: String = ""
+    @Published var status: String = " "
 
     public final let header: [String] = ["Name", "WorkoutStartDate", "WorkoutEndDate",
                                          "Gym", "ActivitySortIndex", "Type", "Reps",
@@ -341,12 +337,17 @@ class BackupManager {
         // All good, return true!
         return (true, nil)
     }
-
+    
+    /// This function parses the CSV file, checking it for errors, It also updates the the counts.
+    /// - Parameter fileURL: The files to be parsed.
     func parseCSV(fileURL: URL) async {
-        parsedData = []
         status = "Parsing CSV..."
         var didHeader = false
-
+        var parsedWorkouts: Set<String> = []
+        var parsedActivities: Set<String> = []
+        var parsedExercises: Set<String> = []
+        var parsedSets: Set<String> = []
+        let time: Date = .now
 
         do {
             guard let fileHandle = try? FileHandle(forReadingFrom: fileURL) else {
@@ -404,32 +405,17 @@ class BackupManager {
                             return
                         }
                         let columns = line.components(separatedBy: ",")
-
-                        let row = Row(
-                            name: columns[0].isEmpty ? nil : columns[0],
-                            workoutStartDate: columns[1].isEmpty ? nil : columns[1],
-                            workoutEndDate: columns[2].isEmpty ? nil : columns[2],
-                            gym: columns[3].isEmpty ? nil : columns[3],
-                            activitySortIndex: Int(columns[4]),
-                            type: columns[5].isEmpty ? nil : columns[5],
-                            reps: Int(columns[6]),
-                            weight: Double(columns[7]),
-                            setSortIndex: Int(columns[8]),
-                            exerciseNotes: columns[9].isEmpty ? nil : columns[9],
-                            setID: columns[10].isEmpty ? nil : columns[10],
-                            activityID: columns[11].isEmpty ? nil : columns[11],
-                            workoutID: columns[12].isEmpty ? nil : columns[12],
-                            exerciseID: columns[13].isEmpty ? nil : columns[13]
-                        )
-
-                        parsedData.append(row)
+                        parsedSets.insert(columns[10])
+                        parsedActivities.insert(columns[11])
+                        parsedWorkouts.insert(columns[12])
+                        parsedExercises.insert(columns[13])
 
                         // Only update the UI every so often to improve performance
-                        if Int.random(in: 0...500) == 0 {
-                            parsedWorkoutCount = Set(parsedData.compactMap { $0.workoutID }).count
-                            parsedActivityCount = Set(parsedData.compactMap { $0.activityID }).count
-                            parsedExerciseCount = Set(parsedData.compactMap { $0.exerciseID }).count
-                            parsedSetCount = Set(parsedData.compactMap { $0.setID }).count
+                        if abs(time.timeIntervalSinceNow) > 0.25 {
+                            parsedWorkoutCount = parsedWorkouts.count
+                            parsedActivityCount = parsedActivities.count
+                            parsedExerciseCount = parsedExercises.count
+                            parsedSetCount = parsedSets.count
                         }
                     }
                 }
@@ -441,18 +427,265 @@ class BackupManager {
                 return
             }
 
+            // We set these variables here to avoid swift concurrency issues
+            let workoutCount = parsedWorkouts.count
+            let activityCount = parsedActivities.count
+            let exerciseCount = parsedExercises.count
+            let setCount = parsedSets.count
             // Final UI update
             await MainActor.run {
                 self.progressBarValue = 1.0
-                self.parsedWorkoutCount = Set(parsedData.compactMap { $0.workoutID }).count
-                self.parsedActivityCount = Set(parsedData.compactMap { $0.activityID }).count
-                self.parsedExerciseCount = Set(parsedData.compactMap { $0.exerciseID }).count
-                self.parsedSetCount = Set(parsedData.compactMap { $0.setID }).count
-                status = "Parsing complete!"
+                self.parsedWorkoutCount = workoutCount
+                self.parsedActivityCount = activityCount
+                self.parsedExerciseCount = exerciseCount
+                self.parsedSetCount = setCount
+                self.status = "Parsing complete!"
                 print("PARSING COMPLETE")
             }
 
-            print("✅ Finished parsing CSV. Total rows: \(parsedData.count)")
+            print("✅ Finished parsing CSV.")
+        }
+    }
+
+    /// Struct that represents a single row of parsed data from the CSV file.
+    /// This struct conforms to `Sendable` to ensure safe use across threads.
+    struct ParsedLineData: Sendable {
+        let exerciseID: String
+        let workoutID: String
+        let activityID: String
+        let setID: String
+        let name: String
+        let workoutStartDate: Date?
+        let workoutEndDate: Date?
+        let gym: String
+        let activitySortIndex: Int
+        let setType: SetData.SetType
+        let reps: Int
+        let weight: Double
+        let setSortIndex: Int
+        let exerciseNotes: String?
+    }
+
+    /// Restores workout data from a CSV file located at `fileURL`.
+    /// The CSV must follow a strict header and field format.
+    ///
+    /// This function:
+    /// - Validates header and lines
+    /// - Wipes existing database data
+    /// - Parses and inserts new objects
+    /// - Updates progress UI
+    ///
+    /// - Warning: This function needs to be rewritten to run on a background thread.
+    /// Currently, everything runs on the main thread and is very klunky.
+    /// I do not have a good enough understanding of Swift concurrancy and threads to feel comfortable rewriting this yet.
+    /// This current implementation works but needs to be imporved.
+    ///
+    /// - Parameter fileURL: URL of the CSV file to restore.
+    func restore(fileURL: URL) {
+        status = "Restoring..."
+        progressBarValue = 0.0
+
+        let totalLines = parsedSetCount
+        var processedLines = 0
+        var time: Date = .now
+
+        // Attempt to open file
+        guard let fileHandle = try? FileHandle(forReadingFrom: fileURL) else {
+            print("❌ Failed to open file")
+            status = "Failed to open file"
+            return
+        }
+
+        defer { try? fileHandle.close() }
+
+        // Wipe database before import
+        wipeDatabase(modelContext: modelContext)
+
+        var buffer = Data()
+        var didHeader = false
+
+        // Maps to prevent duplication and allow reuse
+        var exercisesMap = [String: Exercise]()
+        var workoutsMap = [String: Workout]()
+        var activitiesMap = [String: Activity]()
+        var setsMap = [String: SetData]()
+
+        // Read file in chunks to handle large files efficiently
+        while let chunk = try? fileHandle.read(upToCount: 4096), !chunk.isEmpty {
+            buffer.append(chunk)
+
+            // Process each line
+            while let range = buffer.range(of: Data([0x0A])) { // Newline = 0x0A
+                let lineData = buffer.subdata(in: 0..<range.lowerBound)
+                buffer.removeSubrange(0...range.lowerBound)
+
+                guard let line = String(data: lineData, encoding: .utf8)?
+                    .trimmingCharacters(in: .whitespacesAndNewlines),
+                      !line.isEmpty else {
+                    continue
+                }
+
+                // Handle CSV header
+                if !didHeader {
+                    if line != header.joined(separator: ",") {
+                        status = "Invalid header format"
+                        return
+                    }
+                    didHeader = true
+                    continue
+                }
+
+                // Validate line before parsing
+                let validation = validateCSVLine(line)
+                guard validation.valid else {
+                    status = "Error: \(validation.error ?? "Unknown error")"
+                    return
+                }
+
+                // Parse line into a structured object
+                guard let parsedData = parseLine(line) else { continue }
+
+                // === Begin Object Creation ===
+
+                // Exercise
+                let exercise = exercisesMap[parsedData.exerciseID] ?? {
+                    let newExercise = Exercise(name: parsedData.name,
+                                               notes: parsedData.exerciseNotes,
+                                               activities: [])
+                    exercisesMap[parsedData.exerciseID] = newExercise
+                    modelContext.insert(newExercise)
+                    return newExercise
+                }()
+
+                // Workout
+                let workout = workoutsMap[parsedData.workoutID] ?? {
+                    let newWorkout = Workout(startDate: parsedData.workoutStartDate,
+                                             endDate: parsedData.workoutEndDate,
+                                             gym: parsedData.gym,
+                                             activities: [])
+                    workoutsMap[parsedData.workoutID] = newWorkout
+                    modelContext.insert(newWorkout)
+                    return newWorkout
+                }()
+
+                // Activity
+                let activity = activitiesMap[parsedData.activityID] ?? {
+                    let newActivity = Activity(sets: [],
+                                               parentExercise: exercise,
+                                               parentWorkout: workout,
+                                               sortIndex: parsedData.activitySortIndex)
+                    activitiesMap[parsedData.activityID] = newActivity
+                    exercise.activities.append(newActivity)
+                    workout.activities.append(newActivity)
+                    return newActivity
+                }()
+
+                // Set
+                if setsMap[parsedData.setID] == nil {
+                    let set = SetData(type: parsedData.setType,
+                                      reps: parsedData.reps,
+                                      weight: parsedData.weight,
+                                      isComplete: true,
+                                      parentActivity: activity,
+                                      sortIndex: parsedData.setSortIndex)
+                    setsMap[parsedData.setID] = set
+                    activity.sets.append(set)
+                }
+
+                // === End Object Creation ===
+
+                // Progress tracking
+                processedLines += 1
+                if abs(time.timeIntervalSinceNow) > 0.25 {
+                    progressBarValue = Double(processedLines) / Double(totalLines)
+                    status = "Processing: \(processedLines)/\(totalLines) items"
+                    time = .now
+                }
+            }
+        }
+
+        // Final save
+        do {
+            try modelContext.save()
+            progressBarValue = 1.0
+            status = "Restoration complete!"
+            print("✅ Finished restoring data from CSV.")
+        } catch {
+            status = "Error saving data: \(error.localizedDescription)"
+            print("❌ Failed to save context: \(error)")
+        }
+    }
+
+    /// Parses a single line of CSV into a structured `ParsedLineData` object.
+    /// The order of CSV columns must be consistent.
+    ///
+    /// - Parameter line: The CSV line string.
+    /// - Returns: ParsedLineData or nil if invalid.
+    private func parseLine(_ line: String) -> ParsedLineData? {
+        let columns = line.components(separatedBy: ",")
+
+        guard columns.count >= 14 else { return nil }
+
+        let exerciseID = columns[13]
+        let workoutID = columns[12]
+        let activityID = columns[11]
+        let setID = columns[10]
+
+        let name = columns[0]
+        let workoutStartDate = ISO8601DateFormatter().date(from: columns[1])
+        let workoutEndDate = ISO8601DateFormatter().date(from: columns[2])
+        let gym = columns[3]
+        let activitySortIndex = Int(columns[4]) ?? 0
+        let setType = columns[5].lowercased() == "warmup" ? SetData.SetType.warmUp : SetData.SetType.working
+        let reps = Int(columns[6]) ?? 0
+        let weight = Double(columns[7]) ?? 0.0
+        let setSortIndex = Int(columns[8]) ?? 0
+        let exerciseNotes = columns[9].isEmpty ? nil : columns[9]
+
+        return ParsedLineData(
+            exerciseID: exerciseID,
+            workoutID: workoutID,
+            activityID: activityID,
+            setID: setID,
+            name: name,
+            workoutStartDate: workoutStartDate,
+            workoutEndDate: workoutEndDate,
+            gym: gym,
+            activitySortIndex: activitySortIndex,
+            setType: setType,
+            reps: reps,
+            weight: weight,
+            setSortIndex: setSortIndex,
+            exerciseNotes: exerciseNotes
+        )
+    }
+
+    /// Deletes all existing model data from the database.
+    /// This function should be called before importing new data.
+    ///
+    /// - Parameter modelContext: The model context to operate on.
+    func wipeDatabase(modelContext: ModelContext) {
+        do {
+            // Delete all Activity objects first (cascade expected)
+            let activities = try modelContext.fetch(FetchDescriptor<Activity>())
+            for activity in activities {
+                modelContext.delete(activity)
+            }
+
+            try modelContext.save()
+
+            // Batch delete all entities
+            try modelContext.delete(model: SetData.self)
+            try modelContext.delete(model: Activity.self)
+            try modelContext.delete(model: Workout.self)
+            try modelContext.delete(model: Exercise.self)
+
+            try modelContext.save()
+
+            print("🧹 Database successfully wiped")
+        } catch {
+            status = "Error"
+            print("❌ Error wiping database: \(error)")
         }
     }
 }

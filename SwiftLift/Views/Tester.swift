@@ -118,13 +118,12 @@ struct Tester: View {
         return formatter
     }()
 
-    // swiftlint:disable identifier_name
     private func createTestData() {
         let notes: [String] = ["This is a note", "Another note", "Yet another note"]
 
         let exerciseCount = max(1, testDataCount / 4)
         var exerciseNames = Set<String>()
-        for index in 0..<exerciseCount {
+        for _ in 0..<exerciseCount {
             var name: String
             repeat {
                 name = "Exercise-\(UUID().uuidString.prefix(12))"
@@ -143,12 +142,12 @@ struct Tester: View {
             let start = Date.random()
             let end = start.addingTimeInterval(TimeInterval.random(in: 3600...28800))
             let workout = Workout(startDate: start, endDate: end, gym: gyms.randomElement() ?? "Gym")
-            for j in 0...Int.random(in: 1...10) {
+            for j in 0...Int.random(in: 1...10) { // swiftlint:disable:this identifier_name
                 let activity = Activity(parentExercise: exercises.randomElement()!, parentWorkout: workout, sortIndex: j)
-                for k in 0...Int.random(in: 1...15) {
-                    let rb = Bool.random()
+                for k in 0...Int.random(in: 1...15) { // swiftlint:disable:this identifier_name
+                    let rand = Bool.random()
                     let weight = round(Double.random(in: 10.0...300.0) * 100) / 100.0
-                    let set = SetData(type: rb ? .warmUp : .working,
+                    let set = SetData(type: rand ? .warmUp : .working,
                                       reps: Int.random(in: 1...10),
                                       weight: weight,
                                       isComplete: true,
